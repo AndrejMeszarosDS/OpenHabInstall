@@ -1,5 +1,4 @@
-sudo apt update
-sudo apt upgrade
+sudo apt-get update && apt-get upgrade -y && apt-get autoremove && apt-get autoclean
 sudo apt install --yes --force-yes openjdk-17-jre-headless
 curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor > openhab.gpg
 sudo mkdir /usr/share/keyrings
@@ -15,8 +14,7 @@ sudo systemctl status openhab.service
 sudo systemctl daemon-reload
 sudo systemctl enable openhab.service
 openhab-cli info
-sudo apt update                                        
-sudo apt upgrade                                       
+sudo apt-get update && apt-get upgrade -y && apt-get autoremove && apt-get autoclean
 sudo apt-get install --yes --force-yes nodejs                            
 sudo apt-get install --yes --force-yes npm                               
 sudo npm i frontail -g --yes --force-yes
