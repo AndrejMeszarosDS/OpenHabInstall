@@ -15,3 +15,8 @@ sudo systemctl status openhab.service
 sudo systemctl daemon-reload
 sudo systemctl enable openhab.service
 openhab-cli info
+sudo apt update                                        
+sudo apt upgrade                                       
+sudo apt-get install -y nodejs                            
+sudo apt-get install -y npm                               
+sudo npm i frontail -g -y
