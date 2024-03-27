@@ -1,5 +1,8 @@
+# update & upgrade
 sudo apt-get update && apt-get upgrade -y && apt-get autoremove && apt-get autoclean
+# install java 17
 sudo apt install --yes --force-yes openjdk-17-jre-headless
+# install openHAB 3.4.2.1
 curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor > openhab.gpg
 sudo mkdir /usr/share/keyrings
 sudo mv openhab.gpg /usr/share/keyrings
@@ -14,7 +17,29 @@ sudo systemctl status openhab.service
 sudo systemctl daemon-reload
 sudo systemctl enable openhab.service
 openhab-cli info
+# update & upgrade
 sudo apt-get update && apt-get upgrade -y && apt-get autoremove && apt-get autoclean
+# install frontail and dependecies
 sudo apt-get install --yes --force-yes nodejs                            
 sudo apt-get install --yes --force-yes npm                               
 sudo npm i frontail -g --yes --force-yes
+# remake frontail to work
+cd ~/../../usr/local/lib/node_modules/frontail/web
+sudo rm index.html
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/index.html
+cd ~/../../usr/local/lib/node_modules/frontail/web/assets
+sudo rm app.js
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/app.js
+cd ~/../../usr/local/lib/node_modules/frontail/web/assets/styles
+sudo rm bootstrap.min.css
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/bootstrap.min.css
+cd ~/../../usr/local/lib/node_modules/frontail/preset
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/openhab_AEM.json
+cd ~/../../usr/local/lib/node_modules/frontail/web/assets/styles
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/openhab_AEM.css
+cd ~/../../etc/systemd/system
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/frontail.service
+sudo chmod 644 /etc/systemd/system/frontail.service
+sudo systemctl -q daemon-reload
+sudo systemctl enable --now frontail.service
+sudo systemctl restart frontail.service
