@@ -43,3 +43,16 @@ sudo chmod 644 /etc/systemd/system/frontail.service
 sudo systemctl -q daemon-reload
 sudo systemctl enable --now frontail.service
 sudo systemctl restart frontail.service
+# update & upgrade
+sudo apt-get update && apt-get upgrade -y && apt-get autoremove && apt-get autoclean
+# samba share
+sudo apt-get install --yes --force-yes samba samba-common-bin
+# samba load updated configuration
+cd ~/../../etc/samba/
+sudo rm smb.conf
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
+# set user and password orangepi/secret
+pass="secret"
+(echo "$pass"; echo "$pass") | smbpasswd -s -a "$SUDO_USER"
+# restart samba service
+sudo systemctl restart smbd.service
