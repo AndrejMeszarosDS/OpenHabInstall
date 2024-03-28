@@ -1,5 +1,6 @@
 # update & upgrade
-sudo apt-get update && apt-get upgrade -y && apt-get autoremove && apt-get autoclean
+sudo apt-get --yes --force-yes update 
+sudo apt-get --yes --force-yes upgrade
 # install java 17
 # sudo apt install --yes --force-yes openjdk-17-jre-headless
 # # install openHAB 3.4.2.1
