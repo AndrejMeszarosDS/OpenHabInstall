@@ -10,7 +10,7 @@ sudo mv openhab.gpg /usr/share/keyrings
 sudo chmod u=rw,g=r,o=r /usr/share/keyrings/openhab.gpg
 echo 'deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main' | sudo tee /etc/apt/sources.list.d/openhab.list
 sudo apt-get --yes --force-yes update
-sudo apt install --yes --force-yes openhab=3.4.2-1
+sudo apt install --yes --force-yes openhab=4.1.3
 sudo apt-mark hold openhab
 sudo apt-mark hold openhab-addons
 sudo systemctl start openhab.service
