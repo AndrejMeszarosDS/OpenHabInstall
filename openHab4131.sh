@@ -64,15 +64,15 @@ sudo chmod -R g+w /etc/openhab
 sudo systemctl restart smbd.service
 #install Mosquitto Broker
 sudo apt-get install -y mosquitto mosquitto-clients
-sudo systemctl enable mosquitto.service
-# add user
-#sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi mqttpass
 # download new configuration
-#cd ~/../../etc/mosquitto/
-#sudo rm mosquitto.conf
-#sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
+cd ~/../../etc/mosquitto/
+sudo rm mosquitto.conf
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
+# add user
+sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi mqttpass
+sudo systemctl enable mosquitto.service
 # restart mosquitto
-#sudo systemctl restart mosquitto
+sudo systemctl restart mosquitto
 
 
 
