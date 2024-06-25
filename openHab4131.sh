@@ -66,13 +66,13 @@ sudo systemctl restart smbd.service
 sudo apt-get install -y mosquitto mosquitto-clients
 sudo systemctl enable mosquitto.service
 # add user
-sudo mosquitto_passwd -b /etc/mosquitto/passwd orangepi mqttpass
+#sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi mqttpass
 # download new configuration
-cd ~/../../etc/mosquitto/passwd
-sudo rm mosquitto.conf
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
+#cd ~/../../etc/mosquitto/
+#sudo rm mosquitto.conf
+#sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
 # restart mosquitto
-sudo systemctl restart mosquitto
+#sudo systemctl restart mosquitto
 
 
 
