@@ -1,6 +1,7 @@
 # update & upgrade
-sudo apt-get update
-sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+#sudo apt-get update
+#sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+
 # install java 17
 sudo apt install --yes --force-yes openjdk-17-jre-headless
 # install openHAB 3.4.2.1
@@ -9,18 +10,35 @@ sudo mkdir /usr/share/keyrings
 sudo mv openhab.gpg /usr/share/keyrings
 sudo chmod u=rw,g=r,o=r /usr/share/keyrings/openhab.gpg
 echo 'deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main' | sudo tee /etc/apt/sources.list.d/openhab.list
-sudo apt-get --yes --force-yes update
+#sudo apt-get --yes --force-yes update
 sudo apt install --yes --force-yes openhab=4.1.3-1
 sudo apt-mark hold openhab
 sudo apt-mark hold openhab-addons
+# update addons.cfg ( mqtt-binding, persistence mapdb, influx )
+
+
+
+
+
 sudo systemctl start openhab.service
 sudo systemctl status openhab.service
 sudo systemctl daemon-reload
 sudo systemctl enable openhab.service
 openhab-cli info
+
+# add openhab admin user
+openhab-cli console -p habopen users add openhab openhab_password administrator
+
+
+
+
+
+
+
 # update & upgrade
-sudo apt-get update
-sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+#sudo apt-get update
+#sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+
 # install frontail and dependecies
 sudo apt-get install --yes --force-yes nodejs                            
 sudo apt-get install --yes --force-yes npm                               
@@ -45,9 +63,11 @@ sudo chmod 644 /etc/systemd/system/frontail.service
 sudo systemctl -q daemon-reload
 sudo systemctl enable --now frontail.service
 sudo systemctl restart frontail.service
+
 # update & upgrade
-sudo apt-get update
-sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+#sudo apt-get update
+#sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+
 # samba share
 sudo apt-get install --yes --force-yes samba samba-common-bin
 # samba load updated configuration
@@ -62,6 +82,7 @@ sudo usermod -a -G openhab orangepi
 sudo chmod -R g+w /etc/openhab
 # restart samba service
 sudo systemctl restart smbd.service
+
 #install Mosquitto Broker
 sudo apt-get install -y mosquitto mosquitto-clients
 # download new configuration
