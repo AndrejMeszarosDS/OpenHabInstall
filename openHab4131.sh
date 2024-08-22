@@ -91,9 +91,19 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi $mosquitto_password
 sudo systemctl enable mosquitto.service
 sudo systemctl restart mosquitto
+# add openhab MQTT addon
 
 
 
+# ToDo
+# install influx
+# setup influx
+# add opnhab influx addon
+# set up openhab influx addon
+
+# add test item and thinks
+
+# check all together
 
 
 
