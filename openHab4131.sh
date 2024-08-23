@@ -91,14 +91,36 @@ cd ~/../../etc/openhab/services
 sudo echo "binding = mqtt" >> addons.cfg
 sudo echo "persistence = mapdb, influxdb" >> addons.cfg
 
+# Till it is working
 
+#--------------------------------------------------------------------------------------------------
+# install influx                                                                                  |
+#--------------------------------------------------------------------------------------------------
+curl -LO https://download.influxdata.com/influxdb/releases/influxdb2_2.7.7-1_arm64.deb
+sudo dpkg -i influxdb2_2.7.7-1_arm64.deb
+sudo service influxdb start
+sudo service influxdb status
 
+#--------------------------------------------------------------------------------------------------
+# install influx CLI                                                                              |
+#--------------------------------------------------------------------------------------------------
+wget https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz
+tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 
+#--------------------------------------------------------------------------------------------------
+# create influx admin user and database                                                           |
+#--------------------------------------------------------------------------------------------------
+./influx setup \
+  --username influx_admin \
+  --password influx_admin_password \
+  --org openhab \
+  --bucket openhab_db \
+  --force
 
-
+  
 
 # ToDo
-# install influx
+
 # setup influx
 # add opnhab influx addon
 # set up openhab influx addon
