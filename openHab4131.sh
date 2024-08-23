@@ -38,28 +38,28 @@ openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin
 #--------------------------------------------------------------------------------------------------
 # install frontail and dependecies and make to work                                               |
 #--------------------------------------------------------------------------------------------------
-sudo apt-get install --yes --force-yes nodejs                            
-sudo apt-get install --yes --force-yes npm                               
-sudo npm i frontail -g --yes --force-yes
-cd ~/../../usr/local/lib/node_modules/frontail/web
-sudo rm index.html
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/index.html
-cd ~/../../usr/local/lib/node_modules/frontail/web/assets
-sudo rm app.js
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/app.js
-cd ~/../../usr/local/lib/node_modules/frontail/web/assets/styles
-sudo rm bootstrap.min.css
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/bootstrap.min.css
-cd ~/../../usr/local/lib/node_modules/frontail/preset
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/openhab_AEM.json
-cd ~/../../usr/local/lib/node_modules/frontail/web/assets/styles
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/openhab_AEM.css
-cd ~/../../etc/systemd/system
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/frontail.service
-sudo chmod 644 /etc/systemd/system/frontail.service
-sudo systemctl -q daemon-reload
-sudo systemctl enable --now frontail.service
-sudo systemctl restart frontail.service
+# sudo apt-get install --yes --force-yes nodejs                            
+# sudo apt-get install --yes --force-yes npm                               
+# sudo npm i frontail -g --yes --force-yes
+# cd ~/../../usr/local/lib/node_modules/frontail/web
+# sudo rm index.html
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/index.html
+# cd ~/../../usr/local/lib/node_modules/frontail/web/assets
+# sudo rm app.js
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/app.js
+# cd ~/../../usr/local/lib/node_modules/frontail/web/assets/styles
+# sudo rm bootstrap.min.css
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/bootstrap.min.css
+# cd ~/../../usr/local/lib/node_modules/frontail/preset
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/openhab_AEM.json
+# cd ~/../../usr/local/lib/node_modules/frontail/web/assets/styles
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/openhab_AEM.css
+# cd ~/../../etc/systemd/system
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/frontail/frontail.service
+# sudo chmod 644 /etc/systemd/system/frontail.service
+# sudo systemctl -q daemon-reload
+# sudo systemctl enable --now frontail.service
+# sudo systemctl restart frontail.service
 
 #--------------------------------------------------------------------------------------------------
 # update & upgrade                                                                                |
@@ -70,27 +70,27 @@ sudo systemctl restart frontail.service
 #--------------------------------------------------------------------------------------------------
 # samba share                                                                                     |
 #--------------------------------------------------------------------------------------------------
-samba_share_password = secret
-sudo apt-get install --yes --force-yes samba samba-common-bin
-cd ~/../../etc/samba/
-sudo rm smb.conf
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
-(echo "$samba_share_password"; echo "$samba_share_password") | smbpasswd -s -a "$SUDO_USER"
-sudo usermod -a -G openhab orangepi
-sudo chmod -R g+w /etc/openhab
-sudo systemctl restart smbd.service
+# samba_share_password = secret
+# sudo apt-get install --yes --force-yes samba samba-common-bin
+# cd ~/../../etc/samba/
+# sudo rm smb.conf
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
+# (echo "$samba_share_password"; echo "$samba_share_password") | smbpasswd -s -a "$SUDO_USER"
+# sudo usermod -a -G openhab orangepi
+# sudo chmod -R g+w /etc/openhab
+# sudo systemctl restart smbd.service
 
 #--------------------------------------------------------------------------------------------------
 #install Mosquitto Broker                                                                         |
 #--------------------------------------------------------------------------------------------------
-mosquitto_password = mqttpass
-sudo apt-get install -y mosquitto mosquitto-clients
-cd ~/../../etc/mosquitto/
-sudo rm mosquitto.conf
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
-sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi $mosquitto_password
-sudo systemctl enable mosquitto.service
-sudo systemctl restart mosquitto
+# mosquitto_password = mqttpass
+# sudo apt-get install -y mosquitto mosquitto-clients
+# cd ~/../../etc/mosquitto/
+# sudo rm mosquitto.conf
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
+# sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi $mosquitto_password
+# sudo systemctl enable mosquitto.service
+# sudo systemctl restart mosquitto
 # add openhab MQTT addon
 
 
