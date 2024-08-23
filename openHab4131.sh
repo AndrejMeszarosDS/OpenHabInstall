@@ -1,8 +1,8 @@
 #--------------------------------------------------------------------------------------------------
 # update & upgrade                                                                                |
 #--------------------------------------------------------------------------------------------------
-#sudo apt-get update
-#sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+sudo apt-get update
+sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 
 #--------------------------------------------------------------------------------------------------
 # install java 17                                                                                 |
@@ -26,6 +26,8 @@ sudo systemctl start openhab.service
 sudo systemctl status openhab.service
 sudo systemctl daemon-reload
 sudo systemctl enable openhab.service
+
+sleep 60
 openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin_user_password administrator
 # update addons.cfg ( mqtt-binding, persistence mapdb, influx )
 
