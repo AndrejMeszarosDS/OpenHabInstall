@@ -12,13 +12,14 @@ sudo apt install --yes --force-yes openjdk-17-jre-headless
 #--------------------------------------------------------------------------------------------------
 # install openHAB 4.1.3.1                                                                         |
 #--------------------------------------------------------------------------------------------------
-opanhab_admin_user_name = admin
-opanhab_admin_user_password = openhab_password
+opanhab_admin_user_name="admin"
+opanhab_admin_user_password="openhab_password"
 curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor > openhab.gpg
 sudo mkdir /usr/share/keyrings
 sudo mv openhab.gpg /usr/share/keyrings
 sudo chmod u=rw,g=r,o=r /usr/share/keyrings/openhab.gpg
 echo 'deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main' | sudo tee /etc/apt/sources.list.d/openhab.list
+sudo apt-get update
 sudo apt install --yes --force-yes openhab=4.1.3-1
 sudo apt-mark hold openhab
 sudo apt-mark hold openhab-addons
@@ -26,7 +27,6 @@ sudo systemctl start openhab.service
 sudo systemctl status openhab.service
 sudo systemctl daemon-reload
 sudo systemctl enable openhab.service
-
 sleep 60
 openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin_user_password administrator
 # update addons.cfg ( mqtt-binding, persistence mapdb, influx )
