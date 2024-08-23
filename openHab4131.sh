@@ -25,16 +25,6 @@ sudo systemctl start openhab.service
 sudo systemctl status openhab.service
 sudo systemctl daemon-reload
 sudo systemctl enable openhab.service
-#sleep 60
-#opanhab_admin_user_name="admin"
-#opanhab_admin_user_password="openhab_password"openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin_user_password administrator
-# update addons.cfg ( mqtt-binding, persistence mapdb, influx )
-
-#--------------------------------------------------------------------------------------------------
-# update & upgrade                                                                                |
-#--------------------------------------------------------------------------------------------------
-#sudo apt-get update
-#sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 
 #--------------------------------------------------------------------------------------------------
 # install frontail and dependecies and make to work                                               |
@@ -63,12 +53,6 @@ sudo systemctl enable --now frontail.service
 sudo systemctl restart frontail.service
 
 #--------------------------------------------------------------------------------------------------
-# update & upgrade                                                                                |
-#--------------------------------------------------------------------------------------------------
-#sudo apt-get update
-#sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-
-#--------------------------------------------------------------------------------------------------
 # samba share                                                                                     |
 #--------------------------------------------------------------------------------------------------
 samba_share_password=secret
@@ -82,7 +66,7 @@ sudo chmod -R g+w /etc/openhab
 sudo systemctl restart smbd.service
 
 #--------------------------------------------------------------------------------------------------
-#install Mosquitto Broker                                                                         |
+# install Mosquitto Broker                                                                        |
 #--------------------------------------------------------------------------------------------------
 mosquitto_password=mqttpass
 sudo apt-get install -y mosquitto mosquitto-clients
@@ -92,7 +76,24 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi $mosquitto_password
 sudo systemctl enable mosquitto.service
 sudo systemctl restart mosquitto
-add openhab MQTT addon
+
+#--------------------------------------------------------------------------------------------------
+# create openhab admin user                                                                       |
+#--------------------------------------------------------------------------------------------------
+opanhab_admin_user_name="admin"
+opanhab_admin_user_password="openhab_password"
+openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin_user_password administrator
+
+#--------------------------------------------------------------------------------------------------
+# update addons.cfg ( mqtt-binding, persistence mapdb, influx )                                   |
+#--------------------------------------------------------------------------------------------------
+cd ~/../../etc/openhab/services
+echo "binding = mqtt" >> addons.cfg
+echo "persistence = mapdb, influxdb" >> addons.cfg
+
+
+
+
 
 
 
