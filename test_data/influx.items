@@ -1,0 +1,5 @@
+Group     gInflux
+Number    InfoluxTest_1    "[%.1f °C]"    (gInflux)    {channel="mqtt:topic:main:influxtest:infoluxTest_1"}
+Number    InfoluxTest_2    "[%.1f °C]"    (gInflux)    {channel="mqtt:topic:main:influxtest:infoluxTest_2"}
+Number    InfoluxTest_3    "[%.1f °C]"    (gInflux)    {channel="mqtt:topic:main:influxtest:infoluxTest_3"}
+Number    InfoluxTest_4    "[%.1f °C]"    (gInflux)    {channel="mqtt:topic:main:influxtest:infoluxTest_4"}

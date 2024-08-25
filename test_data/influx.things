@@ -1,0 +1,10 @@
+Bridge mqtt:broker:main  [ host="orangepizero3",secure=false, username="orangepi", password="mqttpass" ]
+{
+  Thing topic influxtest "Influxtest" {
+    Channels:
+        Type number : infoluxTest_1  "InfoluxTest_1 [%.1f °C]"  [ commandTopic = "influxtest/item_1", stateTopic = "influxtest/item_1"]
+        Type number : infoluxTest_2  "InfoluxTest_1 [%.1f °C]"  [ commandTopic = "influxtest/item_2", stateTopic = "influxtest/item_2"]
+        Type number : infoluxTest_3  "InfoluxTest_1 [%.1f °C]"  [ commandTopic = "influxtest/item_3", stateTopic = "influxtest/item_3"]
+        Type number : infoluxTest_4  "InfoluxTest_1 [%.1f °C]"  [ commandTopic = "influxtest/item_4", stateTopic = "influxtest/item_4"]
+  }
+}

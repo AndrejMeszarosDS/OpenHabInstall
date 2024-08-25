@@ -1,0 +1,5 @@
+Group     gMapDB
+String    MapDBTest_1    "[%s]"    (gMapDB)
+String    MapDBTest_2    "[%s]"    (gMapDB)
+String    MapDBTest_3    "[%s]"    (gMapDB)
+String    MapDBTest_4    "[%s]"    (gMapDB)
