@@ -87,9 +87,9 @@ openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin
 #--------------------------------------------------------------------------------------------------
 # update addons.cfg ( mqtt-binding, persistence mapdb, influx )                                   |
 #--------------------------------------------------------------------------------------------------
-cd ~/../../etc/openhab/services
-sudo echo "binding = mqtt" >> addons.cfg
-sudo echo "persistence = mapdb, influxdb" >> addons.cfg
+#cd ~/../../etc/openhab/services
+#sudo echo "binding = mqtt" >> addons.cfg
+#sudo echo "persistence = mapdb, influxdb" >> addons.cfg
 
 # Till it is working
 
