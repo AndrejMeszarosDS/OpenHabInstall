@@ -85,13 +85,6 @@ opanhab_admin_user_password="openhab_password"
 openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin_user_password administrator
 
 #--------------------------------------------------------------------------------------------------
-# update addons.cfg ( mqtt-binding, persistence mapdb, influx )                                   |
-#--------------------------------------------------------------------------------------------------
-cd ~/../../etc/openhab/services
-rm -f addons.cfg
-wget -c https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
-
-#--------------------------------------------------------------------------------------------------
 # install influx                                                                                  |
 #--------------------------------------------------------------------------------------------------
 curl -LO https://download.influxdata.com/influxdb/releases/influxdb2_2.7.7-1_arm64.deb
