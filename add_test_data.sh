@@ -12,3 +12,6 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 cd ~/../../etc/openhab/services
 rm -f addons.cfg
 sudo wget -c https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
+
+rm -f influxdb.cfg
+sudo wget -c https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/influxdb.cfg
