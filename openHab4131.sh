@@ -87,8 +87,8 @@ openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin
 #--------------------------------------------------------------------------------------------------
 # update addons.cfg ( mqtt-binding, persistence mapdb, influx )                                   |
 #--------------------------------------------------------------------------------------------------
-cd ~/../../etc/openhab/services
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
+#cd ~/../../etc/openhab/services
+#sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
 
 #--------------------------------------------------------------------------------------------------
 # install influx                                                                                  |
