@@ -87,9 +87,9 @@ openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin
 #--------------------------------------------------------------------------------------------------
 # update addons.cfg ( mqtt-binding, persistence mapdb, influx )                                   |
 #--------------------------------------------------------------------------------------------------
-#cd ~/../../etc/openhab/services
-#sudo echo "binding = mqtt" >> addons.cfg
-#sudo echo "persistence = mapdb, influxdb" >> addons.cfg
+cd ~/../../etc/openhab/services
+sudo echo "binding = mqtt" >> addons.cfg
+sudo echo "persistence = mapdb, influxdb" >> addons.cfg
 
 # Till it is working
 
@@ -99,7 +99,7 @@ openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin
 curl -LO https://download.influxdata.com/influxdb/releases/influxdb2_2.7.7-1_arm64.deb
 sudo dpkg -i influxdb2_2.7.7-1_arm64.deb
 sudo service influxdb start
-sudo service influxdb status
+#sudo service influxdb status ???
 
 #--------------------------------------------------------------------------------------------------
 # install influx CLI                                                                              |
