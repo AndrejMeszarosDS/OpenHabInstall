@@ -15,3 +15,4 @@ sudo wget -c https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/m
 
 rm -f influxdb.cfg
 sudo wget -c https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
+
