@@ -8,3 +8,7 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 cd ~/../../etc/openhab/persistence
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/influxdb.persist
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/mapdb.persist
+
+cd ~/../../etc/openhab/services
+rm -f addons.cfg
+sudo wget -c https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
