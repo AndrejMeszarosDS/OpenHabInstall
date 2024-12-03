@@ -63,6 +63,7 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 (echo "$samba_share_password"; echo "$samba_share_password") | smbpasswd -s -a "$SUDO_USER"
 sudo usermod -a -G openhab orangepi
 sudo chmod -R g+w /etc/openhab
+sudo chmod -R g+w /var/lib/openhab
 sudo systemctl restart smbd.service
 
 #--------------------------------------------------------------------------------------------------
