@@ -112,19 +112,29 @@ tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 #--------------------------------------------------------------------------------------------------
 # copy backup data from reposity to openhab                                                       |
 #--------------------------------------------------------------------------------------------------
-
 # items > /etc/openhab
 cd ~/../../etc/openhab/items/
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/irrigation.items
+# things > /etc/openhab
+cd ~/../../etc/openhab/things/
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/irrigation.things
+# rules > /etc/openhab
+cd ~/../../etc/openhab/rules/
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/irrigation.rules
+# pagers & widgets > /etc/openhab
+cd /var/lib/openhab/jsondb/
+sudo rm uicomponents_ui_page.json
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/uicomponents_ui_page.json
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/uicomponents_ui_widget.json
+#sudo systemctl restart openhab.service
 
-
-
-(echo "$samba_share_password"; echo "$samba_share_password") | smbpasswd -s -a "$SUDO_USER"
-sudo usermod -a -G openhab orangepi
-sudo chmod -R g+w /etc/openhab
-
-
-
+#--------------------------------------------------------------------------------------------------
+# copy addons config file                                                                         |
+#--------------------------------------------------------------------------------------------------
+cd ~/../../etc/openhab/services
+sudo rm addons.cfg
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
+sudo systemctl restart openhab.service
 
 
 
