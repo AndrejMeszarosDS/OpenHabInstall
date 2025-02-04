@@ -109,7 +109,32 @@ tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
   --bucket openhab_db \
   --force
 
-  
+#--------------------------------------------------------------------------------------------------
+# copy backup data from reposity to openhab                                                       |
+#--------------------------------------------------------------------------------------------------
+
+# items > /etc/openhab
+cd ~/../../etc/openhab/items/
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/irrigation.items
+
+
+
+(echo "$samba_share_password"; echo "$samba_share_password") | smbpasswd -s -a "$SUDO_USER"
+sudo usermod -a -G openhab orangepi
+sudo chmod -R g+w /etc/openhab
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ToDo
 

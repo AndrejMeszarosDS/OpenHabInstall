@@ -1,0 +1,171 @@
+rule "Operation mode opened"
+when
+    Item irr_config_operation_mode_edit_open changed to ON
+then
+    irr_config_selected_program_edit_open.postUpdate(OFF)
+    irr_program_start_edit_open.postUpdate(OFF)
+    irr_pipe_0_duration_edit_open.postUpdate(OFF)
+    irr_pipe_1_duration_edit_open.postUpdate(OFF)
+    irr_pipe_2_duration_edit_open.postUpdate(OFF)
+    irr_pipe_3_duration_edit_open.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+rule "Operation mode changeg"
+when
+    Item irr_config_operation_mode received command
+then
+    irr_config_operation_mode_edit_open.postUpdate(OFF)
+    irr_config_selected_program_edit_open.postUpdate(OFF)
+    irr_program_start_edit_open.postUpdate(OFF)
+    irr_pipe_0_duration_edit_open.postUpdate(OFF)
+    irr_pipe_1_duration_edit_open.postUpdate(OFF)
+    irr_pipe_2_duration_edit_open.postUpdate(OFF)
+    irr_pipe_3_duration_edit_open.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+rule "Program opened"
+when
+    Item irr_config_selected_program_edit_open changed to ON
+then
+    irr_config_operation_mode_edit_open.postUpdate(OFF)
+    irr_program_start_edit_open.postUpdate(OFF)
+    irr_pipe_0_duration_edit_open.postUpdate(OFF)
+    irr_pipe_1_duration_edit_open.postUpdate(OFF)
+    irr_pipe_2_duration_edit_open.postUpdate(OFF)
+    irr_pipe_3_duration_edit_open.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+rule "Program changed"
+when
+    Item irr_config_selected_program received command
+then
+    irr_config_operation_mode_edit_open.postUpdate(OFF)
+    irr_config_selected_program_edit_open.postUpdate(OFF)
+    irr_program_start_edit_open.postUpdate(OFF)
+    irr_pipe_0_duration_edit_open.postUpdate(OFF)
+    irr_pipe_1_duration_edit_open.postUpdate(OFF)
+    irr_pipe_2_duration_edit_open.postUpdate(OFF)
+    irr_pipe_3_duration_edit_open.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+rule "Start time opened"
+when
+    Item irr_program_start_edit_open changed to ON
+then
+    irr_config_operation_mode_edit_open.postUpdate(OFF)
+    irr_config_selected_program_edit_open.postUpdate(OFF)
+    irr_pipe_0_duration_edit_open.postUpdate(OFF)
+    irr_pipe_1_duration_edit_open.postUpdate(OFF)
+    irr_pipe_2_duration_edit_open.postUpdate(OFF)
+    irr_pipe_3_duration_edit_open.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+rule "Pipe 0 duration opened"
+when
+    Item irr_pipe_0_duration_edit_open changed to ON
+then
+    irr_config_operation_mode_edit_open.postUpdate(OFF)
+    irr_config_selected_program_edit_open.postUpdate(OFF)
+    irr_program_start_edit_open.postUpdate(OFF)
+    irr_pipe_1_duration_edit_open.postUpdate(OFF)
+    irr_pipe_2_duration_edit_open.postUpdate(OFF)
+    irr_pipe_3_duration_edit_open.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+rule "Pipe 1 duration opened"
+when
+    Item irr_pipe_1_duration_edit_open changed to ON
+then
+    irr_config_operation_mode_edit_open.postUpdate(OFF)
+    irr_config_selected_program_edit_open.postUpdate(OFF)
+    irr_program_start_edit_open.postUpdate(OFF)
+    irr_pipe_0_duration_edit_open.postUpdate(OFF)
+    irr_pipe_2_duration_edit_open.postUpdate(OFF)
+    irr_pipe_3_duration_edit_open.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+rule "Pipe 2 duration opened"
+when
+    Item irr_pipe_2_duration_edit_open changed to ON
+then
+    irr_config_operation_mode_edit_open.postUpdate(OFF)
+    irr_config_selected_program_edit_open.postUpdate(OFF)
+    irr_program_start_edit_open.postUpdate(OFF)
+    irr_pipe_0_duration_edit_open.postUpdate(OFF)
+    irr_pipe_1_duration_edit_open.postUpdate(OFF)
+    irr_pipe_3_duration_edit_open.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+rule "Pipe 3 duration opened"
+when
+    Item irr_pipe_3_duration_edit_open changed to ON
+then
+    irr_config_operation_mode_edit_open.postUpdate(OFF)
+    irr_config_selected_program_edit_open.postUpdate(OFF)
+    irr_program_start_edit_open.postUpdate(OFF)
+    irr_pipe_0_duration_edit_open.postUpdate(OFF)
+    irr_pipe_1_duration_edit_open.postUpdate(OFF)
+    irr_pipe_2_duration_edit_open.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+rule "Start time change conversion helper - for update"
+when
+    Item irr_program_start_time_helper_hour received command or Item irr_program_start_time_helper_min received command
+then
+    var Number tmpHour = (irr_program_start_time_helper_hour.state) as Number * 3600
+    var Number tmpMin =  (irr_program_start_time_helper_min.state) as Number * 60
+    if (irr_config_selected_program.state==0){
+        irr_program_0_start.postUpdate(tmpHour + tmpMin)
+    }
+    if (irr_config_selected_program.state==1){
+        irr_program_1_start.postUpdate(tmpHour + tmpMin)
+    }
+    if (irr_config_selected_program.state==2){
+        irr_program_2_start.postUpdate(tmpHour + tmpMin)
+    }
+end
+//--------------------------------------------------------------------------------------------
+rule "Start time change conversion helper - to preset"
+when
+    Item irr_config_selected_program received command
+then
+    var Number selectedProgram = irr_config_selected_program.state as Number
+    var Number tmpTime = 0
+    if (selectedProgram==0){
+        tmpTime = irr_program_0_start.state
+    }
+    if (selectedProgram==1){
+        tmpTime = irr_program_1_start.state
+    }
+    if (selectedProgram==2){
+        tmpTime = irr_program_2_start.state
+    }
+    var Number tmpHour = (tmpTime / 3600).intValue
+    var Number tmpMin = (tmpTime - (tmpHour * 3600)) / 60
+    irr_program_start_time_helper_hour.postUpdate(tmpHour)
+    irr_program_start_time_helper_min.postUpdate(tmpMin)
+end
+//--------------------------------------------------------------------------------------------
+rule "Send configuration over mqtt to device"
+when
+    Item irr_config_operation_mode received command
+then
+    // val jsonMessage = '{"temperature": 12, "humidity": 34}'  // JSON message
+    // sendCommand(Irr_program_to_send, jsonMessage)
+end
+//--------------------------------------------------------------------------------------------
+rule "Initialise items (number, switch) to 0,OFF"
+when
+    Item IrrigationNumberInitialise received command
+then
+	logInfo("Irrigation initializer", "Irrigation items initializing.")
+	gIrrigationNumberItems.members.filter( x | x.state == NULL).forEach[ item |
+    	postUpdate( item, 0)
+	]
+	gIrrigationSwitchItems.members.filter( x | x.state == NULL).forEach[ item |
+    	postUpdate( item, OFF)
+	]
+end

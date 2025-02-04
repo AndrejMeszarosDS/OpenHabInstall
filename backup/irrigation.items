@@ -1,0 +1,76 @@
+
+// String         Irr_program_to_send                      "[%.0f]"                                 {channel="mqtt:topic:main:irrigantion:program_to_send"}
+Number         irr_config_operation_mode                                   (gIrrigationNumberItems)
+Switch         irr_config_operation_mode_edit_open                         (gIrrigationSwitchItems)
+
+Number         irr_config_selected_program                                 (gIrrigationNumberItems)
+Switch         irr_config_selected_program_edit_open                       (gIrrigationSwitchItems)
+
+Switch         irr_config_program_edit                                     (gIrrigationSwitchItems)
+
+Number:Time    irr_program_0_start                      "[%1$tk:%1$tM]"    (gIrrigationNumberItems)
+Switch         irr_program_0_day_0                                         (gIrrigationSwitchItems)
+Switch         irr_program_0_day_1                                         (gIrrigationSwitchItems)
+Switch         irr_program_0_day_2                                         (gIrrigationSwitchItems)
+Switch         irr_program_0_day_3                                         (gIrrigationSwitchItems)
+Switch         irr_program_0_day_4                                         (gIrrigationSwitchItems)
+Switch         irr_program_0_day_5                                         (gIrrigationSwitchItems)
+Switch         irr_program_0_day_6                                         (gIrrigationSwitchItems)
+Number         irr_program_0_pipe_0_duration            "[%s min]"         (gIrrigationNumberItems)
+Number         irr_program_0_pipe_1_duration            "[%s min]"         (gIrrigationNumberItems)
+Number         irr_program_0_pipe_2_duration            "[%s min]"         (gIrrigationNumberItems)
+Number         irr_program_0_pipe_3_duration            "[%s min]"         (gIrrigationNumberItems)
+
+Number:Time    irr_program_1_start                      "[%1$tk:%1$tM]"    (gIrrigationNumberItems)
+Switch         irr_program_1_day_0                                         (gIrrigationSwitchItems)
+Switch         irr_program_1_day_1                                         (gIrrigationSwitchItems)
+Switch         irr_program_1_day_2                                         (gIrrigationSwitchItems)
+Switch         irr_program_1_day_3                                         (gIrrigationSwitchItems)
+Switch         irr_program_1_day_4                                         (gIrrigationSwitchItems)
+Switch         irr_program_1_day_5                                         (gIrrigationSwitchItems)
+Switch         irr_program_1_day_6                                         (gIrrigationSwitchItems)
+Number         irr_program_1_pipe_0_duration            "[%s min]"         (gIrrigationNumberItems)
+Number         irr_program_1_pipe_1_duration            "[%s min]"         (gIrrigationNumberItems)
+Number         irr_program_1_pipe_2_duration            "[%s min]"         (gIrrigationNumberItems)
+Number         irr_program_1_pipe_3_duration            "[%s min]"         (gIrrigationNumberItems)
+
+Number:Time    irr_program_2_start                      "[%1$tk:%1$tM]"    (gIrrigationNumberItems)
+Switch         irr_program_2_day_0                                         (gIrrigationSwitchItems)
+Switch         irr_program_2_day_1                                         (gIrrigationSwitchItems)
+Switch         irr_program_2_day_2                                         (gIrrigationSwitchItems)
+Switch         irr_program_2_day_3                                         (gIrrigationSwitchItems)
+Switch         irr_program_2_day_4                                         (gIrrigationSwitchItems)
+Switch         irr_program_2_day_5                                         (gIrrigationSwitchItems)
+Switch         irr_program_2_day_6                                         (gIrrigationSwitchItems)
+Number         irr_program_2_pipe_0_duration            "[%s min]"         (gIrrigationNumberItems)
+Number         irr_program_2_pipe_1_duration            "[%s min]"         (gIrrigationNumberItems)
+Number         irr_program_2_pipe_2_duration            "[%s min]"         (gIrrigationNumberItems)
+Number         irr_program_2_pipe_3_duration            "[%s min]"         (gIrrigationNumberItems)
+
+Switch         irr_manual_mode_started                                     (gIrrigationSwitchItems)
+
+Number         irr_manual_mode_pipe_0_duration          "[%s min]"         (gIrrigationNumberItems)
+Number         irr_manual_mode_pipe_1_duration          "[%s min]"         (gIrrigationNumberItems)
+Number         irr_manual_mode_pipe_2_duration          "[%s min]"         (gIrrigationNumberItems)
+Number         irr_manual_mode_pipe_3_duration          "[%s min]"         (gIrrigationNumberItems)
+
+Switch         irr_pipe_0_duration_edit_open                               (gIrrigationSwitchItems)
+Switch         irr_pipe_1_duration_edit_open                               (gIrrigationSwitchItems)
+Switch         irr_pipe_2_duration_edit_open                               (gIrrigationSwitchItems)
+Switch         irr_pipe_3_duration_edit_open                               (gIrrigationSwitchItems)
+
+Number         irr_pipe_0_rest_time                                        (gIrrigationNumberItems)
+Number         irr_pipe_1_rest_time                                        (gIrrigationNumberItems)
+Number         irr_pipe_2_rest_time                                        (gIrrigationNumberItems)
+Number         irr_pipe_3_rest_time                                        (gIrrigationNumberItems)
+
+Switch         irr_program_start_edit_open                                 (gIrrigationSwitchItems)
+Number         irr_program_start_time_helper_hour       "%s"               (gIrrigationNumberItems)
+Number         irr_program_start_time_helper_min        "%s"               (gIrrigationNumberItems)
+
+Number         TimePicker                               "Time Picker"      (gIrrigationNumberItems)    {ga="Switch" [DiscreteOnly=true]}
+
+Switch         IrrigationNumberInitialise
+
+Group          gIrrigationNumberItems
+Group          gIrrigationSwitchItems

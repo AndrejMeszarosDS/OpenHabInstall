@@ -1,0 +1,2027 @@
+{
+  "irrigation_manual_mode_start_stop": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "irrigation_manual_mode_start_stop",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 11, 2024, 10:01:06 AM",
+      "component": "f7-card",
+      "config": {
+        "style": {
+          "margin-bottom": 0.0,
+          "margin-left": 0.0,
+          "margin-right": 0.0,
+          "padding": 0.0
+        },
+        "visible": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \u00271\u0027)"
+      },
+      "slots": {
+        "default": [
+          {
+            "component": "f7-card-content",
+            "config": {
+              "style": {
+                "padding": "16px",
+                "width": "auto"
+              }
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "align-items": "center",
+                    "style": {
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {
+                          "style": {
+                            "width": "70%"
+                          }
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "large": true
+                                },
+                                "text": "\u003ditems.irr_manual_mode_started.state \u003d\u003d\u003d \"ON\" ? \"Manual irrigation running\" : \"Manual irrigation stopped\""
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {
+                          "style": {
+                            "width": "30%"
+                          }
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "toggle",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_manual_mode_started",
+                                "color": "\u003ditems.irr_manual_mode_started.state \u003d\u003d\u003d \"ON\" ? \"red\" : \"green\"",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "large": true,
+                                  "margin-left": "auto",
+                                  "text-align": "end",
+                                  "text-transform": "capitalize",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_manual_mode_started.state \u003d\u003d\u003d \"ON\" ? \"Stop\" : \"Start\""
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "irrigation_mode_selector": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "irrigation_mode_selector",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 11, 2024, 8:52:41 AM",
+      "component": "f7-card",
+      "config": {
+        "style": {
+          "margin-bottom": 0.0,
+          "margin-left": 0.0,
+          "margin-right": 0.0,
+          "padding": 0.0
+        }
+      },
+      "slots": {
+        "default": [
+          {
+            "component": "f7-card-content",
+            "config": {
+              "style": {
+                "padding": "16px"
+              }
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "align-items": "center",
+                    "width": "100%"
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "large": true
+                                },
+                                "text": "Operation mode"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "toggle",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_config_operation_mode_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "large": true,
+                                  "margin-left": "auto",
+                                  "text-align": "end",
+                                  "text-transform": "capitalize",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"2\" ? \"Auto\" : items.irr_config_operation_mode.state \u003d\u003d\u003d \"1\" ?  \"Manual\" : items.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"Config\" : \"Off\""
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "display": "flex",
+                      "height": "\u003ditems.irr_config_operation_mode_edit_open.state \u003d\u003d\u003d \"ON\" ? \"60px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_config_operation_mode_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_config_operation_mode_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "command",
+                                "actionCommand": "2",
+                                "actionItem": "irr_config_operation_mode",
+                                "active": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \u00272\u0027)",
+                                "color": "green",
+                                "large": true,
+                                "outline": true,
+                                "style": {
+                                  "background-color": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"2\" ? \"rgba(110, 224, 129, 0.4)\" : \"unset\"",
+                                  "border-radius": "8px",
+                                  "border-width": "1px",
+                                  "font-size": "20px",
+                                  "font-weight": 100.0,
+                                  "padding": 0.0
+                                },
+                                "text": "Auto"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "command",
+                                "actionCommand": "1",
+                                "actionItem": "irr_config_operation_mode",
+                                "active": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \u00271\u0027)",
+                                "color": "green",
+                                "large": true,
+                                "outline": true,
+                                "style": {
+                                  "background-color": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"1\" ? \"rgba(110, 224, 129, 0.4)\" : \"unset\"",
+                                  "border-radius": "8px",
+                                  "border-width": "1px",
+                                  "font-size": "20px",
+                                  "font-weight": 100.0,
+                                  "padding": 0.0
+                                },
+                                "text": "Manual"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "command",
+                                "actionCommand": "0",
+                                "actionItem": "irr_config_operation_mode",
+                                "active": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \u00270\u0027)",
+                                "color": "green",
+                                "large": true,
+                                "outline": true,
+                                "style": {
+                                  "background-color": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"0\" ? \"rgba(110, 224, 129, 0.4)\" : \"unset\"",
+                                  "border-radius": "8px",
+                                  "border-width": "1px",
+                                  "font-size": "20px",
+                                  "font-weight": 100.0,
+                                  "padding": 0.0
+                                },
+                                "text": "Off"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "command",
+                                "actionCommand": "3",
+                                "actionItem": "irr_config_operation_mode",
+                                "active": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \u00273\u0027)",
+                                "color": "green",
+                                "large": true,
+                                "outline": true,
+                                "style": {
+                                  "background-color": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"rgba(110, 224, 129, 0.4)\" : \"unset\"",
+                                  "border-radius": "8px",
+                                  "border-width": "1px",
+                                  "font-size": "20px",
+                                  "font-weight": 100.0,
+                                  "padding": 0.0
+                                },
+                                "text": "Config"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "irrigation_program_days": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "irrigation_program_days",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 11, 2024, 10:03:01 AM",
+      "component": "f7-card",
+      "config": {
+        "style": {
+          "margin-bottom": 0.0,
+          "margin-left": 0.0,
+          "margin-right": 0.0,
+          "padding": 0.0
+        },
+        "visible": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \"2\" ? true : items.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? true : false)"
+      },
+      "slots": {
+        "default": [
+          {
+            "component": "f7-card-content",
+            "config": {
+              "style": {
+                "padding": "16px",
+                "width": "auto"
+              }
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "align-items": "center",
+                    "style": {
+                      "height": "60px",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {
+                          "style": {
+                            "align-items": "center",
+                            "display": "flex",
+                            "justify-content": "center"
+                          }
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_day_0\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_day_0\" : \"irr_program_2_day_0\"",
+                                "color": "white",
+                                "iconColor": "green",
+                                "iconF7": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_day_0.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_day_0.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_program_2_day_0.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\"",
+                                "iconSize": "28px",
+                                "style": {
+                                  "display": "flex",
+                                  "flex-direction": "column-reverse",
+                                  "height": "auto"
+                                },
+                                "text": "Mon"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {
+                          "style": {
+                            "align-items": "center",
+                            "display": "flex",
+                            "justify-content": "center"
+                          }
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_day_1\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_day_1\" : \"irr_program_2_day_1\"",
+                                "color": "white",
+                                "iconColor": "green",
+                                "iconF7": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_day_1.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_day_1.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_program_2_day_1.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\"",
+                                "iconSize": "28px",
+                                "style": {
+                                  "display": "flex",
+                                  "flex-direction": "column-reverse",
+                                  "height": "auto"
+                                },
+                                "text": "Tue"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {
+                          "style": {
+                            "align-items": "center",
+                            "display": "flex",
+                            "justify-content": "center"
+                          }
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_day_2\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_day_2\" : \"irr_program_2_day_2\"",
+                                "color": "white",
+                                "iconColor": "green",
+                                "iconF7": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_day_2.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_day_2.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_program_2_day_2.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\"",
+                                "iconSize": "28px",
+                                "style": {
+                                  "display": "flex",
+                                  "flex-direction": "column-reverse",
+                                  "height": "auto"
+                                },
+                                "text": "Wed"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {
+                          "style": {
+                            "align-items": "center",
+                            "display": "flex",
+                            "justify-content": "center"
+                          }
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_day_3\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_day_3\" : \"irr_program_2_day_3\"",
+                                "color": "white",
+                                "iconColor": "green",
+                                "iconF7": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_day_3.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_day_3.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_program_2_day_3.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\"",
+                                "iconSize": "28px",
+                                "style": {
+                                  "display": "flex",
+                                  "flex-direction": "column-reverse",
+                                  "height": "auto"
+                                },
+                                "text": "Thu"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {
+                          "style": {
+                            "align-items": "center",
+                            "display": "flex",
+                            "justify-content": "center"
+                          }
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_day_4\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_day_4\" : \"irr_program_2_day_4\"",
+                                "color": "white",
+                                "iconColor": "green",
+                                "iconF7": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_day_4.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_day_4.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_program_2_day_4.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\"",
+                                "iconSize": "28px",
+                                "style": {
+                                  "display": "flex",
+                                  "flex-direction": "column-reverse",
+                                  "height": "auto"
+                                },
+                                "text": "Fri"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {
+                          "style": {
+                            "align-items": "center",
+                            "display": "flex",
+                            "justify-content": "center"
+                          }
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_day_5\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_day_5\" : \"irr_program_2_day_5\"",
+                                "color": "white",
+                                "iconColor": "green",
+                                "iconF7": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_day_5.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_day_5.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_program_2_day_5.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\"",
+                                "iconSize": "28px",
+                                "style": {
+                                  "display": "flex",
+                                  "flex-direction": "column-reverse",
+                                  "height": "auto"
+                                },
+                                "text": "Sat"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {
+                          "style": {
+                            "align-items": "center",
+                            "display": "flex",
+                            "justify-content": "center"
+                          }
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_day_6\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_day_6\" : \"irr_program_2_day_6\"",
+                                "color": "white",
+                                "iconColor": "green",
+                                "iconF7": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_day_6.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_day_6.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\" : items.irr_program_2_day_6.state \u003d\u003d\u003d \"ON\" ? \"checkmark_alt_circle_fill\" : \"circle\"",
+                                "iconSize": "28px",
+                                "style": {
+                                  "display": "flex",
+                                  "flex-direction": "column-reverse",
+                                  "height": "auto"
+                                },
+                                "text": "Sun"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "irrigation_program_selector": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "irrigation_program_selector",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 6, 2024, 8:44:51 AM",
+      "component": "f7-card",
+      "config": {
+        "style": {
+          "margin-bottom": 0.0,
+          "margin-left": 0.0,
+          "margin-right": 0.0,
+          "padding": 0.0
+        },
+        "visible": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \"2\" ? true : items.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? true : false)"
+      },
+      "slots": {
+        "default": [
+          {
+            "component": "f7-card-content",
+            "config": {
+              "style": {
+                "padding": "16px"
+              }
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "align-items": "center",
+                    "width": "100%"
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "large": true
+                                },
+                                "text": "Program"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "toggle",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_config_selected_program_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "large": true,
+                                  "margin-left": "auto",
+                                  "text-align": "end",
+                                  "text-transform": "capitalize",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"Rare\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ?  \"Medium\" : \"Dense\""
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "display": "flex",
+                      "height": "\u003ditems.irr_config_selected_program_edit_open.state \u003d\u003d\u003d \"ON\" ? \"60px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_config_selected_program_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_config_selected_program_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "command",
+                                "actionCommand": "0",
+                                "actionItem": "irr_config_selected_program",
+                                "active": "\u003d(items.irr_config_selected_program.state \u003d\u003d\u003d \u00270\u0027)",
+                                "color": "green",
+                                "large": true,
+                                "outline": true,
+                                "style": {
+                                  "background-color": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"rgba(110, 224, 129, 0.4)\" : \"unset\"",
+                                  "border-radius": "8px",
+                                  "border-width": "1px",
+                                  "font-size": "20px",
+                                  "font-weight": 100.0,
+                                  "padding": 0.0
+                                },
+                                "text": "Rare"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "command",
+                                "actionCommand": "1",
+                                "actionItem": "irr_config_selected_program",
+                                "active": "\u003d(items.irr_config_selected_program.state \u003d\u003d\u003d \u00271\u0027)",
+                                "color": "green",
+                                "large": true,
+                                "outline": true,
+                                "style": {
+                                  "background-color": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"rgba(110, 224, 129, 0.4)\" : \"unset\"",
+                                  "border-radius": "8px",
+                                  "border-width": "1px",
+                                  "font-size": "20px",
+                                  "font-weight": 100.0,
+                                  "padding": 0.0
+                                },
+                                "text": "Medium"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "command",
+                                "actionCommand": "2",
+                                "actionItem": "irr_config_selected_program",
+                                "active": "\u003d(items.irr_config_selected_program.state \u003d\u003d\u003d \u00272\u0027)",
+                                "color": "green",
+                                "large": true,
+                                "outline": true,
+                                "style": {
+                                  "background-color": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"2\" ? \"rgba(110, 224, 129, 0.4)\" : \"unset\"",
+                                  "border-radius": "8px",
+                                  "border-width": "1px",
+                                  "font-size": "20px",
+                                  "font-weight": 100.0,
+                                  "padding": 0.0
+                                },
+                                "text": "Dense"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "irrigation_program_start_times": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "irrigation_program_start_times",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 11, 2024, 10:16:21 AM",
+      "component": "f7-card",
+      "config": {
+        "style": {
+          "margin-bottom": 0.0,
+          "margin-left": 0.0,
+          "margin-right": 0.0,
+          "padding": 0.0
+        },
+        "visible": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \"2\" ? true : items.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? true : false)"
+      },
+      "slots": {
+        "default": [
+          {
+            "component": "f7-card-content",
+            "config": {
+              "style": {
+                "--f7-card-content-padding-horizontal": "0px",
+                "--f7-card-content-padding-vertical": "0px",
+                "display": "flex",
+                "flex-direction": "column"
+              },
+              "stylesheet": ".range-knob-label{ font-size: 20px; padding: 0px 0px !important; height: 22px; color: rgba(76, 217, 100, 1); background-color: transparent; } .range-scale-step{\n  font-size: 22px;\n}\n"
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "center",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px"
+                                },
+                                "text": "Start time"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_program_start_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px 16px 16px auto",
+                                  "text-align": "end",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_start.displayState : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_start.displayState : items.irr_program_2_start.displayState"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "display": "flex",
+                      "height": "\u003ditems.irr_program_start_edit_open.state \u003d\u003d\u003d \"ON\" ? \"90px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_program_start_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_program_start_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "irr_program_start_time_helper_hour",
+                                "label": true,
+                                "max": 23.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 1.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "hour"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "display": "flex",
+                      "height": "\u003ditems.irr_program_start_edit_open.state \u003d\u003d\u003d \"ON\" ? \"90px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_program_start_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_program_start_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "irr_program_start_time_helper_min",
+                                "label": true,
+                                "max": 55.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 5.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "irrigation_zone_times_manual": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "irrigation_zone_times_manual",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 11, 2024, 9:57:24 AM",
+      "component": "f7-card",
+      "config": {
+        "style": {
+          "margin-bottom": 0.0,
+          "margin-left": 0.0,
+          "margin-right": 0.0,
+          "padding": 0.0
+        },
+        "visible": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \"1\" ? true : false)"
+      },
+      "slots": {
+        "default": [
+          {
+            "component": "f7-card-content",
+            "config": {
+              "style": {
+                "--f7-card-content-padding-horizontal": "0px",
+                "--f7-card-content-padding-vertical": "0px",
+                "display": "flex",
+                "flex-direction": "column"
+              },
+              "stylesheet": ".range-knob-label{ font-size: 20px; padding: 0px 0px !important; height: 22px; color: rgba(76, 217, 100, 1); background-color: transparent; } .range-scale-step{\n  font-size: 22px;\n}\n"
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "center",
+                      "width": "auto"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "color": "white",
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px"
+                                },
+                                "text": "Zone 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_manual_mode_started.state \u003d\u003d\u003d \"OFF\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_pipe_0_duration_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px 16px 16px auto",
+                                  "text-align": "end",
+                                  "text-transform": "lowercase",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_manual_mode_pipe_0_duration.displayState"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "display": "flex",
+                      "height": "\u003ditems.irr_pipe_0_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"90px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_pipe_0_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_pipe_0_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "irr_manual_mode_pipe_0_duration",
+                                "label": true,
+                                "max": 60.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 5.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "center",
+                      "border-top": "1px solid rgba(76, 217, 100,0.2)",
+                      "width": "auto"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "color": "white",
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px"
+                                },
+                                "text": "Zone 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_manual_mode_started.state \u003d\u003d\u003d \"OFF\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_pipe_1_duration_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px 16px 16px auto",
+                                  "margin-left": "auto",
+                                  "text-align": "end",
+                                  "text-transform": "lowercase",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_manual_mode_pipe_1_duration.displayState"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "display": "flex",
+                      "height": "\u003ditems.irr_pipe_1_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"90px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_pipe_1_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_pipe_1_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "irr_manual_mode_pipe_1_duration",
+                                "label": true,
+                                "max": 60.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 5.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "center",
+                      "border-top": "1px solid rgba(76, 217, 100,0.2)",
+                      "width": "auto"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "color": "white",
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px"
+                                },
+                                "text": "Zone 3"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_manual_mode_started.state \u003d\u003d\u003d \"OFF\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_pipe_2_duration_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px 16px 16px auto",
+                                  "margin-left": "auto",
+                                  "text-align": "end",
+                                  "text-transform": "lowercase",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_manual_mode_pipe_2_duration.displayState"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "display": "flex",
+                      "height": "\u003ditems.irr_pipe_2_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"100px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_pipe_2_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_pipe_2_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "irr_manual_mode_pipe_2_duration",
+                                "label": true,
+                                "max": 60.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 5.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "center",
+                      "border-top": "1px solid rgba(76, 217, 100,0.2)",
+                      "width": "auto"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "color": "white",
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px"
+                                },
+                                "text": "Zone 4"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_manual_mode_started.state \u003d\u003d\u003d \"OFF\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_pipe_3_duration_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px 16px 16px auto",
+                                  "margin-left": "auto",
+                                  "text-align": "end",
+                                  "text-transform": "lowercase",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_manual_mode_pipe_3_duration.displayState"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "display": "flex",
+                      "height": "\u003ditems.irr_pipe_3_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"90px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_pipe_3_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_pipe_3_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "irr_manual_mode_pipe_3_duration",
+                                "label": true,
+                                "max": 60.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 5.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "irrigation_zone_times_program": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "irrigation_zone_times_program",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Dec 3, 2024, 12:35:21 PM",
+      "component": "f7-card",
+      "config": {
+        "style": {
+          "margin-bottom": 0.0,
+          "margin-left": 0.0,
+          "margin-right": 0.0,
+          "padding": 0.0
+        },
+        "visible": "\u003d(items.irr_config_operation_mode.state \u003d\u003d\u003d \"2\" ? true : items.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? true: false)"
+      },
+      "slots": {
+        "default": [
+          {
+            "component": "f7-card-content",
+            "config": {
+              "style": {
+                "--f7-card-content-padding-horizontal": "0px",
+                "--f7-card-content-padding-vertical": "0px",
+                "display": "flex",
+                "flex-direction": "column"
+              },
+              "stylesheet": ".range-knob-label{\n  font-size: 20px;\n  padding: 0px 0px !important;\n  height: 22px;\n  color: rgba(76, 217, 100, 1);\n  background-color: transparent;\n} .range-scale-step{\n  font-size: 22px;\n}\n"
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "center",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "color": "white",
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px"
+                                },
+                                "text": "Zone 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_pipe_0_duration_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px 16px 16px auto",
+                                  "text-align": "end",
+                                  "text-transform": "lowercase",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_pipe_0_duration.displayState : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_pipe_0_duration.displayState : items.irr_program_2_pipe_0_duration.displayState"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "display": "flex",
+                      "height": "\u003ditems.irr_pipe_0_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"90px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_pipe_0_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_pipe_0_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_pipe_0_duration\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_pipe_0_duration\" : \"irr_program_2_pipe_0_duration\"",
+                                "label": true,
+                                "max": 60.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 5.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "center",
+                      "border-top": "1px solid rgba(76, 217, 100,0.2)",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "color": "white",
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px"
+                                },
+                                "text": "Zone 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_pipe_1_duration_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px 16px 16px auto",
+                                  "text-align": "end",
+                                  "text-transform": "lowercase",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_pipe_1_duration.displayState : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_pipe_1_duration.displayState : items.irr_program_2_pipe_1_duration.displayState"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "height": "\u003ditems.irr_pipe_1_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"90px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_pipe_1_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_pipe_1_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_pipe_1_duration\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_pipe_1_duration\" : \"irr_program_2_pipe_1_duration\"",
+                                "label": true,
+                                "max": 60.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 5.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "center",
+                      "border-top": "1px solid rgba(76, 217, 100,0.2)",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "color": "white",
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px"
+                                },
+                                "text": "Zone 3"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_pipe_2_duration_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px 16px 16px auto",
+                                  "text-align": "end",
+                                  "text-transform": "lowercase",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_pipe_2_duration.displayState : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_pipe_2_duration.displayState : items.irr_program_2_pipe_2_duration.displayState"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "height": "\u003ditems.irr_pipe_2_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"90px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_pipe_2_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_pipe_2_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_pipe_2_duration\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_pipe_2_duration\" : \"irr_program_2_pipe_2_duration\"",
+                                "label": true,
+                                "max": 60.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 5.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "center",
+                      "border-top": "1px solid rgba(76, 217, 100,0.2)",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "Label",
+                              "config": {
+                                "style": {
+                                  "color": "white",
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px"
+                                },
+                                "text": "Zone 4"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "f7-col",
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-button",
+                              "config": {
+                                "action": "\u003ditems.irr_config_operation_mode.state \u003d\u003d\u003d \"3\" ? \"toggle\" : \"\"",
+                                "actionCommand": "ON",
+                                "actionCommandAlt": "OFF",
+                                "actionItem": "irr_pipe_3_duration_edit_open",
+                                "color": "green",
+                                "style": {
+                                  "font-size": "22px",
+                                  "font-weight": "normal",
+                                  "margin": "16px 16px 16px auto",
+                                  "text-align": "end",
+                                  "text-transform": "lowercase",
+                                  "width": "min-content"
+                                },
+                                "text": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? items.irr_program_0_pipe_3_duration.displayState : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? items.irr_program_1_pipe_3_duration.displayState : items.irr_program_2_pipe_3_duration.displayState"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "f7-row",
+                  "config": {
+                    "style": {
+                      "align-items": "end",
+                      "height": "\u003ditems.irr_pipe_3_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"90px\" : \"0\"",
+                      "opacity": "\u003ditems.irr_pipe_3_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"1\" : \"0\"",
+                      "overflow": "hidden",
+                      "padding": 0.0,
+                      "transition": "height 0.2s ease, opacity 0.2s ease",
+                      "visibility": "\u003ditems.irr_pipe_3_duration_edit_open.state \u003d\u003d\u003d \"ON\" ? \"visible\" : \"hidden\"",
+                      "width": "100%"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "f7-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider",
+                              "config": {
+                                "color": "green",
+                                "item": "\u003ditems.irr_config_selected_program.state \u003d\u003d\u003d \"0\" ? \"irr_program_0_pipe_3_duration\" : items.irr_config_selected_program.state \u003d\u003d\u003d \"1\" ? \"irr_program_1_pipe_3_duration\" : \"irr_program_2_pipe_3_duration\"",
+                                "label": true,
+                                "max": 60.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 1.0,
+                                "step": 5.0,
+                                "style": {
+                                  "--f7-range-bar-active-bg-color": "linear-gradient(to top, rgba(76, 217, 100,0), rgba(76, 217, 100,0.8))",
+                                  "--f7-range-bar-bg-color": "rgba(76, 217, 100, 0.2)",
+                                  "--f7-range-bar-border-radius": "10px",
+                                  "--f7-range-bar-size": "18px",
+                                  "--f7-range-knob-box-shadow": "0 2px 4px rgba(0, 0, 0, 0.3)",
+                                  "--f7-range-knob-size": "30px",
+                                  "--f7-range-label-size": "46px;",
+                                  "--f7-range-label-text-color": "black",
+                                  "margin": "20px 8% 30px 8%",
+                                  "padding-bottom": "15px",
+                                  "width": "84%"
+                                },
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
