@@ -88,6 +88,7 @@ openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin
 #--------------------------------------------------------------------------------------------------
 # install influx                                                                                  |
 #--------------------------------------------------------------------------------------------------
+cd ~
 curl -LO https://download.influxdata.com/influxdb/releases/influxdb2_2.7.7-1_arm64.deb
 sudo dpkg -i influxdb2_2.7.7-1_arm64.deb
 sudo service influxdb start
@@ -96,6 +97,7 @@ sudo service influxdb start
 #--------------------------------------------------------------------------------------------------
 # install influx CLI                                                                              |
 #--------------------------------------------------------------------------------------------------
+cd ~
 wget https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz
 tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 
