@@ -103,11 +103,12 @@ tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 # create influx admin user and database                                                           |
 #--------------------------------------------------------------------------------------------------
 ./influx setup \
-  --username influx_admin \
-  --password influx_admin_password \
+  --username orangepi \
+  --password orangepi_password \
   --org openhab \
   --bucket openhab_db \
-  --force
+  --force 
+  
 
 #--------------------------------------------------------------------------------------------------
 # copy backup data from reposity to openhab                                                       |
@@ -141,21 +142,59 @@ sudo systemctl restart openhab.service
 
 
 
-
-
-
+#--------------------------------------------------------------------------------------------------
+# influx setup finish setup                                                                       |
+#--------------------------------------------------------------------------------------------------
+# can access influx from browser
+# http://192.168.0.145:8086/ influx_admin influx_admin_password
+# we have influx config file
+# check if we have persistence/influxdb.persist file ? no
+# let create it
+# trying correct persist file
+# alse need set influx as default persist service but after restart it works without default persistence setup
+# in openhab i edited the influx addon with ui, check the config file
+# ok, the influxdb.cfg was not copied to openhab, this is still missing so we need to add to install script and try it pout
+# cannot edit file influxdb.cfg permission
+#  cd ~/../../etc/openhab/services
+#  sudo chown orangepi:orangepi /etc/openhab/services/influxdb.cfg
+# this helps
+# but still influx needs token try to set it off
 
 
 # ToDo
-
-# setup influx
-# add opnhab influx addon
-# set up openhab influx addon
-
-# add test item and thinks
-
-# check all together
+# finich influx setting and check
 
 
 
 
+#  try to find, where is influxdb cli installed
+# find / -type d -name "influxdb" 2>/dev/null
+# check influx cli becouse manual reinstall solved to start it
+# try to create user openhab openhab_password
+
+
+
+
+
+# ./influx config create -a --username-password ADMINUSER -n myconfig -u http://127.0.0.1:8086
+# ./influx user create –org openhab –-name openhab –-password openhab_password
+
+# ./influx user create \
+#   --name openhab \
+#   --password openhab_password
+
+
+#   ./influx config create \
+#   -n test_config \
+#   -u http://localhost:8086 \
+#   -p influx_admin:influx_admin_password \
+#   -o openhab
+
+
+
+#   ./influx setup \
+#   --username orangepi \
+#   --password influx_admin_password \
+#   --org openhab \
+#   --bucket openhab_db \
+#   --force 

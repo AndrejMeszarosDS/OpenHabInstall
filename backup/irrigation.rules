@@ -157,15 +157,152 @@ then
     // sendCommand(Irr_program_to_send, jsonMessage)
 end
 //--------------------------------------------------------------------------------------------
-rule "Initialise items (number, switch) to 0,OFF"
+// rule "Initialise items (number, switch) to 0,OFF"
+// when
+//     Item IrrigationNumberInitialise received command
+// then
+// 	logInfo("Irrigation initializer", "Irrigation items initializing.")
+// 	gIrrigationNumberItems.members.filter( x | x.state == NULL).forEach[ item |
+//     	postUpdate( item, 0)
+// 	]
+// 	gIrrigationSwitchItems.members.filter( x | x.state == NULL).forEach[ item |
+//     	postUpdate( item, OFF)
+// 	]
+// end
+//--------------------------------------------------------------------------------------------
+rule "Send actual condig to device"
 when
-    Item IrrigationNumberInitialise received command
+    Item irr_config_operation_mode changed or 
+    Item irr_config_selected_program changed
 then
-	logInfo("Irrigation initializer", "Irrigation items initializing.")
-	gIrrigationNumberItems.members.filter( x | x.state == NULL).forEach[ item |
-    	postUpdate( item, 0)
-	]
-	gIrrigationSwitchItems.members.filter( x | x.state == NULL).forEach[ item |
-    	postUpdate( item, OFF)
-	]
+    var selected_mode = irr_config_operation_mode.state as Number
+    var selected_program = irr_config_selected_program.state as Number
+
+    var output_mode = selected_mode
+    if (selected_mode == 3){
+        output_mode = 0
+    }
+
+    var Number start_time = irr_program_0_start.state as Number
+    if (selected_program == 1){
+        start_time = irr_program_1_start.state as Number
+    }
+    if (selected_program == 2){
+        start_time = irr_program_2_start.state as Number
+    }
+    var Number tmpHour = (start_time / 3600).intValue
+    var Number tmpMin = ((start_time - (tmpHour * 3600)) / 60).intValue
+    start_time = tmpHour.toString() + ":" + tmpMin.toString()
+
+    var irrigation_day_0 = irr_program_0_day_0.state
+    var irrigation_day_1 = irr_program_0_day_1.state
+    var irrigation_day_2 = irr_program_0_day_2.state
+    var irrigation_day_3 = irr_program_0_day_3.state
+    var irrigation_day_4 = irr_program_0_day_4.state
+    var irrigation_day_5 = irr_program_0_day_5.state
+    var irrigation_day_6 = irr_program_0_day_6.state
+    if (selected_program == 1){
+        irrigation_day_0 = irr_program_1_day_0.state
+        irrigation_day_1 = irr_program_1_day_1.state
+        irrigation_day_2 = irr_program_1_day_2.state
+        irrigation_day_3 = irr_program_1_day_3.state
+        irrigation_day_4 = irr_program_1_day_4.state
+        irrigation_day_5 = irr_program_1_day_5.state
+        irrigation_day_6 = irr_program_1_day_6.state
+    }
+    if (selected_program == 2){
+        irrigation_day_0 = irr_program_2_day_0.state
+        irrigation_day_1 = irr_program_2_day_1.state
+        irrigation_day_2 = irr_program_2_day_2.state
+        irrigation_day_3 = irr_program_2_day_3.state
+        irrigation_day_4 = irr_program_2_day_4.state
+        irrigation_day_5 = irr_program_2_day_5.state
+        irrigation_day_6 = irr_program_2_day_6.state
+    }
+    var irrigation_days = ""
+    if (irrigation_day_0 == ON){
+        irrigation_days = irrigation_days + "1"   
+    }else{
+        irrigation_days = irrigation_days + "0"   
+    }
+    if (irrigation_day_1 == ON){
+        irrigation_days = irrigation_days + "1"   
+    }else{
+        irrigation_days = irrigation_days + "0"   
+    }
+    if (irrigation_day_2 == ON){
+        irrigation_days = irrigation_days + "1"   
+    }else{
+        irrigation_days = irrigation_days + "0"   
+    }
+    if (irrigation_day_3 == ON){
+        irrigation_days = irrigation_days + "1"   
+    }else{
+        irrigation_days = irrigation_days + "0"   
+    }
+    if (irrigation_day_4 == ON){
+        irrigation_days = irrigation_days + "1"   
+    }else{
+        irrigation_days = irrigation_days + "0"   
+    }
+    if (irrigation_day_5 == ON){
+        irrigation_days = irrigation_days + "1"   
+    }else{
+        irrigation_days = irrigation_days + "0"   
+    }
+    if (irrigation_day_6 == ON){
+        irrigation_days = irrigation_days + "1"   
+    }else{
+        irrigation_days = irrigation_days + "0"   
+    }
+
+    var pipe_0_duration = irr_program_0_pipe_0_duration.state
+    var pipe_1_duration = irr_program_0_pipe_1_duration.state
+    var pipe_2_duration = irr_program_0_pipe_2_duration.state
+    var pipe_3_duration = irr_program_0_pipe_3_duration.state
+    if (selected_program == 1){
+        pipe_0_duration = irr_program_1_pipe_0_duration.state
+        pipe_1_duration = irr_program_1_pipe_1_duration.state
+        pipe_2_duration = irr_program_1_pipe_2_duration.state
+        pipe_3_duration = irr_program_1_pipe_3_duration.state
+    }
+    if (selected_program == 2){
+        pipe_0_duration = irr_program_2_pipe_0_duration.state
+        pipe_1_duration = irr_program_2_pipe_1_duration.state
+        pipe_2_duration = irr_program_2_pipe_2_duration.state
+        pipe_3_duration = irr_program_2_pipe_3_duration.state
+    }
+
+    var jsonMessage = '{"mode": ' + output_mode.toString() + ',"start_time": "' + start_time.toString() + '" ,"days": "' +  irrigation_days.toString() + '" ,"pipe_0_time": ' + pipe_0_duration.toString() + ',"pipe_1_time": ' + pipe_1_duration.toString() + ',"pipe_2_time": ' + pipe_2_duration.toString() + ',"pipe_3_time": ' + pipe_3_duration.toString() + '}'  
+
+    sendCommand(irr_config, jsonMessage)
+    logInfo("Irrigation initializer", jsonMessage)
 end
+//--------------------------------------------------------------------------------------------
+rule "send ping"
+when
+    Time cron "0/10 * * ? * * *" // every 10 seconds
+then
+    val mqttActions = getActions("mqtt","mqtt:broker:main")
+    mqttActions.publishMQTT("irrigation/set/ping" , "ping")
+
+    // val now = now.plusHours(1)
+    // val actual_date_time = String::format(
+    //     "{ \"dayOfWeek\": %d, \"year\": %d, \"month\": %d, \"day\": %d, \"hour\": %d, \"minute\": %d, \"second\": %d }",
+    //     now.getDayOfWeek().getValue(), now.getYear, now.getMonthValue, now.getDayOfMonth,
+    //     now.getHour, now.getMinute, now.getSecond
+    // )
+    // mqttActions.publishMQTT("irrigation/set/datetime" , actual_date_time)
+end
+//--------------------------------------------------------------------------------------------
+// rule "module - live"
+// when
+//     Item irr_presence changed
+// then
+//     sendNotification("andrej.meszaros.ds@gmail.com", "Irrigation module is " + irr_presence.state + ".")
+//     // this is not working becouse registration is missing on openhab.org
+// end
+
+
+
+
