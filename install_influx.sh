@@ -47,5 +47,5 @@ sudo sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
   auth-enabled = true
 EOF
 
-echo "Restarting InfluxDB service..."
-sudo systemctl restart influxdb
+#echo "Restarting InfluxDB service..."
+#sudo systemctl restart influxdb
