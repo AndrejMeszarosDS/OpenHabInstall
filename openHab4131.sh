@@ -161,17 +161,17 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 #--------------------------------------------------------------------------------------------------
 # copy addons config file                                                                         |
 #--------------------------------------------------------------------------------------------------
-sudo systemctl stop openhab.service
-sudo service influxdb stop
-cd ~/../../etc/openhab/services
-sudo rm addons.cfg
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
-sudo chown orangepi:orangepi ~/../../etc/openhab/services/addons.cfg
-sudo rm influxdb.cfg
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
-sudo chown orangepi:orangepi ~/../../etc/openhab/services/influxdb.cfg
-sudo service influxdb start
-sudo systemctl start openhab.service
+# sudo systemctl stop openhab.service
+# sudo service influxdb stop
+# cd ~/../../etc/openhab/services
+# sudo rm addons.cfg
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
+# sudo chown orangepi:orangepi ~/../../etc/openhab/services/addons.cfg
+# sudo rm influxdb.cfg
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
+# sudo chown orangepi:orangepi ~/../../etc/openhab/services/influxdb.cfg
+# sudo service influxdb start
+# sudo systemctl start openhab.service
 
 #--------------------------------------------------------------------------------------------------
 # influx setup finish setup                                                                       |
