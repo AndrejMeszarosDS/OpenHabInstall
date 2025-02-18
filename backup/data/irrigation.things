@@ -1,0 +1,8 @@
+Bridge mqtt:broker:main  [ host="orangepizero3",secure=false, username="orangepi", password="mqttpass" ]
+{
+  Thing topic irrigantion "Irrigantion" {
+    Channels:
+        Type string : config    "Program to send"[ commandTopic = "irrigation/set/config"]
+        Type switch : presence  "Iriigation module presence [%s]"     [ stateTopic = "irrigation/get/ping"]
+  }
+}

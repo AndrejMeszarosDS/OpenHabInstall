@@ -1,0 +1,1984 @@
+{
+  "overview": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "overview",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Aug 26, 2024, 3:06:30 PM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "Overview"
+      },
+      "slots": {
+        "default": []
+      }
+    }
+  },
+  "page_0d29ad8bfe": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "page_0d29ad8bfe",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 11, 2024, 10:01:45 AM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "Irrigation module",
+        "sidebar": true
+      },
+      "slots": {
+        "canvas": [],
+        "default": [
+          {
+            "component": "oh-block",
+            "config": {
+              "stylesheet": ".block:first-child{\n  margin-top:0;\n  padding: 0\n}\n.button\u003ei+span{\n  margin-left: 0\n}\n"
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {
+                    "style": {
+                      "display": "flex",
+                      "justify-content": "center"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {
+                          "large": "50",
+                          "medium": "70",
+                          "style": {
+                            "margin": "auto"
+                          },
+                          "width": "100",
+                          "xlarge": "30",
+                          "xsmall": "100"
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:irrigation_mode_selector",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {
+                    "style": {
+                      "display": "flex",
+                      "justify-content": "center"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {
+                          "large": "50",
+                          "medium": "70",
+                          "style": {
+                            "margin": "auto"
+                          },
+                          "width": "100",
+                          "xlarge": "30",
+                          "xsmall": "100"
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:irrigation_program_selector",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {
+                    "style": {
+                      "display": "flex",
+                      "justify-content": "center"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {
+                          "large": "50",
+                          "medium": "70",
+                          "style": {
+                            "margin": "auto"
+                          },
+                          "width": "100",
+                          "xlarge": "30",
+                          "xsmall": "100"
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:irrigation_program_start_times",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {
+                    "style": {
+                      "display": "flex",
+                      "justify-content": "center"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {
+                          "large": "50",
+                          "medium": "70",
+                          "style": {
+                            "margin": "auto"
+                          },
+                          "width": "100",
+                          "xlarge": "30",
+                          "xsmall": "100"
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:irrigation_program_days",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {
+                    "style": {
+                      "display": "flex",
+                      "justify-content": "center"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {
+                          "large": "50",
+                          "medium": "70",
+                          "style": {
+                            "margin": "auto"
+                          },
+                          "width": "100",
+                          "xlarge": "30",
+                          "xsmall": "100"
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:irrigation_zone_times_program",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {
+                    "style": {
+                      "display": "flex",
+                      "justify-content": "center"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {
+                          "large": "50",
+                          "medium": "70",
+                          "style": {
+                            "margin": "auto"
+                          },
+                          "width": "100",
+                          "xlarge": "30",
+                          "xsmall": "100"
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:irrigation_manual_mode_start_stop",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {
+                    "style": {
+                      "display": "flex",
+                      "justify-content": "center"
+                    }
+                  },
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {
+                          "large": "50",
+                          "medium": "70",
+                          "style": {
+                            "margin": "auto"
+                          },
+                          "width": "100",
+                          "xlarge": "30",
+                          "xsmall": "100"
+                        },
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:irrigation_zone_times_manual",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "grid": []
+      }
+    }
+  },
+  "page_10bf3141f3": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "page_10bf3141f3",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 5, 2024, 1:02:10 PM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "pipe duration change",
+        "sidebar": true
+      },
+      "slots": {
+        "canvas": [],
+        "default": [
+          {
+            "component": "oh-block",
+            "config": {},
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_0_pipe_0_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 0 Pipe 0"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_0_pipe_1_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 0 Pipe 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_0_pipe_2_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 0 Pipe 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_0_pipe_3_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 0 Pipe 3"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_1_pipe_0_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 1 Pipe 0"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_1_pipe_1_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 1 Pipe 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_1_pipe_2_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 1 Pipe 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_1_pipe_3_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 1 Pipe 3"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_2_pipe_0_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 2 Pipe 0"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_2_pipe_1_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 2 Pipe 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_2_pipe_2_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 2 Pipe 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_2_pipe_3_duration",
+                                "max": 60.0,
+                                "min": 0.0,
+                                "step": 5.0,
+                                "title": "Program 2 Pipe 3"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_0_day_0",
+                                "title": "Program 0 Day 0"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_0_day_1",
+                                "title": "Program 0 Day 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_0_day_2",
+                                "title": "Program 0 Day 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_0_day_3",
+                                "title": "Program 0 Day 3"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_0_day_4",
+                                "title": "Program 0 Day 4"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_0_day_5",
+                                "title": "Program 0 Day 5"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_0_day_6",
+                                "title": "Program 0 Day 6"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_1_day_0",
+                                "title": "Program 1 Day 0"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_1_day_1",
+                                "title": "Program 1 Day 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_1_day_2",
+                                "title": "Program 1 Day 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_1_day_3",
+                                "title": "Program 1 Day 3"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_1_day_4",
+                                "title": "Program 1 Day 4"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_1_day_5",
+                                "title": "Program 1 Day 5"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_1_day_6",
+                                "title": "Program 1 Day 6"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_2_day_0",
+                                "title": "Program 2 Day 0"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_2_day_1",
+                                "title": "Program 2 Day 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_2_day_2",
+                                "title": "Program 2 Day 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_2_day_3",
+                                "title": "Program 2 Day 3"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_2_day_4",
+                                "title": "Program 2 Day 4"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_2_day_5",
+                                "title": "Program 2 Day 5"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-toggle-card",
+                              "config": {
+                                "item": "irr_program_2_day_6",
+                                "title": "Program 2 Day 6"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "grid": []
+      }
+    }
+  },
+  "page_230d41a49c": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "page_230d41a49c",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 4, 2024, 11:15:00 AM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "test new widgets",
+        "sidebar": true
+      },
+      "slots": {
+        "canvas": [],
+        "default": [
+          {
+            "component": "oh-block",
+            "config": {
+              "stylesheet": ".block:first-child{\n  margin-top:0;\n  padding: 0\n}\n"
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:widget_expand_test",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:widget_set_days",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:irrigation_program_start",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "widget:widget_expand_test",
+                              "config": {}
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": []
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": []
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "grid": []
+      }
+    }
+  },
+  "page_31c0c82504": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "page_31c0c82504",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 5, 2024, 1:50:54 PM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "test slider",
+        "sidebar": true
+      },
+      "slots": {
+        "canvas": [],
+        "default": [
+          {
+            "component": "oh-block",
+            "config": {},
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-slider-card",
+                              "config": {
+                                "item": "irr_manual_mode_pipe_3_duration",
+                                "label": true,
+                                "max": 60.0,
+                                "min": 0.0,
+                                "scale": true,
+                                "scaleSteps": 5.0,
+                                "step": 5.0,
+                                "unit": "min"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "grid": []
+      }
+    }
+  },
+  "page_6cd17a4201": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "page_6cd17a4201",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 9, 2024, 8:58:40 AM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "Test irrigitaion data view",
+        "sidebar": true
+      },
+      "slots": {
+        "canvas": [],
+        "default": [
+          {
+            "component": "oh-block",
+            "config": {
+              "title": "Manual"
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_manual_mode_pipe_0_duration",
+                                "title": "Zone 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_manual_mode_pipe_1_duration",
+                                "title": "Zone 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_manual_mode_pipe_2_duration",
+                                "title": "Zone 3"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_manual_mode_pipe_3_duration",
+                                "title": "Zone 4"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "component": "oh-block",
+            "config": {
+              "title": "Program 0"
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_start",
+                                "title": "Start time"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_day_0",
+                                "title": "Day 0"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_day_1",
+                                "title": "Day 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_day_2",
+                                "title": "Day 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_day_3",
+                                "title": "Day 3"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_day_4",
+                                "title": "Day 4"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_day_5",
+                                "title": "Day 5"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_day_6",
+                                "title": "Day 6"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_pipe_0_duration",
+                                "title": "Zone 0 "
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_pipe_1_duration",
+                                "title": "Zone 1 "
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_pipe_2_duration",
+                                "title": "Zone 2 "
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_0_pipe_3_duration",
+                                "title": "Zone 3 "
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "component": "oh-block",
+            "config": {
+              "title": "Program 1"
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_start",
+                                "title": "Start time"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_day_0",
+                                "title": "Day 0"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_day_1",
+                                "title": "Day 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_day_2",
+                                "title": "Day 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_day_3",
+                                "title": "Day 3"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_day_4",
+                                "title": "Day 4"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_day_5",
+                                "title": "Day 5"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_day_6",
+                                "title": "Day 6"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_pipe_0_duration",
+                                "title": "Zone 0 "
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_pipe_1_duration",
+                                "title": "Zone 1 "
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_pipe_2_duration",
+                                "title": "Zone 2 "
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_1_pipe_3_duration",
+                                "title": "Zone 3 "
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "component": "oh-block",
+            "config": {
+              "title": "Program 2"
+            },
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_start",
+                                "title": "Start time"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_day_0",
+                                "title": "Day 0"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_day_1",
+                                "title": "Day 1"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_day_2",
+                                "title": "Day 2"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_day_3",
+                                "title": "Day 3"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_day_4",
+                                "title": "Day 4"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_day_5",
+                                "title": "Day 5"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_day_6",
+                                "title": "Day 6"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_pipe_0_duration",
+                                "title": "Zone 0 "
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_pipe_1_duration",
+                                "title": "Zone 1 "
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_pipe_2_duration",
+                                "title": "Zone 2 "
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-label-card",
+                              "config": {
+                                "item": "irr_program_2_pipe_3_duration",
+                                "title": "Zone 3 "
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "grid": [],
+        "masonry": []
+      }
+    }
+  },
+  "page_984b805f84": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "page_984b805f84",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 2, 2024, 12:49:13 PM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "Time setup",
+        "sidebar": true
+      },
+      "slots": {
+        "canvas": [],
+        "default": [
+          {
+            "component": "oh-block",
+            "config": {},
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "item": "irr_program_0_start",
+                                "max": 1425.0,
+                                "min": 0.0,
+                                "step": 15.0
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "grid": []
+      }
+    }
+  },
+  "page_a9787e7897": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "page_a9787e7897",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Aug 30, 2024, 2:49:54 PM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "Test operation mode change",
+        "sidebar": true
+      },
+      "slots": {
+        "canvas": [],
+        "default": [
+          {
+            "component": "oh-block",
+            "config": {},
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": []
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "grid": []
+      }
+    }
+  },
+  "page_aaef8866b5": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "page_aaef8866b5",
+      "tags": [],
+      "props": {
+        "parameters": [],
+        "parameterGroups": []
+      },
+      "timestamp": "Sep 9, 2024, 3:07:04 PM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "start time preset",
+        "sidebar": true
+      },
+      "slots": {
+        "canvas": [],
+        "default": [
+          {
+            "component": "oh-block",
+            "config": {},
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-row",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-grid-col",
+                        "config": {},
+                        "slots": {
+                          "default": [
+                            {
+                              "component": "oh-stepper-card",
+                              "config": {
+                                "autorepeat": true,
+                                "autorepeatDynamic": true,
+                                "item": "irr_program_0_start",
+                                "max": 85500.0,
+                                "min": 0.0,
+                                "step": 900.0
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "grid": []
+      }
+    }
+  }
+}

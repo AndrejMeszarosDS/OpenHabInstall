@@ -117,18 +117,18 @@ tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 #--------------------------------------------------------------------------------------------------
 # items > /etc/openhab
 cd ~/../../etc/openhab/items/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/irrigation.items
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.items
 # things > /etc/openhab
 cd ~/../../etc/openhab/things/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/irrigation.things
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data//irrigation.things
 # rules > /etc/openhab
 cd ~/../../etc/openhab/rules/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/irrigation.rules
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data//irrigation.rules
 # pagers & widgets > /etc/openhab
 cd /var/lib/openhab/jsondb/
 sudo rm uicomponents_ui_page.json
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/uicomponents_ui_page.json
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/uicomponents_ui_widget.json
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data//uicomponents_ui_page.json
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data//uicomponents_ui_widget.json
 #sudo systemctl restart openhab.service
 
 #--------------------------------------------------------------------------------------------------
@@ -200,3 +200,14 @@ sudo systemctl restart openhab.service
 #   --org openhab \
 #   --bucket openhab_db \
 #   --force 
+
+
+
+#-17.02.2025--------------------------------------------------------------------------------------
+# create backup script for opranhab files
+# ok, script is ok, working
+# updated restore from backup script
+
+# try influx install and setup correction
+# try on clean sd card with linux only
+
