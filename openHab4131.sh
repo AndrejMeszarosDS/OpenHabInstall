@@ -104,12 +104,36 @@ tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 #--------------------------------------------------------------------------------------------------
 # create influx admin user and database                                                           |
 #--------------------------------------------------------------------------------------------------
-./influx setup \
-  --username orangepi \
-  --password orangepi_password \
-  --org openhab \
-  --bucket openhab_db \
-  --force 
+INFLUXDB_USER="orangepi"
+INFLUXDB_PASSWORD="orangepi"
+OPENHAB_USER="openhab"
+OPENHAB_PASSWORD="openhabpassword"
+INFLUXDB_BUCKET="openhab_db"
+INFLUXDB_ORG="openhab_org"
+INFLUXDB_RETENTION="0" # Infinite retention
+
+echo "Setting up InfluxDB admin user..."
+./influx setup --username "$INFLUXDB_USER" \
+             --password "$INFLUXDB_PASSWORD" \
+             --org "$INFLUXDB_ORG" \
+             --bucket "$INFLUXDB_BUCKET" \
+             --retention "$INFLUXDB_RETENTION" \
+             --force
+
+echo "Creating OpenHAB user..."
+./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
+
+echo "Granting OpenHAB user read/write permissions on the bucket..."
+./influx auth create --user "$OPENHAB_USER" --write-buckets --read-buckets
+
+echo "Allowing password authentication..."
+sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
+[http]
+  auth-enabled = true
+EOF
+
+echo "Restarting InfluxDB service..."
+sudo systemctl restart influxdb
   
 
 #--------------------------------------------------------------------------------------------------
