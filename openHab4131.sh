@@ -107,10 +107,10 @@ tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 INFLUXDB_USER="orangepi"
 INFLUXDB_PASSWORD="orangepi"
 OPENHAB_USER="openhab"
-OPENHAB_PASSWORD="openhabpassword"
+OPENHAB_PASSWORD="openhab_password"
 INFLUXDB_BUCKET="openhab_db"
 INFLUXDB_ORG="openhab_org"
-INFLUXDB_RETENTION="0" # Infinite retention
+INFLUXDB_RETENTION="openhab_db"
 
 echo "Setting up InfluxDB admin user..."
 ./influx setup --username "$INFLUXDB_USER" \
@@ -132,10 +132,6 @@ sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
   auth-enabled = true
 EOF
 
-echo "Restarting InfluxDB service..."
-sudo systemctl restart influxdb
-  
-
 #--------------------------------------------------------------------------------------------------
 # copy backup data from reposity to openhab                                                       |
 #--------------------------------------------------------------------------------------------------
@@ -144,15 +140,18 @@ cd ~/../../etc/openhab/items/
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.items
 # things > /etc/openhab
 cd ~/../../etc/openhab/things/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data//irrigation.things
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.things
 # rules > /etc/openhab
 cd ~/../../etc/openhab/rules/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data//irrigation.rules
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.rules
+# persistence > /etc/openhab
+cd ~/../../etc/openhab/persistence/
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.persist
 # pagers & widgets > /etc/openhab
 cd /var/lib/openhab/jsondb/
 sudo rm uicomponents_ui_page.json
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data//uicomponents_ui_page.json
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data//uicomponents_ui_widget.json
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_page.json
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_widget.json
 #sudo systemctl restart openhab.service
 
 #--------------------------------------------------------------------------------------------------
@@ -161,12 +160,16 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 cd ~/../../etc/openhab/services
 sudo rm addons.cfg
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influcdb/influcdb.cfg
+sudo chmod -R g+w /etc/openhab/services/addons.cfg
+sudo chmod -R g+w /etc/openhab/services/influcdb.cfg
 sudo systemctl restart openhab.service
 
 
 
-
-
+# add mapdb and influx persist cfg
+# add influcdb.cfg
+# modify restore to download all items, things .. files
 
 #--------------------------------------------------------------------------------------------------
 # influx setup finish setup                                                                       |
