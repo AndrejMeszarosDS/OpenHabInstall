@@ -36,13 +36,13 @@ echo "Setting up InfluxDB admin user..."
              --force
 
 echo "Creating OpenHAB user..."
-./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
+sudo ./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
 
 echo "Granting OpenHAB user read/write permissions on the bucket..."
-./influx auth create --user "$OPENHAB_USER" --write-buckets --read-buckets
+sudo ./influx auth create --user "$OPENHAB_USER" --write-buckets --read-buckets
 
 echo "Allowing password authentication..."
-sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
+sudo sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
 [http]
   auth-enabled = true
 EOF
