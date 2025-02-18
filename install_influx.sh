@@ -10,8 +10,8 @@ INFLUXDB_RETENTION="0" # Infinite retention
 #--------------------------------------------------------------------------------------------------
 # update & upgrade                                                                                |
 #--------------------------------------------------------------------------------------------------
-sudo apt-get update
-sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+#sudo apt-get update
+#sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 
 
 #--------------------------------------------------------------------------------------------------
