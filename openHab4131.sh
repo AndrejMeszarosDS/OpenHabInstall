@@ -1,8 +1,8 @@
 #--------------------------------------------------------------------------------------------------
 # update & upgrade                                                                                |
 #--------------------------------------------------------------------------------------------------
-sudo apt-get update
-sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+#sudo apt-get update
+#sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 
 #--------------------------------------------------------------------------------------------------
 # install Mosquitto Broker                                                                        |
@@ -176,6 +176,8 @@ sudo systemctl start openhab.service
 #--------------------------------------------------------------------------------------------------
 # influx setup finish setup                                                                       |
 #--------------------------------------------------------------------------------------------------
+
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openHab4131.sh && sudo chmod 755 openHab4131.sh && sudo ./openHab4131.sh
 
 # sudo shutdown -r now  > restart
 # sudo poweroff         > pwer off
