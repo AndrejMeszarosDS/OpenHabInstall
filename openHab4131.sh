@@ -162,85 +162,47 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 # copy addons config file                                                                         |
 #--------------------------------------------------------------------------------------------------
 sudo systemctl stop openhab.service
+sudo service influxdb stop
 cd ~/../../etc/openhab/services
 sudo rm addons.cfg
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
 sudo chown orangepi:orangepi ~/../../etc/openhab/services/addons.cfg
+sudo rm influxdb.cfg
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
 sudo chown orangepi:orangepi ~/../../etc/openhab/services/influxdb.cfg
+sudo service influxdb start
 sudo systemctl start openhab.service
-
-
-
-# add mapdb and influx persist cfg
-# add influcdb.cfg
-# modify restore to download all items, things .. files
 
 #--------------------------------------------------------------------------------------------------
 # influx setup finish setup                                                                       |
 #--------------------------------------------------------------------------------------------------
-# can access influx from browser
-# http://192.168.0.145:8086/ influx_admin influx_admin_password
-# we have influx config file
-# check if we have persistence/influxdb.persist file ? no
-# let create it
-# trying correct persist file
-# alse need set influx as default persist service but after restart it works without default persistence setup
-# in openhab i edited the influx addon with ui, check the config file
-# ok, the influxdb.cfg was not copied to openhab, this is still missing so we need to add to install script and try it pout
-# cannot edit file influxdb.cfg permission
-#  cd ~/../../etc/openhab/services
-#  sudo chown orangepi:orangepi /etc/openhab/services/influxdb.cfg
-# this helps
-# but still influx needs token try to set it off
 
+# sudo shutdown -r now  > restart
+# sudo poweroff         > pwer off
+# add mapdb and influx persist cfg
+# add influcdb.cfg
+# modify restore to download all items, things .. files
 
-# ToDo
-# finich influx setting and check
+# Openhab login : admin openhab_password
+# host          : orangepizaero3
+# mqtt          : orangepi mqttpass
 
+# items 
+# rules
+# persist
+# things
+# addon.cfg
+# influxdb.cfg
 
-
-
-#  try to find, where is influxdb cli installed
-# find / -type d -name "influxdb" 2>/dev/null
-# check influx cli becouse manual reinstall solved to start it
-# try to create user openhab openhab_password
-
-
-
-
-
-# ./influx config create -a --username-password ADMINUSER -n myconfig -u http://127.0.0.1:8086
-# ./influx user create –org openhab –-name openhab –-password openhab_password
-
-# ./influx user create \
-#   --name openhab \
-#   --password openhab_password
-
-
-#   ./influx config create \
-#   -n test_config \
-#   -u http://localhost:8086 \
-#   -p influx_admin:influx_admin_password \
-#   -o openhab
+# sudo systemctl status influxdb.service
+# sudo service influxdb stop
+# sudo service influxdb start
+# sudo systemctl restart openhab.service
+# sudo service influxdb stop
+# sudo service influxdb start
+# sudo systemctl status influxdb.service
+# sudo systemctl status openhab.service
 
 
 
-#   ./influx setup \
-#   --username orangepi \
-#   --password influx_admin_password \
-#   --org openhab \
-#   --bucket openhab_db \
-#   --force 
 
-
-
-#-17.02.2025--------------------------------------------------------------------------------------
-# create backup script for opranhab files
-# ok, script is ok, working
-# updated restore from backup script
-
-# try influx install and setup correction
-# try on clean sd card with linux only
-
-sudo chmod -R g+w /etc/openhab/items/irrigation.items
