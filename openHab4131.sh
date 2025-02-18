@@ -109,8 +109,8 @@ INFLUXDB_PASSWORD="orangepi"
 OPENHAB_USER="openhab"
 OPENHAB_PASSWORD="openhab_password"
 INFLUXDB_BUCKET="openhab_db"
-INFLUXDB_ORG="openhab_org"
-INFLUXDB_RETENTION="openhab_db"
+INFLUXDB_ORG="openhab_db"
+INFLUXDB_RETENTION="0"
 
 echo "Setting up InfluxDB admin user..."
 ./influx setup --username "$INFLUXDB_USER" \
@@ -138,15 +138,19 @@ EOF
 # items > /etc/openhab
 cd ~/../../etc/openhab/items/
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.items
+sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
 # things > /etc/openhab
 cd ~/../../etc/openhab/things/
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.things
+sudo chown orangepi:orangepi /etc/openhab/things/irrigation.things
 # rules > /etc/openhab
 cd ~/../../etc/openhab/rules/
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.rules
+sudo chown orangepi:orangepi /etc/openhab/rules/irrigation.rules
 # persistence > /etc/openhab
 cd ~/../../etc/openhab/persistence/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.persist
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/influxdb.persist
+sudo chown orangepi:orangepi /etc/openhab/persistence/influxdb.persist
 # pagers & widgets > /etc/openhab
 cd /var/lib/openhab/jsondb/
 sudo rm uicomponents_ui_page.json
@@ -160,9 +164,9 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 cd ~/../../etc/openhab/services
 sudo rm addons.cfg
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influcdb/influcdb.cfg
-sudo chmod -R g+w /etc/openhab/services/addons.cfg
-sudo chmod -R g+w /etc/openhab/services/influcdb.cfg
+sudo chown orangepi:orangepi /etc/openhab/services/addons.cfg
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
+sudo chown orangepi:orangepi /etc/openhab/services/influxdb.cfg
 sudo systemctl restart openhab.service
 
 
@@ -238,3 +242,4 @@ sudo systemctl restart openhab.service
 # try influx install and setup correction
 # try on clean sd card with linux only
 
+sudo chmod -R g+w /etc/openhab/items/irrigation.items
