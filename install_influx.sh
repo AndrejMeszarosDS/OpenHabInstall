@@ -2,9 +2,9 @@
 INFLUXDB_USER="orangepi"
 INFLUXDB_PASSWORD="orangepi"
 OPENHAB_USER="openhab"
-OPENHAB_PASSWORD="openhabpassword"
+OPENHAB_PASSWORD="openhab_password"
 INFLUXDB_BUCKET="openhab_db"
-INFLUXDB_ORG="openhab_org"
+INFLUXDB_ORG="openhab_db"
 INFLUXDB_RETENTION="0" # Infinite retention
 
 #--------------------------------------------------------------------------------------------------
