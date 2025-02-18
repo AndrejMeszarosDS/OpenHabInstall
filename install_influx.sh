@@ -1,6 +1,6 @@
 # Variables
-INFLUXDB_USER="admin"
-INFLUXDB_PASSWORD="adminpassword"
+INFLUXDB_USER="orangepi"
+INFLUXDB_PASSWORD="orangepi"
 OPENHAB_USER="openhab"
 OPENHAB_PASSWORD="openhabpassword"
 INFLUXDB_BUCKET="openhab_db"
