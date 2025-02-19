@@ -41,8 +41,8 @@ sudo ./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
 echo "Granting OpenHAB user read/write permissions on the bucket..."
 sudo ./influx auth create --user "$OPENHAB_USER" --write-buckets --read-buckets
 
-echo "Allowing password authentication..."
-echo -e "\n[http]\n  auth-enabled = true" | sudo tee -a /etc/influxdb/config.toml
+#echo "Allowing password authentication..."
+#echo -e "\n[http]\n  auth-enabled = true" | sudo tee -a /etc/influxdb/config.toml
 # sudo sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
 # [http]
 #   auth-enabled = true

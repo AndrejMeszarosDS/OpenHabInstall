@@ -250,4 +250,8 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 # try fresh influx install only and test of content
 # the problem can be, that er overwrite file content, not add 
 # try it with the modified script
-# 
+# cat /etc/influxdb/config.toml
+# nano /etc/influxdb/config.toml
+# set permission
+# sudo chown orangepi:orangepi /etc/influxdb/config.toml
+# try new influx install without config.toml modification
