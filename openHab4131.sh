@@ -255,3 +255,14 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 # set permission
 # sudo chown orangepi:orangepi /etc/influxdb/config.toml
 # try new influx install without config.toml modification
+# ok, this is working after restart
+# the problem is adding auth to end of file
+
+
+influx auth create \
+    --user orangepi \
+    --org openhab_db \
+    --description "OpenHAB Token" \
+    --read-bucket openhab_db \
+    --write-bucket openhab_db \
+    --hide-headers | awk '{print $3}'
