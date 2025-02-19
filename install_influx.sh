@@ -3,9 +3,9 @@ INFLUXDB_USER="orangepi"
 INFLUXDB_PASSWORD="orangepi"
 OPENHAB_USER="openhab"
 OPENHAB_PASSWORD="openhab_password"
-INFLUXDB_BUCKET="openhab_db"
-INFLUXDB_ORG="openhab_db"
-INFLUXDB_RETENTION="0" # Infinite retention
+INFLUX_BUCKET="openhab_db"
+INFLUX_ORG="openhab_db"
+INFLUX_RETENTION="0" # Infinite retention
 
 #--------------------------------------------------------------------------------------------------
 # update & upgrade                                                                                |
@@ -28,7 +28,7 @@ echo "Waiting for InfluxDB to start..."
 sleep 5
 
 echo "Setting up InfluxDB admin user..."
-./influx setup --username "$INFLUXDB_USER" \
+./influx setup --username "$INFLUX_USER" \
              --password "$INFLUXDB_PASSWORD" \
              --org "$INFLUXDB_ORG" \
              --bucket "$INFLUXDB_BUCKET" \
@@ -36,38 +36,35 @@ echo "Setting up InfluxDB admin user..."
              --force
 
 
-#!/bin/bash
+
 
 # OpenHAB Configuration File Path
-OPENHAB_INFLUX_CFG="/etc/openhab/services/influxdb.cfg"
+OPENHAB_INFLUX_CFG="/etc/influxdb.cfg"
 
-# Function to check if Influx CLI is installed
 check_influx_cli() {
-    if ! command -v sudo ./influx &> /dev/null; then
-        echo "Influx CLI is not installed. Please install it first."
+    if ! sudo orangepi/influx version; then
+        echo "Influx CLI is not installed, not executable, or not in the correct directory."
+        echo "Please verify that you have the correct InfluxDB CLI binary."
         exit 1
     fi
 }
 
-# Function to create InfluxDB authentication token
 create_influx_token() {
     echo "Creating an authentication token for InfluxDB..."
-    
-    # Authenticate and generate token
-    INFLUX_TOKEN=$(sudo ./influx auth create \
-        --user "$INFLUX_USER" \
+    # Run the command with sudo and capture the token
+    INFLUX_TOKEN=$(sudo orangepi/influx auth create \
         --org "$INFLUX_ORG" \
         --description "OpenHAB Token" \
-        --read-bucket "$INFLUX_BUCKET" \
-        --write-bucket "$INFLUX_BUCKET" \
-        --hide-headers | awk '{print $3}')
-    
-    if [ -z "$INFLUX_TOKEN" ]; then
-        echo "Failed to create InfluxDB token. Check your InfluxDB setup."
+        --all-access \
+        --hide-headers | awk 'NR==1 {print $4}')
+
+    # Check if the token was successfully created
+    if [ -z "$INFLUX_TOKEN" || "$INFLUX_TOKEN" == "Error" ]; then
+        echo "Failed to create InfluxDB token. Verify your InfluxDB setup and credentials."
         exit 1
     fi
 
-    echo "Token successfully created."
+    echo "Token successfully created: $INFLUX_TOKEN"
 }
 
 # Function to configure OpenHAB with the InfluxDB token
@@ -94,49 +91,7 @@ EOL
     echo "OpenHAB is now configured with InfluxDB token."
 }
 
-# Restart OpenHAB service
-restart_openhab() {
-    echo "Restarting OpenHAB to apply changes..."
-    sudo systemctl restart openhab
-    echo "OpenHAB restarted successfully."
-}
 
-# Run setup
-#check_influx_cli
+check_influx_cli
 create_influx_token
 configure_openhab
-restart_openhab
-
-echo "InfluxDB authentication setup for OpenHAB is complete!"
-
-
-
-#echo "Creating OpenHAB user..."
-#sudo ./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
-
-#echo "Granting OpenHAB user read/write permissions on the bucket..."
-#sudo ./influx auth create --user "$OPENHAB_USER" --write-buckets --read-buckets
-
-
-sudo ./influx auth create \
-        --user orangepi \
-        --org "$INFLUX_ORG" \
-        --description "OpenHAB Token" \
-        --read-bucket openhab_db \
-        --write-bucket openhab_db \
-        --hide-headers | awk '{print $3}'
-
-
-
-
-#echo "Allowing password authentication..."
-# printf "\n[http]\n  auth-enabled = true\n" | sudo tee -a /etc/influxdb/config.toml
-
-#echo -e "\n[http]\n  auth-enabled = true" | sudo tee -a /etc/influxdb/config.toml
-# sudo sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
-# [http]
-#   auth-enabled = true
-# EOF
-
-#echo "Restarting InfluxDB service..."
-#sudo systemctl restart influxdb

@@ -86,6 +86,47 @@ opanhab_admin_user_password="openhab_password"
 openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin_user_password administrator
 
 #--------------------------------------------------------------------------------------------------
+# copy backup data from reposity to openhab                                                       |
+#--------------------------------------------------------------------------------------------------
+# items > /etc/openhab
+cd ~/../../etc/openhab/items/
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.items
+sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
+# things > /etc/openhab
+cd ~/../../etc/openhab/things/
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.things
+sudo chown orangepi:orangepi /etc/openhab/things/irrigation.things
+# rules > /etc/openhab
+cd ~/../../etc/openhab/rules/
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.rules
+sudo chown orangepi:orangepi /etc/openhab/rules/irrigation.rules
+# persistence > /etc/openhab
+cd ~/../../etc/openhab/persistence/
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/influxdb.persist
+sudo chown orangepi:orangepi /etc/openhab/persistence/influxdb.persist
+# pagers & widgets > /etc/openhab
+cd /var/lib/openhab/jsondb/
+sudo rm uicomponents_ui_page.json
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_page.json
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_widget.json
+#sudo systemctl restart openhab.service
+
+#--------------------------------------------------------------------------------------------------
+# copy addons config file                                                                         |
+#--------------------------------------------------------------------------------------------------
+# sudo systemctl stop openhab.service
+# sudo service influxdb stop
+cd ~/../../etc/openhab/services
+sudo rm addons.cfg
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
+sudo chown orangepi:orangepi ~/../../etc/openhab/services/addons.cfg
+# sudo rm influxdb.cfg
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
+# sudo chown orangepi:orangepi ~/../../etc/openhab/services/influxdb.cfg
+# sudo service influxdb start
+sudo systemctl start openhab.service
+
+#--------------------------------------------------------------------------------------------------
 # install influx                                                                                  |
 #--------------------------------------------------------------------------------------------------
 cd ~
@@ -120,58 +161,24 @@ echo "Setting up InfluxDB admin user..."
              --retention "$INFLUXDB_RETENTION" \
              --force
 
-echo "Creating OpenHAB user..."
-./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
 
-echo "Granting OpenHAB user read/write permissions on the bucket..."
-./influx auth create --user "$OPENHAB_USER" --write-buckets --read-buckets
 
-echo "Allowing password authentication..."
-sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
-[http]
-  auth-enabled = true
-EOF
 
-#--------------------------------------------------------------------------------------------------
-# copy backup data from reposity to openhab                                                       |
-#--------------------------------------------------------------------------------------------------
-# items > /etc/openhab
-cd ~/../../etc/openhab/items/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.items
-sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
-# things > /etc/openhab
-cd ~/../../etc/openhab/things/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.things
-sudo chown orangepi:orangepi /etc/openhab/things/irrigation.things
-# rules > /etc/openhab
-cd ~/../../etc/openhab/rules/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.rules
-sudo chown orangepi:orangepi /etc/openhab/rules/irrigation.rules
-# persistence > /etc/openhab
-cd ~/../../etc/openhab/persistence/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/influxdb.persist
-sudo chown orangepi:orangepi /etc/openhab/persistence/influxdb.persist
-# pagers & widgets > /etc/openhab
-cd /var/lib/openhab/jsondb/
-sudo rm uicomponents_ui_page.json
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_page.json
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_widget.json
-#sudo systemctl restart openhab.service
 
-#--------------------------------------------------------------------------------------------------
-# copy addons config file                                                                         |
-#--------------------------------------------------------------------------------------------------
-# sudo systemctl stop openhab.service
-# sudo service influxdb stop
-# cd ~/../../etc/openhab/services
-# sudo rm addons.cfg
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
-# sudo chown orangepi:orangepi ~/../../etc/openhab/services/addons.cfg
-# sudo rm influxdb.cfg
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
-# sudo chown orangepi:orangepi ~/../../etc/openhab/services/influxdb.cfg
-# sudo service influxdb start
-# sudo systemctl start openhab.service
+
+# echo "Creating OpenHAB user..."
+# ./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
+
+# echo "Granting OpenHAB user read/write permissions on the bucket..."
+# ./influx auth create --user "$OPENHAB_USER" --write-buckets --read-buckets
+
+# echo "Allowing password authentication..."
+# sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
+# [http]
+#   auth-enabled = true
+# EOF
+
+
 
 #--------------------------------------------------------------------------------------------------
 # influx setup finish setup                                                                       |
@@ -259,10 +266,3 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 # the problem is adding auth to end of file
 
 
-influx auth create \
-    --user orangepi \
-    --org openhab_db \
-    --description "OpenHAB Token" \
-    --read-bucket openhab_db \
-    --write-bucket openhab_db \
-    --hide-headers | awk '{print $3}'
