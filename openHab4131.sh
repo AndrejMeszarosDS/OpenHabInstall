@@ -179,6 +179,8 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 
 # sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openHab4131.sh && sudo chmod 755 openHab4131.sh && sudo ./openHab4131.sh
 
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/install_influx.sh && sudo chmod 755 install_influx.sh && sudo ./install_influx.sh
+
 # sudo shutdown -r now  > restart
 # sudo poweroff         > pwer off
 # Openhab login : admin openhab_password
@@ -246,3 +248,6 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 # sudo systemctl restart influxdb.service
 # the config.toml may be not correct
 # try fresh influx install only and test of content
+# the problem can be, that er overwrite file content, not add 
+# try it with the modified script
+# 
