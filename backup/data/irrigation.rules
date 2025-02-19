@@ -157,18 +157,35 @@ then
     // sendCommand(Irr_program_to_send, jsonMessage)
 end
 //--------------------------------------------------------------------------------------------
-// rule "Initialise items (number, switch) to 0,OFF"
-// when
-//     Item IrrigationNumberInitialise received command
-// then
-// 	logInfo("Irrigation initializer", "Irrigation items initializing.")
-// 	gIrrigationNumberItems.members.filter( x | x.state == NULL).forEach[ item |
-//     	postUpdate( item, 0)
-// 	]
-// 	gIrrigationSwitchItems.members.filter( x | x.state == NULL).forEach[ item |
-//     	postUpdate( item, OFF)
-// 	]
-// end
+rule "Execute after 30 seconds of startup"
+when
+    System started
+then
+    logInfo("Startup Rule", "System started, waiting 30 seconds...")
+    createTimer(now.plusSeconds(30), [ |
+        logInfo("Startup Rule", "Executing actions after 30 seconds delay")
+	logInfo("Irrigation initializer", "Irrigation items initializing.")
+    gIrrigationNumberItems.members.filter( x | x.state == NULL).forEach[ item | 
+    	postUpdate( item, 0)
+	]
+	gIrrigationSwitchItems.members.filter( x | x.state == NULL).forEach[ item |
+    	postUpdate( item, OFF)
+	]
+    ])
+end
+
+rule "Initialise items (number, switch) to 0,OFF"
+when
+    Item IrrigationNumberInitialise received command
+then
+	logInfo("Irrigation initializer", "Irrigation items initializing.")
+	gIrrigationNumberItems.members.filter( x | x.state == NULL).forEach[ item |
+    	postUpdate( item, 0)
+	]
+	gIrrigationSwitchItems.members.filter( x | x.state == NULL).forEach[ item |
+    	postUpdate( item, OFF)
+	]
+end
 //--------------------------------------------------------------------------------------------
 rule "Send actual condig to device"
 when

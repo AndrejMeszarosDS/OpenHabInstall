@@ -209,6 +209,7 @@ url=http://localhost:8086
 token=$INFLUX_TOKEN
 org=$INFLUXDB_ORG
 bucket=$INFLUXDB_BUCKET
+retentionPolicy=$INFLUXDB_BUCKET
 version=V2
 EOL
 
@@ -219,6 +220,12 @@ EOL
 check_influx_cli
 create_influx_token
 configure_openhab
+
+
+# set default persis service
+sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
+
+printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/services/runtime.cfg
 
 sudo systemctl restart openhab.service
 
@@ -324,3 +331,11 @@ sudo systemctl restart openhab.service
 # begin to work
 # need set influv v2, bucket
 # and influx as default persist service
+# edit null check rule to run afetr start   > test not ok
+# delete not needed pages                   > ok
+# make backup                               > ok
+# influxdb.cfg still not complet            > ??
+# set influx as default persist service     > runtime.cfg ????
+
+
+# sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
