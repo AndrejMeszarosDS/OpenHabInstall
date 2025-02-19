@@ -181,21 +181,9 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 
 # sudo shutdown -r now  > restart
 # sudo poweroff         > pwer off
-# add mapdb and influx persist cfg
-# add influcdb.cfg
-# modify restore to download all items, things .. files
-
 # Openhab login : admin openhab_password
 # host          : orangepizaero3
 # mqtt          : orangepi mqttpass
-
-# items 
-# rules
-# persist
-# things
-# addon.cfg
-# influxdb.cfg
-
 # sudo systemctl status influxdb.service
 # sudo service influxdb stop
 # sudo service influxdb start
@@ -204,7 +192,57 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 # sudo service influxdb start
 # sudo systemctl status influxdb.service
 # sudo systemctl status openhab.service
+# sudo systemctl status influxdb.service
+# sudo service influxdb stop
+# sudo service influxdb start
+# sudo systemctl restart openhab.service
+# sudo service influxdb stop
+# sudo service influxdb start
+# sudo systemctl status influxdb.service
+# sudo systemctl status openhab.service
+# sudo systemctl restart openhab.service
 
 
+# check status after install
+#   - items        > in openhab
+#   - rules        > in openhab
+#   - persist      > in openhab
+#   - things       > in openhab
+#   - addon.cfg
+#   - influxdb.cfg
+#   - pages        > in openhab
+#   - widgets      > in openhab
+#   - samba        > ok
+#   - influx       > ok 
+# pages list there but empty - try to restart openhab > after restart widgets are there
+# missing mqtt addon
 
+# ToDo :
+#   - add addons.cfg
+#   - add influxdb.cfg
+#
+# first check if is there influxdb.cfg > no > try add in first > added
+# second add addons.cfg
+# restart openhab ...
+# influxdb persistencer started
+# mqtt started
+# mqttx connected
+# rule error : 
+#  Script execution of rule with UID 'irrigation-13' failed: Could not cast NULL to java.lang.Number; line 186, column 29, length 35 in irrigation
+# ok, the null check rule was commented, uncomment and run
+# influx write error, unauthorized access
+# check influx cfg
+#   cat config.toml
+# ther is auth setted
+# try to restart influx service
+# sudo systemctl restart influxdb.service > this destroy influx, try restart orangepi
+# sudo shutdown -r now
 
+# influx nost working
+# check status
+# sudo systemctl status influxdb.service
+# try stop openhab
+# sudo systemctl stop openhab.service
+# sudo systemctl restart influxdb.service
+# the config.toml may be not correct
+# try fresh influx install only and test of content
