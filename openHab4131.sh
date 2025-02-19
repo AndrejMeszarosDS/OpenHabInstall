@@ -124,7 +124,7 @@ sudo chown orangepi:orangepi ~/../../etc/openhab/services/addons.cfg
 # sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
 # sudo chown orangepi:orangepi ~/../../etc/openhab/services/influxdb.cfg
 # sudo service influxdb start
-sudo systemctl restart openhab.service
+# sudo systemctl restart openhab.service
 
 #--------------------------------------------------------------------------------------------------
 # install influx                                                                                  |
@@ -220,6 +220,7 @@ check_influx_cli
 create_influx_token
 configure_openhab
 
+sudo systemctl restart openhab.service
 
 # echo "Creating OpenHAB user..."
 # ./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
