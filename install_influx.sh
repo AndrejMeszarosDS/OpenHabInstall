@@ -43,7 +43,7 @@ OPENHAB_INFLUX_CFG="/etc/openhab/services/influxdb.cfg"
 
 # Function to check if Influx CLI is installed
 check_influx_cli() {
-    if ! command -v influx &> /dev/null; then
+    if ! command -v sudo ./influx &> /dev/null; then
         echo "Influx CLI is not installed. Please install it first."
         exit 1
     fi
@@ -54,7 +54,7 @@ create_influx_token() {
     echo "Creating an authentication token for InfluxDB..."
     
     # Authenticate and generate token
-    INFLUX_TOKEN=$(influx auth create \
+    INFLUX_TOKEN=$(sudo ./influx auth create \
         --user "$INFLUX_USER" \
         --org "$INFLUX_ORG" \
         --description "OpenHAB Token" \
@@ -118,7 +118,13 @@ echo "InfluxDB authentication setup for OpenHAB is complete!"
 #sudo ./influx auth create --user "$OPENHAB_USER" --write-buckets --read-buckets
 
 
-
+sudo ./influx auth create \
+        --user orangepi \
+        --org "$INFLUX_ORG" \
+        --description "OpenHAB Token" \
+        --read-bucket openhab_db \
+        --write-bucket openhab_db \
+        --hide-headers | awk '{print $3}'
 
 
 
