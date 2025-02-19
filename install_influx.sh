@@ -102,7 +102,7 @@ restart_openhab() {
 }
 
 # Run setup
-check_influx_cli
+#check_influx_cli
 create_influx_token
 configure_openhab
 restart_openhab
