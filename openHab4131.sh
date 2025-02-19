@@ -124,7 +124,7 @@ sudo chown orangepi:orangepi ~/../../etc/openhab/services/addons.cfg
 # sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
 # sudo chown orangepi:orangepi ~/../../etc/openhab/services/influxdb.cfg
 # sudo service influxdb start
-sudo systemctl start openhab.service
+sudo systemctl restart openhab.service
 
 #--------------------------------------------------------------------------------------------------
 # install influx                                                                                  |
@@ -161,9 +161,64 @@ echo "Setting up InfluxDB admin user..."
              --retention "$INFLUXDB_RETENTION" \
              --force
 
+# OpenHAB Configuration File Path
+OPENHAB_INFLUX_CFG="/etc/openhab/services/influxdb.cfg"
+
+check_influx_cli() {
+    if ! sudo /root/influx version; then
+        echo "Influx CLI is not installed, not executable, or not in the correct directory."
+        echo "Please verify that you have the correct InfluxDB CLI binary."
+        exit 1
+    fi
+}
+
+create_influx_token() {
+    echo "Creating an authentication token for InfluxDB..."
+    # Run the command with sudo and capture the token
+    INFLUX_TOKEN=$(sudo /root/influx auth create \
+        --org "$INFLUXDB_ORG" \
+        --description "OpenHAB Token" \
+        --all-access \
+        --hide-headers | awk 'NR==1 {print $4}')
+
+    # Check if the token was successfully created
+    if [ -z "$INFLUX_TOKEN" || "$INFLUX_TOKEN" == "Error" ]; then
+        echo "Failed to create InfluxDB token. Verify your InfluxDB setup and credentials."
+        exit 1
+    fi
+
+    echo "Token successfully created: $INFLUX_TOKEN"
+}
+
+# Function to configure OpenHAB with the InfluxDB token
+configure_openhab() {
+    echo "Configuring OpenHAB to use InfluxDB token..."
+
+    if [ ! -f "$OPENHAB_INFLUX_CFG" ]; then
+        echo "InfluxDB configuration file not found, creating one..."
+        sudo touch "$OPENHAB_INFLUX_CFG"
+    fi
+
+    # Backup old config
+    sudo cp "$OPENHAB_INFLUX_CFG" "$OPENHAB_INFLUX_CFG.bak"
+
+    # Write new config
+    sudo tee "$OPENHAB_INFLUX_CFG" > /dev/null <<EOL
+# OpenHAB InfluxDB Configuration
+url=http://localhost:8086
+token=$INFLUX_TOKEN
+org=$INFLUXDB_ORG
+bucket=$INFLUXDB_BUCKET
+version=V2
+EOL
+
+    echo "OpenHAB is now configured with InfluxDB token."
+}
 
 
-
+check_influx_cli
+create_influx_token
+configure_openhab
 
 
 # echo "Creating OpenHAB user..."
@@ -265,4 +320,6 @@ echo "Setting up InfluxDB admin user..."
 # ok, this is working after restart
 # the problem is adding auth to end of file
 
-
+# begin to work
+# need set influv v2, bucket
+# and influx as default persist service
