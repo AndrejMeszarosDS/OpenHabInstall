@@ -108,23 +108,18 @@ sudo chown orangepi:orangepi /etc/openhab/persistence/influxdb.persist
 cd /var/lib/openhab/jsondb/
 sudo rm uicomponents_ui_page.json
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_page.json
+sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_page.json
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_widget.json
+sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_widget.json
 #sudo systemctl restart openhab.service
 
 #--------------------------------------------------------------------------------------------------
 # copy addons config file                                                                         |
 #--------------------------------------------------------------------------------------------------
-# sudo systemctl stop openhab.service
-# sudo service influxdb stop
 cd ~/../../etc/openhab/services
 sudo rm addons.cfg
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
 sudo chown orangepi:orangepi ~/../../etc/openhab/services/addons.cfg
-# sudo rm influxdb.cfg
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/influxdb/influxdb.cfg
-# sudo chown orangepi:orangepi ~/../../etc/openhab/services/influxdb.cfg
-# sudo service influxdb start
-# sudo systemctl restart openhab.service
 
 #--------------------------------------------------------------------------------------------------
 # install influx                                                                                  |
@@ -133,7 +128,6 @@ cd ~
 curl -LO https://download.influxdata.com/influxdb/releases/influxdb2_2.7.7-1_arm64.deb
 sudo dpkg -i influxdb2_2.7.7-1_arm64.deb
 sudo service influxdb start
-#sudo service influxdb status ???
 
 #--------------------------------------------------------------------------------------------------
 # install influx CLI                                                                              |
@@ -149,8 +143,8 @@ INFLUXDB_USER="orangepi"
 INFLUXDB_PASSWORD="orangepi"
 OPENHAB_USER="openhab"
 OPENHAB_PASSWORD="openhab_password"
-INFLUXDB_BUCKET="openhab_db"
-INFLUXDB_ORG="openhab_db"
+INFLUXDB_BUCKET="openhab"
+INFLUXDB_ORG="openhab"
 INFLUXDB_RETENTION="0"
 
 echo "Setting up InfluxDB admin user..."
@@ -205,12 +199,12 @@ configure_openhab() {
     # Write new config
     sudo tee "$OPENHAB_INFLUX_CFG" > /dev/null <<EOL
 # OpenHAB InfluxDB Configuration
+version=V2
 url=http://localhost:8086
 token=$INFLUX_TOKEN
 org=$INFLUXDB_ORG
 bucket=$INFLUXDB_BUCKET
 retentionPolicy=$INFLUXDB_BUCKET
-version=V2
 EOL
 
     echo "OpenHAB is now configured with InfluxDB token."
@@ -224,10 +218,11 @@ configure_openhab
 
 # set default persis service
 sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
-
 printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/services/runtime.cfg
 
+# restart openhab service
 sudo systemctl restart openhab.service
+
 
 # echo "Creating OpenHAB user..."
 # ./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
@@ -339,3 +334,32 @@ sudo systemctl restart openhab.service
 
 
 # sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
+
+# after restart
+# influxdb add on still wrong database
+# the default persistence is ok
+# still all pager here !!!
+
+#--20.02.2025------------------------------------------------------------------------------
+#
+# openhab :
+#   - still i have pages 
+#   - influx config database still only openhab
+#   - default persistence ok
+#   - items null check ok
+#   - after db name changed item graph working
+#   - in rules are errors by vsc, but in real this is not error
+
+
+# testing full install script
+# edit null check rule to run afetr start   > 
+# delete not needed pages                   > 
+# make backup                               > 
+# influxdb.cfg still not complet            > 
+# set influx as default persist service     > 
+
+
+
+
+
+sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_page.json
