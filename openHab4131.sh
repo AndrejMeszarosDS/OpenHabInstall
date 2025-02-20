@@ -362,4 +362,3 @@ sudo systemctl restart openhab.service
 
 
 
-sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_page.json
