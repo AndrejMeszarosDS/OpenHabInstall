@@ -1,7 +1,0 @@
-Bridge mqtt:broker:main  [ host="orangepizero3",secure=false, username="orangepi", password="mqttpass" ]
-{
-  Thing topic irrigantion "Irrigantion" {
-    Channels:
-        Type string : program_to_send "Program to send"[ commandTopic = "program_to_send", stateTopic = "program_to_send"]
-  }
-}

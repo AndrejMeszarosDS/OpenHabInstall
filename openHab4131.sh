@@ -352,11 +352,15 @@ sudo systemctl restart openhab.service
 
 
 # testing full install script
-# edit null check rule to run afetr start   > 
+# edit null check rule to run afetr start   > ok
 # delete not needed pages                   > 
-# make backup                               > 
-# influxdb.cfg still not complet            > 
-# set influx as default persist service     > 
+# make backup                               > ok
+# influxdb.cfg still not complet            > ok
+# set influx as default persist service     > ok
+# looks like after role edit and backup
+# no push was made
+
+
 
 
 

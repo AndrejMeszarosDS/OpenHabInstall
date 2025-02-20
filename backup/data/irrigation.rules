@@ -135,13 +135,13 @@ then
     var Number selectedProgram = irr_config_selected_program.state as Number
     var Number tmpTime = 0
     if (selectedProgram==0){
-        tmpTime = irr_program_0_start.state
+        tmpTime = (irr_program_0_start.state) as Number
     }
     if (selectedProgram==1){
-        tmpTime = irr_program_1_start.state
+        tmpTime = (irr_program_1_start.state) as Number
     }
     if (selectedProgram==2){
-        tmpTime = irr_program_2_start.state
+        tmpTime = (irr_program_2_start.state) as Number
     }
     var Number tmpHour = (tmpTime / 3600).intValue
     var Number tmpMin = (tmpTime - (tmpHour * 3600)) / 60
@@ -164,27 +164,27 @@ then
     logInfo("Startup Rule", "System started, waiting 30 seconds...")
     createTimer(now.plusSeconds(30), [ |
         logInfo("Startup Rule", "Executing actions after 30 seconds delay")
-	logInfo("Irrigation initializer", "Irrigation items initializing.")
-    gIrrigationNumberItems.members.filter( x | x.state == NULL).forEach[ item | 
-    	postUpdate( item, 0)
-	]
-	gIrrigationSwitchItems.members.filter( x | x.state == NULL).forEach[ item |
-    	postUpdate( item, OFF)
-	]
-    ])
-end
+        logInfo("Irrigation initializer", "Irrigation items initializing.")
+        
+        // Debugging log
+        logInfo("Debug", "gIrrigationNumberItems: " + gIrrigationNumberItems)
 
-rule "Initialise items (number, switch) to 0,OFF"
-when
-    Item IrrigationNumberInitialise received command
-then
-	logInfo("Irrigation initializer", "Irrigation items initializing.")
-	gIrrigationNumberItems.members.filter( x | x.state == NULL).forEach[ item |
-    	postUpdate( item, 0)
-	]
-	gIrrigationSwitchItems.members.filter( x | x.state == NULL).forEach[ item |
-    	postUpdate( item, OFF)
-	]
+        if (gIrrigationNumberItems !== null) {
+            gIrrigationNumberItems.members.filter[ GenericItem x | x.state == NULL ].forEach[ GenericItem item | 
+                item.postUpdate(0)
+            ]
+        } else {
+            logWarn("Debug", "gIrrigationNumberItems is NULL or undefined!")
+        }
+
+        if (gIrrigationSwitchItems !== null) {
+            gIrrigationSwitchItems.members.filter[ GenericItem x | x.state == NULL ].forEach[ GenericItem item |
+                item.postUpdate(OFF)
+            ]
+        } else {
+            logWarn("Debug", "gIrrigationSwitchItems is NULL or undefined!")
+        }
+    ])
 end
 //--------------------------------------------------------------------------------------------
 rule "Send actual condig to device"
