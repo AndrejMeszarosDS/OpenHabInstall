@@ -1,0 +1,28 @@
+17.09.2025 -----------------------------------------------------------------------
+  - created install script for openHab v5.0.0
+    - testing ... > looks good !!!!!!!!
+    - Mosquitto Broker was not installed, my mistake
+    - recheck with clean sdcard 
+  - mo
+
+  - ToDo
+    - change static IP address ....
+
+    - make script 
+      - one click backup of openhab impoertant files
+        - icons
+        - items
+        - persistence
+        - rules
+        - 
+
+
+      - make commit and push ....
+
+ 
+
+
+ ------------------------------------------------------------------------------------
+ OrangePi
+  - sudo shutdown -r now  > restart
+  - sudo poweroff         > pwer off

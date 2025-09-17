@@ -1,42 +1,42 @@
-# #--------------------------------------------------------------------------------------------------
-# # update & upgrade                                                                                |
-# #--------------------------------------------------------------------------------------------------
-# sudo apt-get update
-# sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+#--------------------------------------------------------------------------------------------------
+# update & upgrade                                                                                |
+#--------------------------------------------------------------------------------------------------
+sudo apt-get update
+sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 
-# #--------------------------------------------------------------------------------------------------
-# # install Mosquitto Broker                                                                        |
-# #--------------------------------------------------------------------------------------------------
-# mosquitto_password=mqttpass
-# sudo apt-get install -y mosquitto mosquitto-clients
-# cd ~/../../etc/mosquitto/
-# sudo rm mosquitto.conf
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
-# sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi $mosquitto_password
-# sudo systemctl enable mosquitto.service
-# sudo systemctl restart mosquitto
+#--------------------------------------------------------------------------------------------------
+# install Mosquitto Broker                                                                        |
+#--------------------------------------------------------------------------------------------------
+mosquitto_password=mqttpass
+sudo apt-get install -y mosquitto mosquitto-clients
+cd ~/../../etc/mosquitto/
+sudo rm mosquitto.conf
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
+sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi $mosquitto_password
+sudo systemctl enable mosquitto.service
+sudo systemctl restart mosquitto
 
-# #--------------------------------------------------------------------------------------------------
-# # install java 21                                                                                 |
-# #--------------------------------------------------------------------------------------------------
-# sudo apt install --yes --force-yes openjdk-21-jre-headless
+#--------------------------------------------------------------------------------------------------
+# install java 21                                                                                 |
+#--------------------------------------------------------------------------------------------------
+sudo apt install --yes --force-yes openjdk-21-jre-headless
 
-# #--------------------------------------------------------------------------------------------------
-# # install openHAB 5.0.0.1                                                          |
-# #--------------------------------------------------------------------------------------------------
-# curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor > openhab.gpg
-# sudo mkdir /usr/share/keyrings
-# sudo mv openhab.gpg /usr/share/keyrings
-# sudo chmod u=rw,g=r,o=r /usr/share/keyrings/openhab.gpg
-# echo 'deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main' | sudo tee /etc/apt/sources.list.d/openhab.list
-# sudo apt-get update
-# sudo apt install --yes --force-yes openhab=5.0.0-1
-# sudo apt-mark hold openhab
-# sudo apt-mark hold openhab-addons
-# sudo systemctl start openhab.service
-# sudo systemctl status openhab.service
-# sudo systemctl daemon-reload
-# sudo systemctl enable openhab.service
+#--------------------------------------------------------------------------------------------------
+# install openHAB 5.0.0.1                                                          |
+#--------------------------------------------------------------------------------------------------
+curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor > openhab.gpg
+sudo mkdir /usr/share/keyrings
+sudo mv openhab.gpg /usr/share/keyrings
+sudo chmod u=rw,g=r,o=r /usr/share/keyrings/openhab.gpg
+echo 'deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main' | sudo tee /etc/apt/sources.list.d/openhab.list
+sudo apt-get update
+sudo apt install --yes --force-yes openhab=5.0.0-1
+sudo apt-mark hold openhab
+sudo apt-mark hold openhab-addons
+sudo systemctl start openhab.service
+sudo systemctl status openhab.service
+sudo systemctl daemon-reload
+sudo systemctl enable openhab.service
 
 #--------------------------------------------------------------------------------------------------
 # install frontail and dependecies and make to work                                               |
@@ -224,157 +224,4 @@ printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/s
 sudo systemctl restart openhab.service
 
 
-# echo "Creating OpenHAB user..."
-# ./influx user create --name "$OPENHAB_USER" --password "$OPENHAB_PASSWORD"
-
-# echo "Granting OpenHAB user read/write permissions on the bucket..."
-# ./influx auth create --user "$OPENHAB_USER" --write-buckets --read-buckets
-
-# echo "Allowing password authentication..."
-# sudo tee /etc/influxdb/config.toml <<EOF >/dev/null
-# [http]
-#   auth-enabled = true
-# EOF
-
-
-
-#--------------------------------------------------------------------------------------------------
-# influx setup finish setup                                                                       |
-#--------------------------------------------------------------------------------------------------
-
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openHab4131.sh && sudo chmod 755 openHab4131.sh && sudo ./openHab4131.sh
-
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/install_influx.sh && sudo chmod 755 install_influx.sh && sudo ./install_influx.sh
-
-# sudo shutdown -r now  > restart
-# sudo poweroff         > pwer off
-# Openhab login : admin openhab_password
-# host          : orangepizaero3
-# mqtt          : orangepi mqttpass
-# sudo systemctl status influxdb.service
-# sudo service influxdb stop
-# sudo service influxdb start
-# sudo systemctl restart openhab.service
-# sudo service influxdb stop
-# sudo service influxdb start
-# sudo systemctl status influxdb.service
-# sudo systemctl status openhab.service
-# sudo systemctl status influxdb.service
-# sudo service influxdb stop
-# sudo service influxdb start
-# sudo systemctl restart openhab.service
-# sudo service influxdb stop
-# sudo service influxdb start
-# sudo systemctl status influxdb.service
-# sudo systemctl status openhab.service
-# sudo systemctl restart openhab.service
-
-
-# check status after install
-#   - items        > in openhab
-#   - rules        > in openhab
-#   - persist      > in openhab
-#   - things       > in openhab
-#   - addon.cfg
-#   - influxdb.cfg
-#   - pages        > in openhab
-#   - widgets      > in openhab
-#   - samba        > ok
-#   - influx       > ok 
-# pages list there but empty - try to restart openhab > after restart widgets are there
-# missing mqtt addon
-
-# ToDo :
-#   - add addons.cfg
-#   - add influxdb.cfg
-#
-# first check if is there influxdb.cfg > no > try add in first > added
-# second add addons.cfg
-# restart openhab ...
-# influxdb persistencer started
-# mqtt started
-# mqttx connected
-# rule error : 
-#  Script execution of rule with UID 'irrigation-13' failed: Could not cast NULL to java.lang.Number; line 186, column 29, length 35 in irrigation
-# ok, the null check rule was commented, uncomment and run
-# influx write error, unauthorized access
-# check influx cfg
-#   cat config.toml
-# ther is auth setted
-# try to restart influx service
-# sudo systemctl restart influxdb.service > this destroy influx, try restart orangepi
-# sudo shutdown -r now
-
-# influx nost working
-# check status
-# sudo systemctl status influxdb.service
-# try stop openhab
-# sudo systemctl stop openhab.service
-# sudo systemctl restart influxdb.service
-# the config.toml may be not correct
-# try fresh influx install only and test of content
-# the problem can be, that er overwrite file content, not add 
-# try it with the modified script
-# cat /etc/influxdb/config.toml
-# nano /etc/influxdb/config.toml
-# set permission
-# sudo chown orangepi:orangepi /etc/influxdb/config.toml
-# try new influx install without config.toml modification
-# ok, this is working after restart
-# the problem is adding auth to end of file
-
-# begin to work
-# need set influv v2, bucket
-# and influx as default persist service
-# edit null check rule to run afetr start   > test not ok
-# delete not needed pages                   > ok
-# make backup                               > ok
-# influxdb.cfg still not complet            > ??
-# set influx as default persist service     > runtime.cfg ????
-
-
-# sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
-
-# after restart
-# influxdb add on still wrong database
-# the default persistence is ok
-# still all pager here !!!
-
-#--20.02.2025------------------------------------------------------------------------------
-#
-# openhab :
-#   - still i have pages 
-#   - influx config database still only openhab
-#   - default persistence ok
-#   - items null check ok
-#   - after db name changed item graph working
-#   - in rules are errors by vsc, but in real this is not error
-
-
-# testing full install script
-# edit null check rule to run afetr start   > ok
-# delete not needed pages                   > 
-# make backup                               > ok
-# influxdb.cfg still not complet            > ok
-# set influx as default persist service     > ok
-# looks like after role edit and backup
-# no push was made
-# another test
-# last test is OK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-# ToDo
-# update mapdb and influx persistence for items  > ok 
-#   - tray restart opanhab service and check data > ok
-#   - try power off > ok
-# update pipe rest time url for mqtt message     > ok
-# create account on openhab org                  > ok
-# make mobile app active for testing             > ok
-# create irrigation overview widget              > 
-# publish mqttt rule error
-
-
-
-
-
-
--1
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openHab501.sh && sudo chmod 755 openHab501.sh && sudo ./openHab501.sh
