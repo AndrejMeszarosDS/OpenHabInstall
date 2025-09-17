@@ -10,13 +10,17 @@
 
     - make script 
       - one click backup of openhab impoertant files
-        - icons
-        - items
-        - persistence
-        - rules
-        - 
-
-
+        - conf
+          - icons
+          - items
+          - persistence
+          - rules
+          - things
+        - userdata
+          - json - ui
+          - persistence - mapdb
+        - influx  - ???
+  
       - make commit and push ....
 
  

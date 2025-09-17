@@ -224,4 +224,4 @@ printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/s
 sudo systemctl restart openhab.service
 
 
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openHab501.sh && sudo chmod 755 openHab501.sh && sudo ./openHab501.sh
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openHab501.sh && sudo chmod 755 openHab501.sh && sudo ./openHab501.sh
