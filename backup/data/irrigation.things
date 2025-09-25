@@ -2,7 +2,9 @@ Bridge mqtt:broker:main  [ host="orangepizero3",secure=false, username="orangepi
 {
   Thing topic irrigantion "Irrigantion" {
     Channels:
-        Type string : config    "Program to send"[ commandTopic = "irrigation/set/config"]
-        Type switch : presence  "Iriigation module presence [%s]"     [ stateTopic = "irrigation/get/ping"]
+        Type switch : online  "Online [%s]"                                           [ stateTopic = "irrigation/get/ping"]
+        Type switch : starting  "Iriigation module started  [%s]"                      [ stateTopic = "irrigation/get/starting"]
+        Type string : pipe   "Actual irrigation pipe [%s]"                            [ stateTopic = "irrigation/get/rest_times",  transformationPattern = "JSONPATH:$.pipe"]
+        Type number : time    "Actual irrigation time  [%s min]"                      [ stateTopic = "irrigation/get/rest_times",  transformationPattern = "JSONPATH:$.time"]
   }
 }

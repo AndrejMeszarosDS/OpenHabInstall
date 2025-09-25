@@ -1,82 +1,118 @@
+String         ir_mm_icon                               "[%.0f]"           (gIrrigationMapDBPersist)
+String         ir_mm_stateText                          "[%.0f]"           (gIrrigationMapDBPersist)
+String         ir_mm_infoText                           "[%.0f]"           (gIrrigationMapDBPersist)
+Switch         ir_mm_expanded
+String         ir_mm_alt_icon                           "[%.0f]"
+String         ir_mm_alt_icon_text                      "[%.0f]"
+String         ir_mm_alt_icon_text_color                "[%.0f]"
+String         ir_mm_alt_right_text                     "[%.0f]"
+String         ir_mm_alt_right_value                    "[%.0f]"
+String         ir_mm_alt_right_text_color               "[%.0f]"
+String         ir_mm_alt_right_value_color              "[%.0f]"
+String         ir_mm_expand_select                      "[%.0f]"
+Switch         ir_mm_online                             "[%s]"             (gIrrigationMapDBPersist)                           {channel="mqtt:topic:main:irrigantion:online", expire="10s,command=OFF"}
 
-Number         irr_config_operation_mode                                   (gIrrigationNumberItems)
-Switch         irr_config_operation_mode_edit_open                         (gIrrigationSwitchItems)
+// -----------------------------------------------------------------------------------------------------------------------------------
 
-Number         irr_config_selected_program                                 (gIrrigationNumberItems)
-Switch         irr_config_selected_program_edit_open                       (gIrrigationSwitchItems)
+Group          gIrProgramStartItem
+Group          gIrProgramDayItem
+Group          gIrProgramDurationItem
+Group          gIrrigationMapDBPersist
+Group          gIrrigationNumberItems
+Group          gIrrigationSwitchItems
+Group          gIrrigationInfluxPersist
 
-Switch         irr_config_program_edit                                     (gIrrigationSwitchItems)
+// -----------------------------------------------------------------------------------------------------------------------------------
 
-Number:Time    irr_program_0_start                      "[%1$tk:%1$tM]"    (gIrrigationNumberItems,gIrrigationInfluxPersist)
-Switch         irr_program_0_day_0                                         (gIrrigationSwitchItems)
-Switch         irr_program_0_day_1                                         (gIrrigationSwitchItems)
-Switch         irr_program_0_day_2                                         (gIrrigationSwitchItems)
-Switch         irr_program_0_day_3                                         (gIrrigationSwitchItems)
-Switch         irr_program_0_day_4                                         (gIrrigationSwitchItems)
-Switch         irr_program_0_day_5                                         (gIrrigationSwitchItems)
-Switch         irr_program_0_day_6                                         (gIrrigationSwitchItems)
-Number         irr_program_0_pipe_0_duration            "[%s min]"         (gIrrigationNumberItems)
-Number         irr_program_0_pipe_1_duration            "[%s min]"         (gIrrigationNumberItems)
-Number         irr_program_0_pipe_2_duration            "[%s min]"         (gIrrigationNumberItems)
-Number         irr_program_0_pipe_3_duration            "[%s min]"         (gIrrigationNumberItems)
+Number:Time    irr_program_start                        "[%1$tk:%1$tM]"    (gIrProgramStartItem,gIrrigationMapDBPersist)
+Switch         irr_program_day_0                                           (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_day_1                                           (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_day_2                                           (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_day_3                                           (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_day_4                                           (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_day_5                                           (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_day_6                                           (gIrProgramDayItem,gIrrigationMapDBPersist)
+Number         irr_program_pipe_0_duration              "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_pipe_1_duration              "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_pipe_2_duration              "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_pipe_3_duration              "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
 
-Number:Time    irr_program_1_start                      "[%1$tk:%1$tM]"    (gIrrigationNumberItems)
-Switch         irr_program_1_day_0                                         (gIrrigationSwitchItems)
-Switch         irr_program_1_day_1                                         (gIrrigationSwitchItems)
-Switch         irr_program_1_day_2                                         (gIrrigationSwitchItems)
-Switch         irr_program_1_day_3                                         (gIrrigationSwitchItems)
-Switch         irr_program_1_day_4                                         (gIrrigationSwitchItems)
-Switch         irr_program_1_day_5                                         (gIrrigationSwitchItems)
-Switch         irr_program_1_day_6                                         (gIrrigationSwitchItems)
-Number         irr_program_1_pipe_0_duration            "[%s min]"         (gIrrigationNumberItems)
-Number         irr_program_1_pipe_1_duration            "[%s min]"         (gIrrigationNumberItems)
-Number         irr_program_1_pipe_2_duration            "[%s min]"         (gIrrigationNumberItems)
-Number         irr_program_1_pipe_3_duration            "[%s min]"         (gIrrigationNumberItems)
+Number:Time    irr_program_0_start                      "[%1$tk:%1$tM]"    (gIrProgramStartItem,gIrrigationMapDBPersist)
+Switch         irr_program_0_day_0                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_0_day_1                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_0_day_2                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_0_day_3                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_0_day_4                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_0_day_5                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_0_day_6                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Number         irr_program_0_pipe_0_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_0_pipe_1_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_0_pipe_2_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_0_pipe_3_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
 
-Number:Time    irr_program_2_start                      "[%1$tk:%1$tM]"    (gIrrigationNumberItems)
-Switch         irr_program_2_day_0                                         (gIrrigationSwitchItems)
-Switch         irr_program_2_day_1                                         (gIrrigationSwitchItems)
-Switch         irr_program_2_day_2                                         (gIrrigationSwitchItems)
-Switch         irr_program_2_day_3                                         (gIrrigationSwitchItems)
-Switch         irr_program_2_day_4                                         (gIrrigationSwitchItems)
-Switch         irr_program_2_day_5                                         (gIrrigationSwitchItems)
-Switch         irr_program_2_day_6                                         (gIrrigationSwitchItems)
-Number         irr_program_2_pipe_0_duration            "[%s min]"         (gIrrigationNumberItems)
-Number         irr_program_2_pipe_1_duration            "[%s min]"         (gIrrigationNumberItems)
-Number         irr_program_2_pipe_2_duration            "[%s min]"         (gIrrigationNumberItems)
-Number         irr_program_2_pipe_3_duration            "[%s min]"         (gIrrigationNumberItems)
+Number:Time    irr_program_1_start                      "[%1$tk:%1$tM]"    (gIrProgramStartItem,gIrrigationMapDBPersist)
+Switch         irr_program_1_day_0                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_1_day_1                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_1_day_2                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_1_day_3                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_1_day_4                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_1_day_5                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_1_day_6                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Number         irr_program_1_pipe_0_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_1_pipe_1_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_1_pipe_2_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_1_pipe_3_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
 
-Switch         irr_manual_mode_started                                     (gIrrigationSwitchItems)
+Number:Time    irr_program_2_start                      "[%1$tk:%1$tM]"    (gIrProgramStartItem,gIrrigationMapDBPersist)
+Switch         irr_program_2_day_0                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_2_day_1                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_2_day_2                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_2_day_3                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_2_day_4                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_2_day_5                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_program_2_day_6                                         (gIrProgramDayItem,gIrrigationMapDBPersist)
+Number         irr_program_2_pipe_0_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_2_pipe_1_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_2_pipe_2_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
+Number         irr_program_2_pipe_3_duration            "[%s min]"         (gIrProgramDurationItem,gIrrigationMapDBPersist)
 
-Number         irr_manual_mode_pipe_0_duration          "[%s min]"         (gIrrigationNumberItems)
-Number         irr_manual_mode_pipe_1_duration          "[%s min]"         (gIrrigationNumberItems)
-Number         irr_manual_mode_pipe_2_duration          "[%s min]"         (gIrrigationNumberItems)
-Number         irr_manual_mode_pipe_3_duration          "[%s min]"         (gIrrigationNumberItems)
 
-Switch         irr_pipe_0_duration_edit_open                               (gIrrigationSwitchItems)
-Switch         irr_pipe_1_duration_edit_open                               (gIrrigationSwitchItems)
-Switch         irr_pipe_2_duration_edit_open                               (gIrrigationSwitchItems)
-Switch         irr_pipe_3_duration_edit_open                               (gIrrigationSwitchItems)
+Switch         irr_pipe_0_duration_edit_open                               (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_pipe_1_duration_edit_open                               (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_pipe_2_duration_edit_open                               (gIrProgramDayItem,gIrrigationMapDBPersist)
+Switch         irr_pipe_3_duration_edit_open                               (gIrProgramDayItem,gIrrigationMapDBPersist)
 
-Number         irr_pipe_0_rest_time                                        (gIrrigationNumberItems)
-Number         irr_pipe_1_rest_time                                        (gIrrigationNumberItems)
-Number         irr_pipe_2_rest_time                                        (gIrrigationNumberItems)
-Number         irr_pipe_3_rest_time                                        (gIrrigationNumberItems)
+String         irr_actual_irrigation_pipe               "[%.0f"                                                                {channel="mqtt:topic:main:irrigantion:pipe"}
+Number         irr_actual_irrigation_time               "[%s min]"                                                             {channel="mqtt:topic:main:irrigantion:time"}
 
-Switch         irr_program_start_edit_open                                 (gIrrigationSwitchItems)
+// -----------------------------------------------------------------------------------------------------------------------------------
+
+
+String         irr_new_operation_mode                   "[%.0f"
+String         irr_new_manual_mode                      "[%.0f"
+Number         irr_new_program_mode                     "[%.0f"            (gIrrigationNumberItems,gIrrigationMapDBPersist)
+Number         irr_new_program_config_mode              "[%.0f"
+
+Switch         irr_new_manual_mode_show                 "[%.0f"
+Switch         irr_new_operation_mode_show              "[%.0f"
+Switch         irr_new_program_mode_show                "[%.0f"
+Switch         irr_new_config_mode_show                 "[%.0f"
+ 
+Number         irr_config_selected_program                                 (gIrrigationNumberItems,gIrrigationMapDBPersist)
+Switch         irr_config_selected_program_edit_open                       (gIrrigationSwitchItems,gIrrigationMapDBPersist)
+
+Switch         irr_program_start_edit_open                                 (gIrrigationSwitchItems,gIrrigationMapDBPersist)
 Number         irr_program_start_time_helper_hour       "%s"               (gIrrigationNumberItems)
 Number         irr_program_start_time_helper_min        "%s"               (gIrrigationNumberItems)
 
-Number         TimePicker                               "Time Picker"      (gIrrigationNumberItems)                             {ga="Switch" [DiscreteOnly=true]}
+Number         TimePicker                               "Time Picker"      (gIrrigationNumberItems)                            {ga="Switch" [DiscreteOnly=true]}
 
 Switch         IrrigationNumberInitialise
 
-String         irr_config                               "[%.0f]"                                                                {channel="mqtt:topic:main:irrigantion:config"}
-
-Switch         irr_presence                             "[%.0f %%]"                                                             {channel="mqtt:topic:main:irrigantion:presence", expire="35s,command=OFF"}
-
-Group          gIrrigationNumberItems
-Group          gIrrigationSwitchItems
+Switch         irr_save_config                          "[%.0f %%]"        (gIrrigationSwitchItems)
+Switch         irr_send_config                          "[%.0f %%]"
+Switch         irr_module_starting                      "[%.0f %%]"                                                            {channel="mqtt:topic:main:irrigantion:starting", expire="1s,command=OFF"}
 
 
-Group          gIrrigationInfluxPersist
+
+

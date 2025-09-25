@@ -1,0 +1,246 @@
+String    ht_mm_icon                     "[%.0f]"       (gHeatingMapDB)
+String    ht_mm_stateText                "[%.0f]"       (gHeatingMapDB)
+String    ht_mm_infoText                 "[%.0f]"       (gHeatingMapDB)
+Switch    ht_mm_toexpand
+Switch    ht_mm_expanded
+String    ht_mm_alt_icon                 "[%.0f]"
+String    ht_mm_alt_icon_text            "[%.0f]"
+String    ht_mm_alt_icon_text_color      "[%.0f]"
+String    ht_mm_alt_right_text           "[%.0f]"
+String    ht_mm_alt_right_value          "[%.0f]"
+String    ht_mm_alt_right_text_color     "[%.0f]"
+String    ht_mm_alt_right_value_color    "[%.0f]"
+String    ht_mm_expand_select            "[%.0f]"
+Switch    ht_mm_online                                                         {channel="mqtt:topic:main:termostats:online", expire="10s,command=OFF"}
+
+Switch    ht_mm_termostats_show          "[%.0f"
+Switch    ht_mm_false_show               "[%.0f"
+
+Switch    ht_module_starting             "[%s]"                                {channel="mqtt:topic:main:termostats:started", expire="1s,command=OFF"}
+
+String    ht_01_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_01_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_temp"}
+Number    ht_01_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_hum"}
+Number    ht_01_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_batt"}
+Switch    ht_01_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_online", expire="35m,command=OFF"}
+Switch    ht_01_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_01_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_level"}
+Switch    ht_01_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_01_heat_level_set           "[%.0f %%]"
+Switch    ht_01_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+
+String    ht_02_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_02_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_02_temp"}
+Number    ht_02_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_02_hum"}
+Number    ht_02_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_02_batt"}
+Switch    ht_02_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_02_online", expire="35m,command=OFF"}
+Switch    ht_02_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_02_state"}
+Number    ht_02_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_02_level"}
+Switch    ht_02_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_02_heat_level_set           "[%.0f %%]"
+Switch    ht_02_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_03_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_03_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_03_temp"}
+Number    ht_03_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_03_hum"}
+Number    ht_03_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_03_batt"}
+Switch    ht_03_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_03_online", expire="35m,command=OFF"}
+Switch    ht_03_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_03_state"}
+Number    ht_03_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_03_level"}
+Switch    ht_03_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_03_heat_level_set           "[%.0f %%]"
+Switch    ht_03_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_04_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_04_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_04_temp"}
+Number    ht_04_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_04_hum"}
+Number    ht_04_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_04_batt"}
+Switch    ht_04_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_04_online", expire="35m,command=OFF"}
+Switch    ht_04_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_04_state"}
+Number    ht_04_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_04_level"}
+Switch    ht_04_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_04_heat_level_set           "[%.0f %%]"
+Switch    ht_04_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_05_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_05_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_05_temp"}
+Number    ht_05_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_05_hum"}
+Number    ht_05_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_05_batt"}
+Switch    ht_05_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_05_online", expire="35m,command=OFF"}
+Switch    ht_05_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_05_state"}
+Number    ht_05_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_05_level"}
+Switch    ht_05_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_05_heat_level_set           "[%.0f %%]"
+Switch    ht_05_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_06_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_06_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_06_temp"}
+Number    ht_06_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_06_hum"}
+Number    ht_06_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_06_batt"}
+Switch    ht_06_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_06_online", expire="35m,command=OFF"}
+Switch    ht_06_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_06_state"}
+Number    ht_06_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_06_level"}
+Switch    ht_06_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_06_heat_level_set           "[%.0f %%]"
+Switch    ht_06_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_07_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_07_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_07_temp"}
+Number    ht_07_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_07_hum"}
+Number    ht_07_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_07_batt"}
+Switch    ht_07_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_07_online", expire="35m,command=OFF"}
+Switch    ht_07_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_07_state"}
+Number    ht_07_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_07_level"}
+Switch    ht_07_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_07_heat_level_set           "[%.0f %%]"
+Switch    ht_07_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_08_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_08_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_08_temp"}
+Number    ht_08_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_08_hum"}
+Number    ht_08_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_08_batt"}
+Switch    ht_08_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_08_online", expire="35m,command=OFF"}
+Switch    ht_08_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_08_state"}
+Number    ht_08_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_08_level"}
+Switch    ht_08_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_08_heat_level_set           "[%.0f %%]"
+Switch    ht_08_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_09_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_09_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_09_temp"}
+Number    ht_09_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_09_hum"}
+Number    ht_09_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_09_batt"}
+Switch    ht_09_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_09_online", expire="35m,command=OFF"}
+Switch    ht_09_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_09_state"}
+Number    ht_09_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_09_level"}
+Switch    ht_09_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_09_heat_level_set           "[%.0f %%]"
+Switch    ht_09_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_10_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_10_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_10_temp"}
+Number    ht_10_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_10_hum"}
+Number    ht_10_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_10_batt"}
+Switch    ht_10_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_10_online", expire="35m,command=OFF"}
+Switch    ht_10_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_10_state"}
+Number    ht_10_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_10_level"}
+Switch    ht_10_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_10_heat_level_set           "[%.0f %%]"
+Switch    ht_10_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_11_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_11_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_11_temp"}
+Number    ht_11_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_11_hum"}
+Number    ht_11_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_11_batt"}
+Switch    ht_11_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_11_online", expire="35m,command=OFF"}
+Switch    ht_11_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_11_state"}
+Number    ht_11_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_11_level"}
+Switch    ht_11_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_11_heat_level_set           "[%.0f %%]"
+Switch    ht_11_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_12_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_12_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_12_temp"}
+Number    ht_12_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_12_hum"}
+Number    ht_12_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_12_batt"}
+Switch    ht_12_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_12_online", expire="35m,command=OFF"}
+Switch    ht_12_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_12_state"}
+Number    ht_12_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_12_level"}
+Switch    ht_12_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_12_heat_level_set           "[%.0f %%]"
+Switch    ht_12_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_13_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_13_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_13_temp"}
+Number    ht_13_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_13_hum"}
+Number    ht_13_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_13_batt"}
+Switch    ht_13_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_13_online", expire="35m,command=OFF"}
+Switch    ht_13_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_13_state"}
+Number    ht_13_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_13_level"}
+Switch    ht_13_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_13_heat_level_set           "[%.0f %%]"
+Switch    ht_13_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_14_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_14_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_14_temp"}
+Number    ht_14_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_14_hum"}
+Number    ht_14_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_14_batt"}
+Switch    ht_14_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_14_online", expire="35m,command=OFF"}
+Switch    ht_14_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_14_state"}
+Number    ht_14_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_14_level"}
+Switch    ht_14_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_14_heat_level_set           "[%.0f %%]"
+Switch    ht_14_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_15_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_15_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_15_temp"}
+Number    ht_15_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_15_hum"}
+Number    ht_15_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_15_batt"}
+Switch    ht_15_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_15_online", expire="35m,command=OFF"}
+Switch    ht_15_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_15_state"}
+Number    ht_15_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_15_level"}
+Switch    ht_15_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_15_heat_level_set           "[%.0f %%]"
+Switch    ht_15_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_16_name                     "[%s]"         (gHeatingMapDB)
+Number    ht_16_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_16_temp"}
+Number    ht_16_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_16_hum"}
+Number    ht_16_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_16_batt"}
+Switch    ht_16_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_16_online", expire="35m,command=OFF"}
+Switch    ht_16_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_16_state"}
+Number    ht_16_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_16_level"}
+Switch    ht_16_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+Number    ht_16_heat_level_set           "[%.0f %%]"
+Switch    ht_16_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+// String    ht_17_name                     "[%s]"         (gHeatingMapDB)
+// Number    ht_17_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_17_temp"}
+// Number    ht_17_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_17_hum"}
+// Number    ht_17_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_17_batt"}
+// Switch    ht_17_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_17_online", expire="35m,command=OFF"}
+// Switch    ht_17_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_17_state"}
+// Number    ht_17_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_17_level"}
+// Switch    ht_17_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+// Number    ht_17_heat_level_set           "[%.0f %%]"
+// Switch    ht_17_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+// String    ht_18_name                     "[%s]"         (gHeatingMapDB)
+// Number    ht_18_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_18_temp"}
+// Number    ht_18_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_18_hum"}
+// Number    ht_18_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_18_batt"}
+// Switch    ht_18_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_18_online", expire="35m,command=OFF"}
+// Switch    ht_18_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_18_state"}
+// Number    ht_18_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_18_level"}
+// Switch    ht_18_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+// Number    ht_18_heat_level_set           "[%.0f %%]"
+// Switch    ht_18_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+// String    ht_19_name                     "[%s]"         (gHeatingMapDB)
+// Number    ht_19_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_19_temp"}
+// Number    ht_19_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_19_hum"}
+// Number    ht_19_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_19_batt"}
+// Switch    ht_19_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_19_online", expire="35m,command=OFF"}
+// Switch    ht_19_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_19_state"}
+// Number    ht_19_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_19_level"}
+// Switch    ht_19_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+// Number    ht_19_heat_level_set           "[%.0f %%]"
+// Switch    ht_19_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+// String    ht_20_name                     "[%s]"         (gHeatingMapDB)
+// Number    ht_20_temp                     "[%.1f °C]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_20_temp"}
+// Number    ht_20_hum                      "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_20_hum"}
+// Number    ht_20_batt                     "[%.1f V]"     (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_20_batt"}
+// Switch    ht_20_online                   "[%.0f]"       (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_20_online", expire="35m,command=OFF"}
+// Switch    ht_20_heat_state_get           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_20_state"}
+// Number    ht_20_heat_level_get           "[%.0f %%]"    (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_20_level"}
+// Switch    ht_20_heat_state_set           "[%s]"         (gHeatingInflux)       {channel="mqtt:topic:main:termostats:ht_01_state"}
+// Number    ht_20_heat_level_set           "[%.0f %%]"
+// Switch    ht_20_heat_level_send          "[%s]"         (gHeatingSendLevel)    {expire="1s,command=OFF"}
+
+String    ht_expanded_item               "[%.0f]"
+
+Group     gHeatingInflux
+Group     gHeatingMapDB
+Group     gHeatingSendLevel

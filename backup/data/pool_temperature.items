@@ -1,0 +1,26 @@
+String    pt_mm_icon                     "[%.0f]"
+Switch    pt_mm_online                                                              {channel="mqtt:topic:main:poolTemperature:state", expire="35m,command=OFF"}
+String    pt_mm_stateText                "[%.0f]"
+String    pt_mm_infoText                 "[%.0f]"
+Switch    pt_mm_toexpand
+Switch    pt_mm_expanded
+String    pt_mm_alt_icon                 "[%.0f]"
+String    pt_mm_alt_icon_text            "[%.0f]"
+String    pt_mm_alt_icon_text_color      "[%.0f]"
+String    pt_mm_alt_right_text           "[%.0f]"
+String    pt_mm_alt_right_value          "[%.0f]"
+String    pt_mm_alt_right_text_color     "[%.0f]"
+String    pt_mm_alt_right_value_color    "[%.0f]"
+
+Number    pt_temperature                 "[%.1f °C]"    (gPoolTemperatureInflux)    {channel="mqtt:topic:main:poolTemperature:temperature"}
+Number    pt_battery                     "[%.1f V]"     (gPoolTemperatureInflux)    {channel="mqtt:topic:main:poolTemperature:battery"}
+Switch    pt_water_in                                                               {channel="mqtt:topic:main:poolTemperature:water"}
+
+String    pt_received_command            "[%.0f]"                                   {channel="mqtt:topic:main:poolTemperature:rx"}
+
+Group     gPoolTemperatureInflux
+
+Switch    pt_showButtonData1
+Switch    pt_showButtonData2
+Switch    pt_showButtonData3
+Switch    pt_showButtonData4

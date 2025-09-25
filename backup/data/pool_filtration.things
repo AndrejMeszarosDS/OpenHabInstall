@@ -1,0 +1,13 @@
+Bridge mqtt:broker:main  [ host="orangepizero3",secure=false, username="orangepi", password="mqttpass" ]
+{
+  Thing topic poolFiltration  "PoolFiltration" {
+    Channels:
+        Type switch : started  "Online [%s]"                          [ stateTopic = "poolFiltration/get/started"]
+        Type switch : online  "Online [%s]"                           [ stateTopic = "poolFiltration/get/ping"]
+        Type switch : send_time  "Send time [%s]"                     [ stateTopic = "poolFiltration/get/dateTime"]
+        Type switch : send_config  "Send config [%s]"                 [ stateTopic = "poolFiltration/get/config"]
+        Type switch : state  "Filtration state [%s]"                  [ stateTopic = "poolFiltration/get/state"]
+        Type switch : senzor_low  "Senzor low [%s]"                   [ stateTopic = "poolFiltration/get/senzor_low"]
+        Type switch : senzor_high  "Senzor high [%s]"                 [ stateTopic = "poolFiltration/get/senzor_high"]
+  }
+}    

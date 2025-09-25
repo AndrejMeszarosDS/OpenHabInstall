@@ -5,6 +5,10 @@ Strategies {
 
 Items {
     gIrrigationInfluxPersist* : strategy = everyChange, everyMinute
+    gPoolFiltrationInflux* : strategy = everyChange, everyMinute
+    gPoolTemperatureInflux* : strategy = everyChange, everyMinute
+    gHeatingInflux* : strategy = everyChange, everyMinute
+    gOpenerInfluxPersist* : strategy = everyChange, everyMinute
 }
 
 

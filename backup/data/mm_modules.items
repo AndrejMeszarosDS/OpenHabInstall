@@ -1,0 +1,25 @@
+
+
+
+
+
+
+String    pl_mm_icon                     "[%.0f]"
+Switch    pl_mm_online
+String    pl_mm_stateText                "[%.0f]"
+String    pl_mm_infoText                 "[%.0f]"
+Switch    pl_mm_toexpand
+Switch    pl_mm_expanded
+String    pl_mm_alt_icon                 "[%.0f]"
+String    pl_mm_alt_icon_text            "[%.0f]"
+String    pl_mm_alt_icon_text_color      "[%.0f]"
+String    pl_mm_alt_right_text           "[%.0f]"
+String    pl_mm_alt_right_value          "[%.0f]"
+String    pl_mm_alt_right_text_color     "[%.0f]"
+String    pl_mm_alt_right_value_color    "[%.0f]"
+
+
+
+String    mm_expanded_item               "[%.0f]"
+
+Switch    mm_showButtonData              "[%.0f]"

@@ -1,0 +1,97 @@
+rule "Update temperature when changed"
+when
+    Item pt_temperature changed
+then
+    var Number temperatureValue = pt_temperature.state as Number
+    var String temperatureColor = ""
+
+    // Determine color based on temperature value
+    if (temperatureValue <= 28.0) {
+        temperatureColor = "rgb(0 153 255)" // blue
+    } else if (temperatureValue <= 30.0) {
+        temperatureColor = "rgb(118 236 74)" // green
+    } else {
+        temperatureColor = "rgb(255 66 66)" // red
+    }
+
+    pt_mm_alt_right_text.postUpdate("Temperature")
+    pt_mm_alt_right_text_color.postUpdate("rgb(118 236 74)")
+    pt_mm_alt_right_value.postUpdate(temperatureValue.toString + "°C")
+    pt_mm_alt_right_value_color.postUpdate(temperatureColor)
+end
+//--------------------------------------------------------------------------------------------
+rule "Update battery level when changed"
+when
+    Item pt_battery changed
+then
+    var Number batteryLevelValue = pt_battery.state as Number
+    var String batteryLevelString = ""
+    var String batteryIcon = ""
+    var String batteryColor = "rgb(118 236 74)" // Keep green unless you want to change for low levels
+
+    if (batteryLevelValue <= 3.30) {
+        batteryLevelString = "0%"
+        batteryIcon = "battery_0"
+    } else if (batteryLevelValue <= 3.50) {
+        batteryLevelString = "10%"
+        batteryIcon = "battery_1"
+    } else if (batteryLevelValue <= 3.70) {
+        batteryLevelString = "25%"
+        batteryIcon = "battery_2"
+    } else if (batteryLevelValue <= 3.85) {
+        batteryLevelString = "50%"
+        batteryIcon = "battery_3"
+    } else if (batteryLevelValue <= 4.00) {
+        batteryLevelString = "75%"
+        batteryIcon = "battery_4"
+    } else {
+        batteryLevelString = "100%"
+        batteryIcon = "battery_5"
+    }
+
+    pt_mm_alt_icon.postUpdate(batteryIcon)
+    pt_mm_alt_icon_text.postUpdate(batteryLevelString)
+    pt_mm_alt_icon_text_color.postUpdate(batteryColor)
+end
+//--------------------------------------------------------------------------------------------
+rule "Update last recived data timestamp"
+when
+    Item pt_battery received update
+then
+    val now = now.plusHours(2)
+    val String formattedDateTime = now.getYear().toString() + '.' + now.getMonthValue().toString() + '.' + now.getDayOfMonth().toString() + ' ' + now.getHour().toString() + ':' + now.getMinute().toString()
+    pt_mm_stateText.postUpdate(formattedDateTime)
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle online send notification"
+when
+    Item pt_mm_online changed to ON
+then
+    sendNotification("andrej.meszaros72s@gmail.com", "Pool temperature module online.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle offline send notification"
+when
+    Item pt_mm_online changed to OFF
+then
+    sendNotification("andrej.meszaros72s@gmail.com", "Pool temperature module offline.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle water in state"
+when
+    Item pt_water_in changed to ON
+then
+    pt_mm_icon.postUpdate('mm_pool_water_temperature_water')
+    sendNotification("andrej.meszaros72s@gmail.com", "Pool temperature module water in !!!")
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle water in state"
+when
+    Item pt_water_in changed to OFF
+then
+    pt_mm_icon.postUpdate('mm_pool_water_temperature')
+    sendNotification("andrej.meszaros72s@gmail.com", "Pool temperature module no water.")
+end
+
+
+

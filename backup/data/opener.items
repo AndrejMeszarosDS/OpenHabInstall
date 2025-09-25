@@ -1,0 +1,34 @@
+String    op_mm_icon                     "[%.0f]"    (gOpenerMapDBPersist)
+Switch    op_mm_online                   "[%s]"      (gOpenerMapDBPersist)    {channel="mqtt:topic:main:opener:presence", expire="35s,command=OFF"}
+String    op_mm_stateText                "[%.0f]"    (gOpenerMapDBPersist)
+String    op_mm_infoText                 "[%.0f]"    (gOpenerMapDBPersist)
+Switch    op_mm_expanded                 "[%s]"      (gOpenerMapDBPersist)
+String    op_mm_alt_icon                 "[%.0f]"
+String    op_mm_alt_icon_text            "[%.0f]"
+String    op_mm_alt_icon_text_color      "[%.0f]"
+String    op_mm_alt_right_text           "[%.0f]"
+String    op_mm_alt_right_value          "[%.0f]"
+String    op_mm_alt_right_text_color     "[%.0f]"
+String    op_mm_alt_right_value_color    "[%.0f]"
+String    op_mm_expand_select            "[%.0f]"
+
+// -----------------------------------------------------------------------------------------------------------------------------------
+
+Group     gOpenerMapDBPersist
+Group     gOpenerInfluxPersist
+
+// -----------------------------------------------------------------------------------------------------------------------------------
+
+Switch    opener_expand_card
+
+Switch    op_ask_state                   "[%s]"                               {channel="mqtt:topic:main:opener:state", expire="1s,command=OFF"}
+Switch    op_garage_closed               "[%s]"                               {channel="mqtt:topic:main:opener:garageclosed"}
+Switch    op_gate_closed                 "[%s]"                               {channel="mqtt:topic:main:opener:gateclosed"}
+Switch    op_garage_open_close           "[%s]"                               {channel="mqtt:topic:main:opener:garageopenclose"}
+Switch    op_gate_open_close             "[%s]"                               {channel="mqtt:topic:main:opener:gateopenclose"}
+ 
+Switch    op_showButtonData1                         (gOpenerMapDBPersist)
+Switch    op_showButtonData2                         (gOpenerMapDBPersist)
+Switch    op_showButtonData3                         (gOpenerMapDBPersist)
+Switch    op_showButtonData4                         (gOpenerMapDBPersist)
+

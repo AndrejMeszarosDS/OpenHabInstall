@@ -1,0 +1,29 @@
+rule "Set expanded rows shoeing setup for each module"
+when
+    Item mm_expanded_item changed
+then
+    var selected_item = mm_expanded_item.state.toString()
+    if (selected_item == "Opener"){
+        op_showButtonData1.postUpdate(ON)
+        op_showButtonData2.postUpdate(OFF)
+        op_showButtonData3.postUpdate(OFF)
+        op_showButtonData4.postUpdate(OFF)
+    }
+     if (selected_item == "Pool filtration"){
+         pf_showButtonData1.postUpdate(ON)
+    //     pf_showButtonData2.postUpdate(ON)
+    //     pf_showButtonData3.postUpdate(OFF)
+    //     pf_showButtonData4.postUpdate(OFF)
+    }
+    if (selected_item == "Pool filtration"){
+        pt_showButtonData1.postUpdate(ON)
+        pt_showButtonData2.postUpdate(ON)
+        pt_showButtonData3.postUpdate(OFF)
+        pt_showButtonData4.postUpdate(OFF)
+    }
+    if (selected_item == "Heating"){
+        ht_mm_termostats_show.postUpdate(ON)
+        ht_mm_false_show.postUpdate(OFF)
+    }
+
+end

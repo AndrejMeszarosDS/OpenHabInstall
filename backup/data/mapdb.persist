@@ -1,0 +1,9 @@
+Strategies {
+  default = everyChange
+}
+Items {
+  gPoolFiltrationMapDB* : strategy = everyChange, restoreOnStartup
+  gHeatingMapDB* : strategy = everyChange, restoreOnStartup
+  gIrrigationMapDBPersist* : strategy = everyChange, restoreOnStartup
+  gOpenerMapDBPersist* : strategy = everyChange, restoreOnStartup
+}

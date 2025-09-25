@@ -1,0 +1,200 @@
+//--------------------------------------------------------------------------------------------
+rule "Start time change conversion helper - for update"
+when
+    Item pf_config_start_time_helper_hour received command or Item pf_config_start_time_helper_minute received command
+then
+    var Number tmpHour = (pf_config_start_time_helper_hour.state) as Number * 3600
+    var Number tmpMin =  (pf_config_start_time_helper_minute.state) as Number * 60
+    pf_config_start_time_value.postUpdate(tmpHour + tmpMin)
+end
+//--------------------------------------------------------------------------------------------
+rule "Duration change conversion helper - for update"
+when
+    Item pf_config_duration_helper_hour received command
+then
+    var Number tmpHour = (pf_config_duration_helper_hour.state) as Number * 3600
+    pf_config_duration_value.postUpdate(tmpHour)
+end
+//--------------------------------------------------------------------------------------------
+rule "Reset start time and duratiob helper to setted value"
+when
+    Item mm_expanded_item received command
+then
+    var Number totalSeconds = (pf_start_time.state as Number)
+    var Number hours = (totalSeconds / 3600).intValue
+    var Number minutes = ((totalSeconds  - (hours * 3600)) / 60).intValue
+    pf_config_start_time_helper_hour.postUpdate(hours)
+    pf_config_start_time_helper_minute.postUpdate(minutes)
+    pf_config_start_time_value.postUpdate(totalSeconds)
+
+    totalSeconds = (pf_duration.state as Number)
+    hours = (totalSeconds / 3600).intValue
+    pf_config_duration_helper_hour.postUpdate(hours)
+    pf_config_duration_value.postUpdate(totalSeconds)
+end
+//--------------------------------------------------------------------------------------------
+rule "Save config"
+when
+    Item pf_save_config received command
+then
+    var Number totalSeconds = (pf_config_start_time_value.state as Number)
+    pf_start_time.postUpdate(totalSeconds)
+    totalSeconds = (pf_config_duration_value.state as Number)
+    pf_duration.postUpdate(totalSeconds)
+    pf_save_config.postUpdate(OFF)
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle mode change to auto"
+when
+    Item pf_operation_mode changed to 'auto' or Item pf_save_config changed
+then
+    pf_mm_stateText.postUpdate('Auto')
+    pf_manual_started.postUpdate(OFF)
+    pf_showButtonData3.postUpdate(OFF)    // hide manual button
+    pf_showButtonData2.postUpdate(OFF)    // hide config
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle mode change to manual"
+when
+    Item pf_operation_mode changed to 'manual'
+then
+    pf_mm_stateText.postUpdate('Manual')
+    pf_showButtonData3.postUpdate(ON)     // show manual button
+    pf_showButtonData2.postUpdate(OFF)    // hide config
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle mode change to off"
+when
+    Item pf_operation_mode changed to 'off'
+then
+    pf_mm_stateText.postUpdate('Off')
+    pf_manual_started.postUpdate(OFF)
+    pf_showButtonData3.postUpdate(OFF)     // hide manual button
+    pf_showButtonData2.postUpdate(ON)      // showe config
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle icon change whe filtering is OFF"
+when
+    Item pf_state changed to OFF
+then
+    pf_mm_icon.postUpdate('mm_pool_filtering_off')
+    if (pf_operation_mode.state.toString() == 'manual'){
+        pf_mm_stateText.postUpdate('Manual :  OFF')
+    }
+    if (pf_operation_mode.state.toString() == 'auto'){
+        pf_mm_stateText.postUpdate('Auto :  OFF')
+    }
+    sendNotification("andrej.meszaros72s@gmail.com", "Pool filtration OFF.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle icon change whe filtering is ON"
+when
+    Item pf_state changed to ON
+then
+    pf_mm_icon.postUpdate('mm_pool_filtering')
+    if (pf_operation_mode.state.toString() == 'manual'){
+        pf_mm_stateText.postUpdate('Manual :  ON')
+    }
+    if (pf_operation_mode.state.toString() == 'auto'){
+        pf_mm_stateText.postUpdate('Auto :  ON')
+    }
+    sendNotification("andrej.meszaros72s@gmail.com", "Pool filtration ON.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle online send notification"
+when
+    Item pf_mm_online changed to ON
+then
+    val later = now.plusHours(2)
+    val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+    val date_string = later.format(formatter)
+    val message = 'Online from : ' + date_string
+    pf_mm_infoText.postUpdate(message)
+    pf_send_time.postUpdate(ON)
+    sendNotification("andrej.meszaros72s@gmail.com", "Pool filtration online.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Handle offline send notification"
+when
+    Item pf_mm_online changed to OFF
+then
+    val later = now.plusHours(2)
+    val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+    val date_string = later.format(formatter)
+    val message = 'Offline from : ' + date_string
+    pf_mm_infoText.postUpdate(message)
+    mm_expanded_item.postUpdate('none')
+    sendNotification("andrej.meszaros72s@gmail.com", "Pool filtration offline.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Send date time when asked"
+when
+    Item pf_send_time changed to ON
+then
+    val mqttActions = getActions("mqtt","mqtt:broker:main")
+    val now = now.plusHours(2)
+    val actual_date_time = String::format(
+         "{ \"dayOfWeek\": %d, \"year\": %d, \"month\": %d, \"day\": %d, \"hour\": %d, \"minute\": %d, \"second\": %d }",
+         now.getDayOfWeek().getValue(), now.getYear, now.getMonthValue, now.getDayOfMonth,
+         now.getHour, now.getMinute, now.getSecond
+     )
+    mqttActions.publishMQTT("poolFiltration/set/dateTime" , actual_date_time)
+end
+//--------------------------------------------------------------------------------------------
+rule "When send config to module"
+when
+    Item pf_operation_mode changed or Item pf_save_config received command or Item pf_manual_started received command or Item pf_mm_online changed to ON
+then
+    pf_send_config.postUpdate(ON)
+end
+//--------------------------------------------------------------------------------------------
+rule "Send config to module"
+when
+    Item pf_send_config changed to ON
+then
+    var mqttActions = getActions("mqtt","mqtt:broker:main")
+
+    var config_mode = pf_operation_mode.state.toString()
+
+    var Number startTimeTotalSeconds = (pf_start_time.state as Number)
+    var Number startTimeHours = (startTimeTotalSeconds / 3600).intValue
+    var Number startTimeMinutes = ((startTimeTotalSeconds  - (startTimeHours * 3600)) / 60).intValue
+    var Number durationTotalSeconds = (pf_duration.state as Number)
+    var Number durationHours = (durationTotalSeconds / 3600).intValue
+
+    var manual_started = pf_manual_started.state.toString()
+
+    // Format time to HH:mm
+    val timeFormatted = String::format("%02d:%02d", startTimeHours, startTimeMinutes)
+
+    // Create JSON string
+    val message = String::format("{\"mode\":\"%s\",\"start_time\":\"%s\",\"duration\":\"%s\",\"manual_started\":\"%s\"}"   , config_mode, timeFormatted, durationHours, manual_started)
+
+    mqttActions.publishMQTT("poolFiltration/set/config" , message)
+
+    pf_send_config.postUpdate(OFF)
+    // for testing purpose
+    //sendNotification("andrej.meszaros72s@gmail.com", "Irrigation module date time updated.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Water"
+when
+    Item pf_senzor_low changed or Item pf_senzor_high changed
+then
+    if (pf_senzor_low.state.toString() == 'OFF' && pf_senzor_high.state.toString() == 'OFF') {
+        sendNotification("andrej.meszaros72s@gmail.com", "Pool filtration no water.")
+        if (pf_state.state.toString() == 'OFF'){
+            pf_mm_icon.postUpdate('mm_pool_filtering_off')
+        }else{
+            pf_mm_icon.postUpdate('mm_pool_filtering')
+        }
+    }else{
+        if (pf_senzor_high.state.toString() == 'ON') {
+            pf_mm_icon.postUpdate('water_high')
+            sendNotification("andrej.meszaros72s@gmail.com", "Pool filtration water high.")
+        }else{
+            pf_mm_icon.postUpdate('water_low')
+            sendNotification("andrej.meszaros72s@gmail.com", "Pool filtration water low.")
+        }
+    }
+end

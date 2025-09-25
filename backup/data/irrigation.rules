@@ -1,114 +1,204 @@
-rule "Operation mode opened"
+rule "Handle operation mode change"
 when
-    Item irr_config_operation_mode_edit_open changed to ON
+    Item irr_new_operation_mode changed
 then
-    irr_config_selected_program_edit_open.postUpdate(OFF)
-    irr_program_start_edit_open.postUpdate(OFF)
-    irr_pipe_0_duration_edit_open.postUpdate(OFF)
-    irr_pipe_1_duration_edit_open.postUpdate(OFF)
-    irr_pipe_2_duration_edit_open.postUpdate(OFF)
-    irr_pipe_3_duration_edit_open.postUpdate(OFF)
+    var selected_mode = irr_new_operation_mode.state.toString()
+    if (selected_mode == "manual"){
+        irr_new_program_mode_show.postUpdate(OFF)
+        irr_new_manual_mode_show.postUpdate(ON)
+        irr_new_config_mode_show.postUpdate(OFF)
+        irr_new_manual_mode.postUpdate('off')
+        ir_mm_stateText.postUpdate('Manual: OFF')
+
+    } else if (selected_mode == "auto"){
+        irr_new_manual_mode_show.postUpdate(OFF)
+        irr_new_program_mode_show.postUpdate(ON)
+        irr_new_config_mode_show.postUpdate(OFF)
+
+        var selected_program = irr_new_program_mode.state.toString()
+        if (selected_program == "low"){
+            ir_mm_stateText.postUpdate('Auto : Low')
+        }
+        if (selected_program == "normal"){
+            ir_mm_stateText.postUpdate('Auto : Normal')
+        }
+        if (selected_program == "high"){
+            ir_mm_stateText.postUpdate('Auto : High')
+        }
+
+    } else {
+        irr_new_program_mode_show.postUpdate(OFF)
+        irr_new_manual_mode_show.postUpdate(OFF)
+        irr_new_config_mode_show.postUpdate(ON)
+        irr_new_operation_mode_show.postUpdate(ON)
+        ir_mm_stateText.postUpdate('Off')
+    }
+    irr_send_config.postUpdate(ON)
+end
+// --------------------------------------------------------------------------------------------
+rule "Handle program mode change"
+when
+    Item irr_new_program_mode received command
+then
+    var selected_program = irr_new_program_mode.state.toString()
+    if (selected_program == "0"){
+        ir_mm_stateText.postUpdate('Auto program : Low')
+    }
+    if (selected_program == "1"){
+        ir_mm_stateText.postUpdate('Auto program : Normal')
+    }
+    if (selected_program == "2"){
+        ir_mm_stateText.postUpdate('Auto program : High')
+    }
+    irr_send_config.postUpdate(ON)
+end
+// --------------------------------------------------------------------------------------------
+rule "Handle manual mode change"
+when
+    Item irr_new_manual_mode changed
+then
+    // var selected_mode = irr_new_manual_mode.state.toString()
+    // if (selected_mode == "zone_1"){
+    //     ir_mm_infoText.postUpdate('Active : zone 1')
+    // }
+    // if (selected_mode == "zone_2"){
+    //     ir_mm_infoText.postUpdate('Active : zone 2')
+    // }
+    // if (selected_mode == "zone_3"){
+    //     ir_mm_infoText.postUpdate('Active : zone 3')
+    // }
+    // if (selected_mode == "zone_4"){
+    //     ir_mm_infoText.postUpdate('Active : zone 4')
+    // }
+    // if (selected_mode == "pumpe"){
+    //     ir_mm_infoText.postUpdate('Active : pumpe')
+    // }
+    // if (selected_mode == "off"){
+    //     ir_mm_infoText.postUpdate('Active : none')
+    // }
+    irr_send_config.postUpdate(ON)
+end
+// --------------------------------------------------------------------------------------------
+rule "Initialize Irrigation Items"
+when
+    Item IrrigationNumberInitialise changed to ON
+then
+    if (gIrrigationNumberItems !== null) {
+        gIrrigationNumberItems.members.filter[ GenericItem x | x.state == NULL ].forEach[ GenericItem item |
+            item.postUpdate(0)
+        ]
+    } else {
+        logWarn("Debug", "gIrrigationNumberItems is NULL or undefined!")
+    }
+
+    if (gIrrigationSwitchItems !== null) {
+        gIrrigationSwitchItems.members.filter[ GenericItem x | x.state == NULL ].forEach[ GenericItem item |
+            item.postUpdate(OFF)
+        ]
+    } else {
+        logWarn("Debug", "gIrrigationSwitchItems is NULL or undefined!")
+    }
+end
+
+
+//--------------------------------------------------------------------------------------------
+rule "Preset values when config program changes"
+when
+    Item irr_new_program_config_mode changed or Item mm_expanded_item changed to 'open_ir_config'
+then
+    var selected_program = irr_new_program_config_mode.state.toString()
+    if (selected_program == "0"){
+        irr_program_start.postUpdate(irr_program_0_start.state)
+        irr_program_day_0.postUpdate(irr_program_0_day_0.state)
+        irr_program_day_1.postUpdate(irr_program_0_day_1.state)
+        irr_program_day_2.postUpdate(irr_program_0_day_2.state)
+        irr_program_day_3.postUpdate(irr_program_0_day_3.state)
+        irr_program_day_4.postUpdate(irr_program_0_day_4.state)
+        irr_program_day_5.postUpdate(irr_program_0_day_5.state)
+        irr_program_day_6.postUpdate(irr_program_0_day_6.state)
+        irr_program_pipe_0_duration.postUpdate(irr_program_0_pipe_0_duration.state)
+        irr_program_pipe_1_duration.postUpdate(irr_program_0_pipe_1_duration.state)
+        irr_program_pipe_2_duration.postUpdate(irr_program_0_pipe_2_duration.state)
+        irr_program_pipe_3_duration.postUpdate(irr_program_0_pipe_3_duration.state)
+    }
+    if (selected_program == "1"){
+        irr_program_start.postUpdate(irr_program_1_start.state)
+        irr_program_day_0.postUpdate(irr_program_1_day_0.state)
+        irr_program_day_1.postUpdate(irr_program_1_day_1.state)
+        irr_program_day_2.postUpdate(irr_program_1_day_2.state)
+        irr_program_day_3.postUpdate(irr_program_1_day_3.state)
+        irr_program_day_4.postUpdate(irr_program_1_day_4.state)
+        irr_program_day_5.postUpdate(irr_program_1_day_5.state)
+        irr_program_day_6.postUpdate(irr_program_1_day_6.state)
+        irr_program_pipe_0_duration.postUpdate(irr_program_1_pipe_0_duration.state)
+        irr_program_pipe_1_duration.postUpdate(irr_program_1_pipe_1_duration.state)
+        irr_program_pipe_2_duration.postUpdate(irr_program_1_pipe_2_duration.state)
+        irr_program_pipe_3_duration.postUpdate(irr_program_1_pipe_3_duration.state)
+    }
+    if (selected_program == "2"){
+        irr_program_start.postUpdate(irr_program_2_start.state)
+        irr_program_day_0.postUpdate(irr_program_2_day_0.state)
+        irr_program_day_1.postUpdate(irr_program_2_day_1.state)
+        irr_program_day_2.postUpdate(irr_program_2_day_2.state)
+        irr_program_day_3.postUpdate(irr_program_2_day_3.state)
+        irr_program_day_4.postUpdate(irr_program_2_day_4.state)
+        irr_program_day_5.postUpdate(irr_program_2_day_5.state)
+        irr_program_day_6.postUpdate(irr_program_2_day_6.state)
+        irr_program_pipe_0_duration.postUpdate(irr_program_2_pipe_0_duration.state)
+        irr_program_pipe_1_duration.postUpdate(irr_program_2_pipe_1_duration.state)
+        irr_program_pipe_2_duration.postUpdate(irr_program_2_pipe_2_duration.state)
+        irr_program_pipe_3_duration.postUpdate(irr_program_2_pipe_3_duration.state)
+    }
 end
 //--------------------------------------------------------------------------------------------
-rule "Operation mode changeg"
+rule "Save config"
 when
-    Item irr_config_operation_mode received command
+    Item irr_save_config changed to ON
 then
-    irr_config_operation_mode_edit_open.postUpdate(OFF)
-    irr_config_selected_program_edit_open.postUpdate(OFF)
-    irr_program_start_edit_open.postUpdate(OFF)
-    irr_pipe_0_duration_edit_open.postUpdate(OFF)
-    irr_pipe_1_duration_edit_open.postUpdate(OFF)
-    irr_pipe_2_duration_edit_open.postUpdate(OFF)
-    irr_pipe_3_duration_edit_open.postUpdate(OFF)
-end
-//--------------------------------------------------------------------------------------------
-rule "Program opened"
-when
-    Item irr_config_selected_program_edit_open changed to ON
-then
-    irr_config_operation_mode_edit_open.postUpdate(OFF)
-    irr_program_start_edit_open.postUpdate(OFF)
-    irr_pipe_0_duration_edit_open.postUpdate(OFF)
-    irr_pipe_1_duration_edit_open.postUpdate(OFF)
-    irr_pipe_2_duration_edit_open.postUpdate(OFF)
-    irr_pipe_3_duration_edit_open.postUpdate(OFF)
-end
-//--------------------------------------------------------------------------------------------
-rule "Program changed"
-when
-    Item irr_config_selected_program received command
-then
-    irr_config_operation_mode_edit_open.postUpdate(OFF)
-    irr_config_selected_program_edit_open.postUpdate(OFF)
-    irr_program_start_edit_open.postUpdate(OFF)
-    irr_pipe_0_duration_edit_open.postUpdate(OFF)
-    irr_pipe_1_duration_edit_open.postUpdate(OFF)
-    irr_pipe_2_duration_edit_open.postUpdate(OFF)
-    irr_pipe_3_duration_edit_open.postUpdate(OFF)
-end
-//--------------------------------------------------------------------------------------------
-rule "Start time opened"
-when
-    Item irr_program_start_edit_open changed to ON
-then
-    irr_config_operation_mode_edit_open.postUpdate(OFF)
-    irr_config_selected_program_edit_open.postUpdate(OFF)
-    irr_pipe_0_duration_edit_open.postUpdate(OFF)
-    irr_pipe_1_duration_edit_open.postUpdate(OFF)
-    irr_pipe_2_duration_edit_open.postUpdate(OFF)
-    irr_pipe_3_duration_edit_open.postUpdate(OFF)
-end
-//--------------------------------------------------------------------------------------------
-rule "Pipe 0 duration opened"
-when
-    Item irr_pipe_0_duration_edit_open changed to ON
-then
-    irr_config_operation_mode_edit_open.postUpdate(OFF)
-    irr_config_selected_program_edit_open.postUpdate(OFF)
-    irr_program_start_edit_open.postUpdate(OFF)
-    irr_pipe_1_duration_edit_open.postUpdate(OFF)
-    irr_pipe_2_duration_edit_open.postUpdate(OFF)
-    irr_pipe_3_duration_edit_open.postUpdate(OFF)
-end
-//--------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------
-rule "Pipe 1 duration opened"
-when
-    Item irr_pipe_1_duration_edit_open changed to ON
-then
-    irr_config_operation_mode_edit_open.postUpdate(OFF)
-    irr_config_selected_program_edit_open.postUpdate(OFF)
-    irr_program_start_edit_open.postUpdate(OFF)
-    irr_pipe_0_duration_edit_open.postUpdate(OFF)
-    irr_pipe_2_duration_edit_open.postUpdate(OFF)
-    irr_pipe_3_duration_edit_open.postUpdate(OFF)
-end
-//--------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------
-rule "Pipe 2 duration opened"
-when
-    Item irr_pipe_2_duration_edit_open changed to ON
-then
-    irr_config_operation_mode_edit_open.postUpdate(OFF)
-    irr_config_selected_program_edit_open.postUpdate(OFF)
-    irr_program_start_edit_open.postUpdate(OFF)
-    irr_pipe_0_duration_edit_open.postUpdate(OFF)
-    irr_pipe_1_duration_edit_open.postUpdate(OFF)
-    irr_pipe_3_duration_edit_open.postUpdate(OFF)
-end
-//--------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------
-rule "Pipe 3 duration opened"
-when
-    Item irr_pipe_3_duration_edit_open changed to ON
-then
-    irr_config_operation_mode_edit_open.postUpdate(OFF)
-    irr_config_selected_program_edit_open.postUpdate(OFF)
-    irr_program_start_edit_open.postUpdate(OFF)
-    irr_pipe_0_duration_edit_open.postUpdate(OFF)
-    irr_pipe_1_duration_edit_open.postUpdate(OFF)
-    irr_pipe_2_duration_edit_open.postUpdate(OFF)
+    var selected_program = irr_new_program_config_mode.state.toString()
+    if (selected_program == "0"){
+        irr_program_0_start.postUpdate(irr_program_start.state)
+        irr_program_0_day_0.postUpdate(irr_program_day_0.state)
+        irr_program_0_day_1.postUpdate(irr_program_day_1.state)
+        irr_program_0_day_2.postUpdate(irr_program_day_2.state)
+        irr_program_0_day_3.postUpdate(irr_program_day_3.state)
+        irr_program_0_day_4.postUpdate(irr_program_day_4.state)
+        irr_program_0_day_5.postUpdate(irr_program_day_5.state)
+        irr_program_0_day_6.postUpdate(irr_program_day_6.state)
+        irr_program_0_pipe_0_duration.postUpdate(irr_program_pipe_0_duration.state)
+        irr_program_0_pipe_1_duration.postUpdate(irr_program_pipe_1_duration.state)
+        irr_program_0_pipe_2_duration.postUpdate(irr_program_pipe_2_duration.state)
+        irr_program_0_pipe_3_duration.postUpdate(irr_program_pipe_3_duration.state)
+    }
+    if (selected_program == "1"){
+        irr_program_1_start.postUpdate(irr_program_start.state)
+        irr_program_1_day_0.postUpdate(irr_program_day_0.state)
+        irr_program_1_day_1.postUpdate(irr_program_day_1.state)
+        irr_program_1_day_2.postUpdate(irr_program_day_2.state)
+        irr_program_1_day_3.postUpdate(irr_program_day_3.state)
+        irr_program_1_day_4.postUpdate(irr_program_day_4.state)
+        irr_program_1_day_5.postUpdate(irr_program_day_5.state)
+        irr_program_1_day_6.postUpdate(irr_program_day_6.state)
+        irr_program_1_pipe_0_duration.postUpdate(irr_program_pipe_0_duration.state)
+        irr_program_1_pipe_1_duration.postUpdate(irr_program_pipe_1_duration.state)
+        irr_program_1_pipe_2_duration.postUpdate(irr_program_pipe_2_duration.state)
+        irr_program_1_pipe_3_duration.postUpdate(irr_program_pipe_3_duration.state)
+    }
+    if (selected_program == "2"){
+        irr_program_2_start.postUpdate(irr_program_start.state)
+        irr_program_2_day_0.postUpdate(irr_program_day_0.state)
+        irr_program_2_day_1.postUpdate(irr_program_day_1.state)
+        irr_program_2_day_2.postUpdate(irr_program_day_2.state)
+        irr_program_2_day_3.postUpdate(irr_program_day_3.state)
+        irr_program_2_day_4.postUpdate(irr_program_day_4.state)
+        irr_program_2_day_5.postUpdate(irr_program_day_5.state)
+        irr_program_2_day_6.postUpdate(irr_program_day_6.state)
+        irr_program_2_pipe_0_duration.postUpdate(irr_program_pipe_0_duration.state)
+        irr_program_2_pipe_1_duration.postUpdate(irr_program_pipe_1_duration.state)
+        irr_program_2_pipe_2_duration.postUpdate(irr_program_pipe_2_duration.state)
+        irr_program_2_pipe_3_duration.postUpdate(irr_program_pipe_3_duration.state)
+    }
+    irr_save_config.postUpdate(OFF)
 end
 //--------------------------------------------------------------------------------------------
 rule "Start time change conversion helper - for update"
@@ -117,209 +207,303 @@ when
 then
     var Number tmpHour = (irr_program_start_time_helper_hour.state) as Number * 3600
     var Number tmpMin =  (irr_program_start_time_helper_min.state) as Number * 60
-    if (irr_config_selected_program.state==0){
-        irr_program_0_start.postUpdate(tmpHour + tmpMin)
-    }
-    if (irr_config_selected_program.state==1){
-        irr_program_1_start.postUpdate(tmpHour + tmpMin)
-    }
-    if (irr_config_selected_program.state==2){
-        irr_program_2_start.postUpdate(tmpHour + tmpMin)
-    }
+    irr_program_start.postUpdate(tmpHour + tmpMin)
 end
 //--------------------------------------------------------------------------------------------
 rule "Start time change conversion helper - to preset"
 when
-    Item irr_config_selected_program received command
+    Item irr_program_start changed
 then
-    var Number selectedProgram = irr_config_selected_program.state as Number
-    var Number tmpTime = 0
-    if (selectedProgram==0){
-        tmpTime = (irr_program_0_start.state) as Number
-    }
-    if (selectedProgram==1){
-        tmpTime = (irr_program_1_start.state) as Number
-    }
-    if (selectedProgram==2){
-        tmpTime = (irr_program_2_start.state) as Number
-    }
+    var Number tmpTime = (irr_program_start.state) as Number
     var Number tmpHour = (tmpTime / 3600).intValue
     var Number tmpMin = (tmpTime - (tmpHour * 3600)) / 60
     irr_program_start_time_helper_hour.postUpdate(tmpHour)
     irr_program_start_time_helper_min.postUpdate(tmpMin)
 end
 //--------------------------------------------------------------------------------------------
-rule "Send configuration over mqtt to device"
+rule "Send config to module"
 when
-    Item irr_config_operation_mode received command
+    Item irr_send_config changed to ON
 then
-    // val jsonMessage = '{"temperature": 12, "humidity": 34}'  // JSON message
-    // sendCommand(Irr_program_to_send, jsonMessage)
-end
-//--------------------------------------------------------------------------------------------
-rule "Execute after 30 seconds of startup"
-when
-    System started
-then
-    logInfo("Startup Rule", "System started, waiting 30 seconds...")
-    createTimer(now.plusSeconds(30), [ |
-        logInfo("Startup Rule", "Executing actions after 30 seconds delay")
-        logInfo("Irrigation initializer", "Irrigation items initializing.")
-        
-        // Debugging log
-        logInfo("Debug", "gIrrigationNumberItems: " + gIrrigationNumberItems)
 
-        if (gIrrigationNumberItems !== null) {
-            gIrrigationNumberItems.members.filter[ GenericItem x | x.state == NULL ].forEach[ GenericItem item | 
-                item.postUpdate(0)
-            ]
-        } else {
-            logWarn("Debug", "gIrrigationNumberItems is NULL or undefined!")
+    if (irr_new_operation_mode.state.toString() == "auto" || irr_new_operation_mode.state.toString() == "off"){
+
+        var start_time = 0
+        var irrigation_day_0 = false
+        var irrigation_day_1 = false
+        var irrigation_day_2 = false
+        var irrigation_day_3 = false
+        var irrigation_day_4 = false
+        var irrigation_day_5 = false
+        var irrigation_day_6 = false
+        var pipe_0_duration = 0
+        var pipe_1_duration = 0
+        var pipe_2_duration = 0
+        var pipe_3_duration = 0
+        var zone = 0
+
+        var selected_program = irr_new_program_mode.state.toString()
+
+        if (selected_program == "0"){
+            start_time = (irr_program_0_start.state as QuantityType<Number>).toBigDecimal.intValue()
+            irrigation_day_0 = irr_program_0_day_0.state
+            irrigation_day_1 = irr_program_0_day_1.state
+            irrigation_day_2 = irr_program_0_day_2.state
+            irrigation_day_3 = irr_program_0_day_3.state
+            irrigation_day_4 = irr_program_0_day_4.state
+            irrigation_day_5 = irr_program_0_day_5.state
+            irrigation_day_6 = irr_program_0_day_6.state
+            pipe_0_duration = irr_program_0_pipe_0_duration.state as Number
+            pipe_1_duration = irr_program_0_pipe_1_duration.state
+            pipe_2_duration = irr_program_0_pipe_2_duration.state
+            pipe_3_duration = irr_program_0_pipe_3_duration.state
         }
 
-        if (gIrrigationSwitchItems !== null) {
-            gIrrigationSwitchItems.members.filter[ GenericItem x | x.state == NULL ].forEach[ GenericItem item |
-                item.postUpdate(OFF)
-            ]
-        } else {
-            logWarn("Debug", "gIrrigationSwitchItems is NULL or undefined!")
+        if (selected_program == "1"){
+            start_time = (irr_program_1_start.state as QuantityType<Number>).toBigDecimal.intValue()
+            irrigation_day_0 = irr_program_1_day_0.state
+            irrigation_day_1 = irr_program_1_day_1.state
+            irrigation_day_2 = irr_program_1_day_2.state
+            irrigation_day_3 = irr_program_1_day_3.state
+            irrigation_day_4 = irr_program_1_day_4.state
+            irrigation_day_5 = irr_program_1_day_5.state
+            irrigation_day_6 = irr_program_1_day_6.state
+            pipe_0_duration = irr_program_1_pipe_0_duration.state as Number
+            pipe_1_duration = irr_program_1_pipe_1_duration.state
+            pipe_2_duration = irr_program_1_pipe_2_duration.state
+            pipe_3_duration = irr_program_1_pipe_3_duration.state
         }
-    ])
+
+        if (selected_program == "2"){
+            start_time = (irr_program_2_start.state as QuantityType<Number>).toBigDecimal.intValue()
+            irrigation_day_0 = irr_program_2_day_0.state
+            irrigation_day_1 = irr_program_2_day_1.state
+            irrigation_day_2 = irr_program_2_day_2.state
+            irrigation_day_3 = irr_program_2_day_3.state
+            irrigation_day_4 = irr_program_2_day_4.state
+            irrigation_day_5 = irr_program_2_day_5.state
+            irrigation_day_6 = irr_program_2_day_6.state
+            pipe_0_duration = irr_program_2_pipe_0_duration.state as Number
+            pipe_1_duration = irr_program_2_pipe_1_duration.state
+            pipe_2_duration = irr_program_2_pipe_2_duration.state
+            pipe_3_duration = irr_program_2_pipe_3_duration.state
+        }
+
+        var Number tmpHour = (start_time / 3600).intValue
+        var Number tmpMin = ((start_time - (tmpHour * 3600)) / 60).intValue
+        start_time = tmpHour.toString() + ":" + tmpMin.toString()
+
+        if (irrigation_day_0 == ON){
+            irrigation_day_0 = 'true'
+        }else{
+            irrigation_day_0 = 'false'
+        }
+        if (irrigation_day_1 == ON){
+            irrigation_day_1 = 'true'
+        }else{
+            irrigation_day_1 = 'false'
+        }
+        if (irrigation_day_2 == ON){
+            irrigation_day_2 = 'true'
+        }else{
+            irrigation_day_2 = 'false'
+        }
+        if (irrigation_day_3 == ON){
+            irrigation_day_3 = 'true'
+        }else{
+            irrigation_day_3 = 'false'
+        }
+        if (irrigation_day_4 == ON){
+            irrigation_day_4 = 'true'
+        }else{
+            irrigation_day_4 = 'false'
+        }
+        if (irrigation_day_5 == ON){
+            irrigation_day_5 = 'true'
+        }else{
+            irrigation_day_5 = 'false'
+        }
+        if (irrigation_day_6 == ON){
+            irrigation_day_6 = 'true'
+        }else{
+            irrigation_day_6 = 'false'
+        }
+
+
+        // // mode > "1" auto mode
+
+        var selected_mode = irr_new_operation_mode.state
+        var selected_mode_number = 0
+
+        if (selected_mode == "auto") {
+            selected_mode_number = 1
+        }
+        if (selected_mode == "manual") {
+            selected_mode_number = 2
+        }
+
+        var selected_zone = irr_new_manual_mode.state.toString()
+        if (selected_zone == "zone_1"){
+            zone = 1
+        }
+        if (selected_zone == "zone_2"){
+            zone = 2
+        }
+        if (selected_zone == "zone_3"){
+            zone = 3
+        }
+        if (selected_zone == "zone_4"){
+            zone = 4
+        }
+        if (selected_zone == "pumpe"){
+            zone = 5
+        }
+        if (selected_zone == "off"){
+            zone = 0
+        }
+
+        var jsonMessage = '{ \"mode\": ' + selected_mode_number + ', \"start_time\": \"' + start_time + '\", \"irrigation_days\": [' + irrigation_day_0 + ', ' + irrigation_day_1 + ', ' + irrigation_day_2 + ', ' + irrigation_day_3 + ', ' + irrigation_day_4 + ', ' + irrigation_day_5 + ', ' + irrigation_day_6 + '], \"pipes_durations\": [' + pipe_0_duration + ', ' + pipe_1_duration + ', ' + pipe_2_duration + ', ' + pipe_3_duration + '], \"started_manually\": ' + zone + ' }'
+        // // // { "mode": 0, "start_time":"10:10", "irrigation_days": [false, true, false, false, true, true, false], "pipe_durations":[5, 5, 5, 5], "started_manually":0 }
+        logInfo("Irrigation initializer", jsonMessage)
+
+        val mqttActions = getActions("mqtt","mqtt:broker:main")
+        mqttActions.publishMQTT("irrigation/set/config" , jsonMessage)
+
+    } else {
+
+        var selected_zone = irr_new_manual_mode.state.toString()
+        var max_time = 5
+
+        if (irr_new_manual_mode.state.toString() == "pumpe") {
+            max_time = 60
+        }
+
+
+        var jsonMessage = '{ \"pipe\": \"' + selected_zone + '\", \"max_time\": ' + max_time + ' }'
+        logInfo("Irrigation initializer", jsonMessage)
+
+        val mqttActions = getActions("mqtt","mqtt:broker:main")
+        mqttActions.publishMQTT("irrigation/set/manual" , jsonMessage)
+
+    }
+
+    irr_send_config.postUpdate(OFF)
 end
+
+
 //--------------------------------------------------------------------------------------------
-rule "Send actual condig to device"
+//--------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+rule "Module goes offline"
 when
-    Item irr_config_operation_mode changed or 
-    Item irr_config_selected_program changed
+    Item ir_mm_online changed to OFF
 then
-    var selected_mode = irr_config_operation_mode.state as Number
-    var selected_program = irr_config_selected_program.state as Number
-
-    var output_mode = selected_mode
-    if (selected_mode == 3){
-        output_mode = 0
-    }
-
-    var Number start_time = irr_program_0_start.state as Number
-    if (selected_program == 1){
-        start_time = irr_program_1_start.state as Number
-    }
-    if (selected_program == 2){
-        start_time = irr_program_2_start.state as Number
-    }
-    var Number tmpHour = (start_time / 3600).intValue
-    var Number tmpMin = ((start_time - (tmpHour * 3600)) / 60).intValue
-    start_time = tmpHour.toString() + ":" + tmpMin.toString()
-
-    var irrigation_day_0 = irr_program_0_day_0.state
-    var irrigation_day_1 = irr_program_0_day_1.state
-    var irrigation_day_2 = irr_program_0_day_2.state
-    var irrigation_day_3 = irr_program_0_day_3.state
-    var irrigation_day_4 = irr_program_0_day_4.state
-    var irrigation_day_5 = irr_program_0_day_5.state
-    var irrigation_day_6 = irr_program_0_day_6.state
-    if (selected_program == 1){
-        irrigation_day_0 = irr_program_1_day_0.state
-        irrigation_day_1 = irr_program_1_day_1.state
-        irrigation_day_2 = irr_program_1_day_2.state
-        irrigation_day_3 = irr_program_1_day_3.state
-        irrigation_day_4 = irr_program_1_day_4.state
-        irrigation_day_5 = irr_program_1_day_5.state
-        irrigation_day_6 = irr_program_1_day_6.state
-    }
-    if (selected_program == 2){
-        irrigation_day_0 = irr_program_2_day_0.state
-        irrigation_day_1 = irr_program_2_day_1.state
-        irrigation_day_2 = irr_program_2_day_2.state
-        irrigation_day_3 = irr_program_2_day_3.state
-        irrigation_day_4 = irr_program_2_day_4.state
-        irrigation_day_5 = irr_program_2_day_5.state
-        irrigation_day_6 = irr_program_2_day_6.state
-    }
-    var irrigation_days = ""
-    if (irrigation_day_0 == ON){
-        irrigation_days = irrigation_days + "1"   
-    }else{
-        irrigation_days = irrigation_days + "0"   
-    }
-    if (irrigation_day_1 == ON){
-        irrigation_days = irrigation_days + "1"   
-    }else{
-        irrigation_days = irrigation_days + "0"   
-    }
-    if (irrigation_day_2 == ON){
-        irrigation_days = irrigation_days + "1"   
-    }else{
-        irrigation_days = irrigation_days + "0"   
-    }
-    if (irrigation_day_3 == ON){
-        irrigation_days = irrigation_days + "1"   
-    }else{
-        irrigation_days = irrigation_days + "0"   
-    }
-    if (irrigation_day_4 == ON){
-        irrigation_days = irrigation_days + "1"   
-    }else{
-        irrigation_days = irrigation_days + "0"   
-    }
-    if (irrigation_day_5 == ON){
-        irrigation_days = irrigation_days + "1"   
-    }else{
-        irrigation_days = irrigation_days + "0"   
-    }
-    if (irrigation_day_6 == ON){
-        irrigation_days = irrigation_days + "1"   
-    }else{
-        irrigation_days = irrigation_days + "0"   
-    }
-
-    var pipe_0_duration = irr_program_0_pipe_0_duration.state
-    var pipe_1_duration = irr_program_0_pipe_1_duration.state
-    var pipe_2_duration = irr_program_0_pipe_2_duration.state
-    var pipe_3_duration = irr_program_0_pipe_3_duration.state
-    if (selected_program == 1){
-        pipe_0_duration = irr_program_1_pipe_0_duration.state
-        pipe_1_duration = irr_program_1_pipe_1_duration.state
-        pipe_2_duration = irr_program_1_pipe_2_duration.state
-        pipe_3_duration = irr_program_1_pipe_3_duration.state
-    }
-    if (selected_program == 2){
-        pipe_0_duration = irr_program_2_pipe_0_duration.state
-        pipe_1_duration = irr_program_2_pipe_1_duration.state
-        pipe_2_duration = irr_program_2_pipe_2_duration.state
-        pipe_3_duration = irr_program_2_pipe_3_duration.state
-    }
-
-    var jsonMessage = '{"mode": ' + output_mode.toString() + ',"start_time": "' + start_time.toString() + '" ,"days": "' +  irrigation_days.toString() + '" ,"pipe_0_time": ' + pipe_0_duration.toString() + ',"pipe_1_time": ' + pipe_1_duration.toString() + ',"pipe_2_time": ' + pipe_2_duration.toString() + ',"pipe_3_time": ' + pipe_3_duration.toString() + '}'  
-
-    sendCommand(irr_config, jsonMessage)
-    logInfo("Irrigation initializer", jsonMessage)
+    val later = now.plusHours(2)
+    val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+    val date_string = later.format(formatter)
+    val message = 'Offline from : ' + date_string
+    ir_mm_infoText.postUpdate(message)
+    mm_expanded_item.postUpdate('none')
 end
 //--------------------------------------------------------------------------------------------
-rule "send ping"
+rule "Module goes onine"
 when
-    Time cron "0/10 * * ? * * *" // every 10 seconds
+    Item ir_mm_online changed to ON
+then
+    ir_mm_icon.postUpdate('irrigation_off') 
+
+    if (irr_new_operation_mode.state == NULL) {
+        irr_new_operation_mode.postUpdate("off")
+    }
+
+    val later = now.plusHours(2)
+    val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+    val date_string = later.format(formatter)
+    val message = 'Online from : ' + date_string
+    ir_mm_infoText.postUpdate(message)
+end
+//--------------------------------------------------------------------------------------------
+rule "Show pipe rest times"
+when
+    Item irr_actual_irrigation_pipe changed or Item irr_actual_irrigation_time changed
+then
+    var selected_pipe_text = ''
+    var selected_pipe = irr_actual_irrigation_pipe.state.toString()
+    var rest_time = irr_actual_irrigation_time.state.toString() + " min."
+    var selected_mode = irr_new_operation_mode.state.toString()
+    var selected_program = irr_new_program_mode.state.toString()
+
+    if (selected_mode == "manual"){
+        selected_pipe_text = "Manual "
+    }
+
+    if (selected_mode == "auto"){
+        selected_pipe_text = "Auto "
+    }
+
+    if (selected_pipe == "zone1") {
+        selected_pipe_text = selected_pipe_text + 'zone 1' + " : " + rest_time
+    }
+    if (selected_pipe == "zone2") {
+        selected_pipe_text = selected_pipe_text + 'zone 2' + " : " + rest_time
+    }
+    if (selected_pipe == "zone3") {
+        selected_pipe_text = selected_pipe_text + 'zone 3' + " : " + rest_time
+    }
+    if (selected_pipe == "zone4") {
+        selected_pipe_text = selected_pipe_text + 'zone 4' + " : " + rest_time
+    }
+    if (selected_pipe == "pumpe") {
+        selected_pipe_text = selected_pipe_text + 'pumpe' + " : " + rest_time
+    }
+    if (selected_pipe == "off") {
+        if (selected_mode == "auto"){
+            if (selected_program == "0"){
+                selected_pipe_text = selected_pipe_text + 'program : Low'
+            }
+            if (selected_program == "1"){
+                selected_pipe_text = selected_pipe_text + 'program : Normal'
+            }
+            if (selected_program == "2"){
+                selected_pipe_text = selected_pipe_text + 'program : High'
+            }            
+        }else{
+            selected_pipe_text = selected_pipe_text + ': OFF'
+        }
+    }
+
+    ir_mm_stateText.postUpdate(selected_pipe_text)
+    
+    if (selected_pipe == "off" &&  selected_mode == "manual") {
+        irr_new_manual_mode.postUpdate('off')
+    }
+
+    if (selected_pipe == "off") {
+        ir_mm_icon.postUpdate('irrigation_off') 
+    } else {
+        ir_mm_icon.postUpdate('irrigation_on') 
+    }
+end
+//--------------------------------------------------------------------------------------------
+rule "After module starting send actual date time and config to module"
+when
+    Item irr_module_starting changed to ON
 then
     val mqttActions = getActions("mqtt","mqtt:broker:main")
-    mqttActions.publishMQTT("irrigation/set/ping" , "ping")
-
-    // val now = now.plusHours(1)
-    // val actual_date_time = String::format(
-    //     "{ \"dayOfWeek\": %d, \"year\": %d, \"month\": %d, \"day\": %d, \"hour\": %d, \"minute\": %d, \"second\": %d }",
-    //     now.getDayOfWeek().getValue(), now.getYear, now.getMonthValue, now.getDayOfMonth,
-    //     now.getHour, now.getMinute, now.getSecond
-    // )
-    // mqttActions.publishMQTT("irrigation/set/datetime" , actual_date_time)
+    val now = now.plusHours(2)
+    val actual_date_time = String::format(
+         "{ \"dayOfWeek\": %d, \"year\": %d, \"month\": %d, \"day\": %d, \"hour\": %d, \"minute\": %d, \"second\": %d }",
+         now.getDayOfWeek().getValue(), now.getYear, now.getMonthValue, now.getDayOfMonth,
+         now.getHour, now.getMinute, now.getSecond
+     )
+    mqttActions.publishMQTT("irrigation/set/dateTime" , actual_date_time)
 end
 //--------------------------------------------------------------------------------------------
-// rule "module - live"
-// when
-//     Item irr_presence changed
-// then
-//     sendNotification("andrej.meszaros.ds@gmail.com", "Irrigation module is " + irr_presence.state + ".")
-//     // this is not working becouse registration is missing on openhab.org
-// end
-
-
-
-
+rule "After module starting send actual config to module"
+when
+    Item irr_module_starting changed to OFF
+then
+    irr_send_config.postUpdate(ON)
+end

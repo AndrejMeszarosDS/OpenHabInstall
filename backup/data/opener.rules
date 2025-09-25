@@ -1,0 +1,121 @@
+// rule "Module started"
+// when
+//     Item op_started changed to ON
+// then
+//     val later = now.plusHours(2)
+//     val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+//     val date_string = later.format(formatter)
+//     val message = 'Running till : ' + date_string
+//     op_mm_infoText.postUpdate(message)
+//     op_mm_stateText.postUpdate('')
+//     sendNotification("andrej.meszaros72s@gmail.com", "Opener module started.")
+// end
+// //--------------------------------------------------------------------------------------------
+// rule "Module goes off"
+// when
+//     Item op_started changed to OFF
+// then
+//     val later = now.plusHours(2)
+//     val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+//     val date_string = later.format(formatter)
+//     val message = 'Offline from : ' + date_string
+//     op_mm_infoText.postUpdate(message)
+//     op_mm_stateText.postUpdate('')
+//     sendNotification("andrej.meszaros72s@gmail.com", "Opener module started.")
+// end
+//--------------------------------------------------------------------------------------------
+rule "Module goes online"
+when
+    Item op_mm_online changed to ON
+then
+    val later = now.plusHours(2)
+    val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+    val date_string = later.format(formatter)
+    val message = 'Online from : ' + date_string
+    op_mm_infoText.postUpdate(message)
+    op_mm_stateText.postUpdate('')
+    sendNotification("andrej.meszaros72s@gmail.com", "Opener module goes online.")
+    op_showButtonData1.postUpdate(ON)
+    op_ask_state.sendCommand(ON)
+end
+//--------------------------------------------------------------------------------------------
+rule "Module goes offline"
+when
+    Item op_mm_online changed to OFF
+then
+    val later = now.plusHours(2)
+    val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+    val date_string = later.format(formatter)
+    val message = 'Offline from  : ' + date_string
+    op_mm_infoText.postUpdate(message)
+    op_mm_stateText.postUpdate('')
+    sendNotification("andrej.meszaros72s@gmail.com", "Opener module goes offine.")
+    op_showButtonData1.postUpdate(OFF)
+
+    if (mm_expanded_item.state == 'Opener') {
+        mm_expanded_item.postUpdate('none')
+    }
+end
+//--------------------------------------------------------------------------------------------
+rule "Send garage open command based on new ui"
+when
+    Item op_mm_expand_select changed to 'garage'
+then
+    op_garage_open_close.sendCommand(ON)
+end
+//--------------------------------------------------------------------------------------------
+rule "Send gate open command based on new ui"
+when
+    Item op_mm_expand_select changed to 'gate'
+then
+    op_gate_open_close.sendCommand(ON)
+end
+//--------------------------------------------------------------------------------------------
+rule "Update icon based on state"
+when
+    Item op_garage_closed changed or Item op_gate_closed changed
+then
+    var garageClosed = op_garage_closed.state
+    var gateClosed = op_gate_closed.state
+    if (garageClosed == ON) {
+        if (gateClosed == ON) {
+            op_mm_icon.postUpdate('opener_t_t')
+        } else {
+            op_mm_icon.postUpdate('opener_f_t')
+        }
+    } else {
+        if (gateClosed == ON) {
+            op_mm_icon.postUpdate('opener_t_f')
+        } else {
+            op_mm_icon.postUpdate('opener_f_f')
+        }
+    }
+end
+//--------------------------------------------------------------------------------------------
+rule "Send notification - garage open"
+when
+    Item op_garage_closed changed to OFF
+then
+    sendNotification("andrej.meszaros72s@gmail.com", "Garage opened.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Send notification - garage closed"
+when
+    Item op_garage_closed changed to ON
+then
+    sendNotification("andrej.meszaros72s@gmail.com", "Garage closed.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Send notification - gate open"
+when
+    Item op_gate_closed changed to OFF
+then
+    sendNotification("andrej.meszaros72s@gmail.com", "Gate opened.")
+end
+//--------------------------------------------------------------------------------------------
+rule "Send notification - gate closed"
+when
+    Item op_gate_closed changed to ON
+then
+    sendNotification("andrej.meszaros72s@gmail.com", "Gate closed.")
+end

@@ -1,0 +1,41 @@
+rule "Execute after startup"
+when
+    System started
+then
+    logInfo("Startup Rule", "System starting...")
+    // sendNotification("andrej.meszaros72s@gmail.com", "Openhab starting...")
+
+    // createTimer(now.plusSeconds(180), [ |
+
+    //     logInfo("Startup Rule", "System started.")
+    //     sendNotification("andrej.meszaros72s@gmail.com", "Openhab started.")
+    //     // Irrigation module defaults ...    
+    //     // ir_mm_online.postUpdate(OFF)
+
+    //     // Irrigation items defaults checks ...
+    //     if (gIrProgramStartItem !== null) {
+    //         gIrProgramStartItem.members.filter[ GenericItem x | x.state == NULL ].forEach[ GenericItem item |
+    //             item.postUpdate(0)
+    //         ]
+    //     } else {
+    //         logWarn("Debug", "gIrProgramStartItem is NULL or undefined!")
+    //     }
+
+    //     if (gIrProgramDurationItem !== null) {
+    //         gIrProgramDurationItem.members.filter[ GenericItem x | x.state == NULL ].forEach[ GenericItem item |
+    //             item.postUpdate(0)
+    //         ]
+    //     } else {
+    //         logWarn("Debug", "gIrProgramDurationItem is NULL or undefined!")
+    //     }
+ 
+    //     if (gIrProgramDayItem !== null) {
+    //         gIrProgramDayItem.members.filter[ GenericItem x | x.state == NULL ].forEach[ GenericItem item |
+    //             item.postUpdate(OFF)
+    //         ]
+    //     } else {
+    //         logWarn("Debug", "gIrProgramDayItem is NULL or undefined!")
+    //     }
+
+    // ])
+end      

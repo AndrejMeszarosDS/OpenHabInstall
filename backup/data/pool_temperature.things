@@ -1,0 +1,11 @@
+Bridge mqtt:broker:main  [ host="orangepizero3",secure=false, username="orangepi", password="mqttpass" ]
+{
+  Thing topic poolTemperature  "PoolTemperature" {
+    Channels:
+        Type number : temperature  "Pool temperature [%.1f °C]"      [ stateTopic = "poolTemperature/get" , transformationPattern = "JSONPATH:$.temp"]
+        Type number : battery  "Pool temperature battery [%.0f %%]"  [ stateTopic = "poolTemperature/get" , transformationPattern = "JSONPATH:$.batt"]
+        Type switch : state  "Pool temperature state [%.0f %%]"      [ stateTopic = "poolTemperature/get" , transformationPattern = "JSONPATH:$.state"]
+        Type switch : water  "Pool water in [%.0f %%]"               [ stateTopic = "poolTemperature/get" , transformationPattern = "JSONPATH:$.water"]
+        Type string : rx   "Pool temperature command [%.0f %%]"      [ stateTopic = "poolTemperature/get"]
+  }
+} 

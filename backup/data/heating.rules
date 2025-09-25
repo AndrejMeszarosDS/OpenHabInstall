@@ -1,0 +1,77 @@
+import org.openhab.core.model.script.ScriptServiceUtil
+//------------------------------------------------------------------------------------------------------
+rule "Send new heating level to esp"
+when
+    Member of gHeatingSendLevel changed to ON
+then
+    val parts = triggeringItem.name.split("_")
+    val id = parts.get(1)
+    val levelItemName = "ht_" + id + "_heat_level_set"
+    val levelItem = ScriptServiceUtil.getItemRegistry.getItem(levelItemName)
+    val level = levelItem.state.toString
+
+    var jsonMessage = '{ \"channel\": ' + id + ', \"level\": ' + level + ' }'
+    //logInfo("Irrigation initializer", jsonMessage)
+
+    val mqttActions = getActions("mqtt","mqtt:broker:main")
+    mqttActions.publishMQTT("heating/set/level_change" , jsonMessage)
+
+    //logInfo("MyRule",id + " > " + level)
+end
+//--------------------------------------------------------------------------------------------
+rule "After module starting send actual date time and config to module"
+when
+    Item ht_module_starting changed to ON
+then
+    val mqttActions = getActions("mqtt","mqtt:broker:main")
+    val now = now.plusHours(2)
+    val actual_date_time = String::format(
+         "{ \"dayOfWeek\": %d, \"year\": %d, \"month\": %d, \"day\": %d, \"hour\": %d, \"minute\": %d, \"second\": %d }",
+         now.getDayOfWeek().getValue(), now.getYear, now.getMonthValue, now.getDayOfMonth,
+         now.getHour, now.getMinute, now.getSecond
+     )
+    mqttActions.publishMQTT("heating/set/dateTime" , actual_date_time)
+end
+//--------------------------------------------------------------------------------------------
+rule "Module goes offline"
+when
+    Item ht_mm_online changed to OFF
+then
+    val later = now.plusHours(2)
+    val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+    val date_string = later.format(formatter)
+    val message = 'Offline from : ' + date_string
+    ht_mm_infoText.postUpdate(message)
+    ht_mm_stateText.postUpdate("")
+    mm_expanded_item.postUpdate('none')
+end
+//--------------------------------------------------------------------------------------------
+rule "Module goes onine"
+when
+    Item ht_mm_online changed to ON
+then
+    val later = now.plusHours(2)
+    val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")
+    val date_string = later.format(formatter)
+    val message = 'Online from : ' + date_string
+    ht_mm_infoText.postUpdate(message)
+    ht_mm_stateText.postUpdate("")
+end
+//--------------------------------------------------------------------------------------------
+rule "Preset heating level in change widget"
+when
+    Item ht_expanded_item changed
+then
+    val expandedName = ht_expanded_item.state.toString  // e.g. "ht_14_name"
+
+    if (expandedName == "none") {
+        return; // do nothing
+    }
+
+    val num = expandedName.split("_").get(1)            // e.g. "14"
+
+    val setItem = ScriptServiceUtil.getItemRegistry.getItem("ht_" + num + "_heat_level_set")
+    val getItem = ScriptServiceUtil.getItemRegistry.getItem("ht_" + num + "_heat_level_get")
+
+    setItem.postUpdate(getItem.state)
+end

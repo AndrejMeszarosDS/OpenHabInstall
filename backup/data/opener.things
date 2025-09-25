@@ -1,0 +1,12 @@
+Bridge mqtt:broker:main  [ host="orangepizero3",secure=false, username="orangepi", password="mqttpass" ]
+{
+  Thing topic opener "Opener" {
+    Channels:
+        Type switch : presence  "Opener module presence [%s]"     [ stateTopic = "opener/get/ping"]
+        Type switch : state   "Get state from module  [%s]"       [ commandTopic = "opener/set/state"]
+        Type switch : garageclosed   "Garage closed  [%s]"        [ stateTopic = "opener/get/garage/closed"]
+        Type switch : gateclosed       "Gate closed  [%s]"        [ stateTopic = "opener/get/gate/closed"]
+        Type switch : garageopenclose   "Garage open close  [%s]" [ commandTopic = "opener/set/garage/openclose",stateTopic = "opener/get/garage/openclose"]
+        Type switch : gateopenclose   "Garage open close  [%s]"   [ commandTopic = "opener/set/gate/openclose",stateTopic = "opener/get/gate/openclose"]
+  }
+}

@@ -1,0 +1,46 @@
+String         pf_mm_icon                            "[%.0f]"           (gPoolFiltrationMapDB)
+String         pf_mm_stateText                       "[%.0f]"           (gPoolFiltrationMapDB)
+String         pf_mm_infoText                        "[%.0f]"           (gPoolFiltrationMapDB)
+Switch         pf_mm_toexpand
+Switch         pf_mm_expanded
+String         pf_mm_alt_icon                        "[%.0f]"
+String         pf_mm_alt_icon_text                   "[%.0f]"
+String         pf_mm_alt_icon_text_color             "[%.0f]"
+String         pf_mm_alt_right_text                  "[%.0f]"
+String         pf_mm_alt_right_value                 "[%.0f]"
+String         pf_mm_alt_right_text_color            "[%.0f]"
+String         pf_mm_alt_right_value_color           "[%.0f]"
+
+Switch         pf_mm_online                          "[%.0f %%]"        (gPoolFiltrationInflux)    {channel="mqtt:topic:main:poolFiltration:online", expire="10s,command=OFF"}
+Switch         pf_mm_started                         "[%.0f %%]"        (gPoolFiltrationInflux)    {channel="mqtt:topic:main:poolFiltration:started", expire="1s,command=OFF"}
+Switch         pf_send_config                        "[%.0f %%]"                                   {channel="mqtt:topic:main:poolFiltration:send_config", expire="1s,command=OFF"}
+Switch         pf_send_time                          "[%.0f %%]"                                   {channel="mqtt:topic:main:poolFiltration:send_time", expire="1s,command=OFF"}
+Switch         pf_state                              "[%.0f %%]"        (gPoolFiltrationInflux)    {channel="mqtt:topic:main:poolFiltration:state"}
+Switch         pf_senzor_low                         "[%.0f %%]"        (gPoolFiltrationInflux)    {channel="mqtt:topic:main:poolFiltration:senzor_low"}
+Switch         pf_senzor_high                        "[%.0f %%]"        (gPoolFiltrationInflux)    {channel="mqtt:topic:main:poolFiltration:senzor_high"}
+
+ 
+
+String         pf_operation_mode                     "[%.0f]"           (gPoolFiltrationMapDB)
+Number:Time    pf_start_time                         "[%1$tk:%1$tM]"    (gPoolFiltrationMapDB)
+Number         pf_duration                           "[%1$tk:%1$tM]"    (gPoolFiltrationMapDB)
+Switch         pf_manual_started                     "[%.0f %%]"        (gPoolFiltrationMapDB)
+
+Switch         pf_save_config                        "[%.0f %%]"        (gPoolFiltrationMapDB)
+Switch         pf_config_show                        "[%.0f %%]"        (gPoolFiltrationMapDB)
+
+Number:Time    pf_config_start_time_value            "[%1$tk:%1$tM]"
+Number         pf_config_start_time_helper_hour      "%s"
+Number         pf_config_start_time_helper_minute    "%s"
+
+Number:Time    pf_config_duration_value              "[%1$tk:%1$tM]"
+Number         pf_config_duration_helper_hour        "%s"
+
+Group          gPoolFiltrationInflux
+Group          gPoolFiltrationMapDB
+
+Switch         pf_showButtonData1                                       (gPoolFiltrationMapDB)
+Switch         pf_showButtonData2                                       (gPoolFiltrationMapDB)
+Switch         pf_showButtonData3                                       (gPoolFiltrationMapDB)
+Switch         pf_showButtonData4                                       (gPoolFiltrationMapDB)
+  
