@@ -86,34 +86,6 @@ opanhab_admin_user_password="openhab_password"
 openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin_user_password administrator
 
 #--------------------------------------------------------------------------------------------------
-# copy backup data from reposity to openhab                                                       |
-#--------------------------------------------------------------------------------------------------
-# items > /etc/openhab
-cd ~/../../etc/openhab/items/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.items
-sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
-# things > /etc/openhab
-cd ~/../../etc/openhab/things/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.things
-sudo chown orangepi:orangepi /etc/openhab/things/irrigation.things
-# rules > /etc/openhab
-cd ~/../../etc/openhab/rules/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.rules
-sudo chown orangepi:orangepi /etc/openhab/rules/irrigation.rules
-# persistence > /etc/openhab
-cd ~/../../etc/openhab/persistence/
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/influxdb.persist
-sudo chown orangepi:orangepi /etc/openhab/persistence/influxdb.persist
-# pagers & widgets > /etc/openhab
-cd /var/lib/openhab/jsondb/
-sudo rm uicomponents_ui_page.json
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_page.json
-sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_page.json
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_widget.json
-sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_widget.json
-#sudo systemctl restart openhab.service
-
-#--------------------------------------------------------------------------------------------------
 # copy addons config file                                                                         |
 #--------------------------------------------------------------------------------------------------
 cd ~/../../etc/openhab/services
@@ -222,6 +194,72 @@ printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/s
 
 # restart openhab service
 sudo systemctl restart openhab.service
+
+
+
+
+
+
+
+
+
+
+
+# #--------------------------------------------------------------------------------------------------
+# # copy backup data from reposity to openhab                                                       |
+# #--------------------------------------------------------------------------------------------------
+
+# # icons > /etc/openhab
+# cd ~/../../etc/openhab/icons/classic/
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/*.png
+# sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
+
+
+
+
+# # items > /etc/openhab
+# cd ~/../../etc/openhab/items/
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.items
+# sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
+# # things > /etc/openhab
+# cd ~/../../etc/openhab/things/
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.things
+# sudo chown orangepi:orangepi /etc/openhab/things/irrigation.things
+# # rules > /etc/openhab
+# cd ~/../../etc/openhab/rules/
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.rules
+# sudo chown orangepi:orangepi /etc/openhab/rules/irrigation.rules
+# # persistence > /etc/openhab
+# cd ~/../../etc/openhab/persistence/
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/influxdb.persist
+# sudo chown orangepi:orangepi /etc/openhab/persistence/influxdb.persist
+# # pagers & widgets > /etc/openhab
+# cd /var/lib/openhab/jsondb/
+# sudo rm uicomponents_ui_page.json
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_page.json
+# sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_page.json
+# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_widget.json
+# sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_widget.json
+# #sudo systemctl restart openhab.service
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openHab501.sh && sudo chmod 755 openHab501.sh && sudo ./openHab501.sh
