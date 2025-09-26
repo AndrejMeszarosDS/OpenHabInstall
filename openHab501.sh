@@ -250,7 +250,7 @@ else
 fi
 
 # restart openhab service
-sudo systemctl restart openhab.service
+# sudo systemctl restart openhab.service
 
 #--------------------------------------------------------------------------------------------------
 # create systemd service for system metrics                                                       |
