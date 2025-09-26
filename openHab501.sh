@@ -278,32 +278,44 @@ sudo systemctl enable system-metrics.service
 sudo systemctl start system-metrics.service
 
 #--------------------------------------------------------------------------------------------------
-# install Grafana + configure InfluxDB data source + import system metrics dashboard               |
+# install Grafana + configure InfluxDB data source + import system metrics dashboard
 #--------------------------------------------------------------------------------------------------
-GRAFANA_VERSION="9.6.2"
+
 GRAFANA_USER="grafana"
 GRAFANA_PASSWORD="grafana_password"   # Change to a secure password
-GRAFANA_DEB="grafana_${GRAFANA_VERSION}_arm64.deb"
 
-cd ~
-wget https://dl.grafana.com/oss/release/$GRAFANA_DEB
-sudo dpkg -i $GRAFANA_DEB
+# Install dependencies
+sudo apt-get update
+sudo apt-get install -y software-properties-common wget apt-transport-https
 
-# start and enable Grafana service
+# Add Grafana official APT repository
+sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main" -y
+
+# Add Grafana GPG key
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+
+# Update package lists and install Grafana
+sudo apt-get update
+sudo apt-get install -y grafana
+
+# Start and enable Grafana service
 sudo systemctl daemon-reload
 sudo systemctl enable grafana-server.service
 sudo systemctl start grafana-server.service
 
-# set default admin user
+# Set default admin password
 sudo grafana-cli admin reset-admin-password $GRAFANA_PASSWORD
 echo "Grafana installed and running at http://<orangepi-ip>:3000"
 
-# configure InfluxDB data source for Grafana
+#--------------------------------------------------------------------------------------------------
+# configure InfluxDB data source
+#--------------------------------------------------------------------------------------------------
 GRAFANA_PROVISIONING_DIR="/etc/grafana/provisioning"
 INFLUXDB_TOKEN="$INFLUX_TOKEN"  # From your previous install steps
 INFLUXDB_ORG="openhab"
 INFLUXDB_BUCKET="openhab"
 INFLUXDB_URL="http://localhost:8086"
+INFLUXDB_USER="openhab"  # replace if different
 
 # create directories for provisioning
 sudo mkdir -p $GRAFANA_PROVISIONING_DIR/datasources
@@ -350,40 +362,58 @@ sudo chown -R grafana:grafana /var/lib/grafana/dashboards
 sudo systemctl restart grafana-server.service
 
 echo "Grafana is fully configured with InfluxDB data source and system metrics dashboard."
-
 #--------------------------------------------------------------------------------------------------
 # copy backup data from reposity to openhab                                                       |
 #--------------------------------------------------------------------------------------------------
 
-# icons > /etc/openhab
-cd /etc/openhab/icons/classic/ || exit 1
-sudo wget -i /path/to/icons.txt
-sudo chown orangepi:orangepi /etc/openhab/icons/classic/*.png
+TXT_DIR=/home/orangepi/openhab_txt
+mkdir -p "$TXT_DIR"
 
-# items > /etc/openhab
-cd /etc/openhab/items/ || exit 1
-sudo wget -i /path/to/items.txt
-sudo chown orangepi:orangepi /etc/openhab/items/*.items
+# Base URL of your txt files
+BASE_URL="https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data"
+
+# List of txt files
+TXT_FILES=(icons.txt items.txt json.txt persist.txt rules.txt things.txt)
+
+# Download all txt files
+for file in "${TXT_FILES[@]}"; do
+    wget -O "$TXT_DIR/$file" "$BASE_URL/$file"
+done
+
+# Helper function to download files and set ownership
+download_and_chown() {
+    local txt_file="$1"
+    local target_dir="$2"
+    local pattern="$3"  # e.g., *.png, *.items
+
+    cd "$target_dir" || { echo "Directory $target_dir not found"; return; }
+
+    sudo wget -i "$TXT_DIR/$txt_file"
+    sudo chown orangepi:orangepi "$target_dir/$pattern"
+}
+
+# icons > /etc/openhab/icons/classic
+download_and_chown icons.txt /etc/openhab/icons/classic "*.png"
+
+# items > /etc/openhab/items
+download_and_chown items.txt /etc/openhab/items "*.items"
 
 # ui > /var/lib/openhab/jsondb
-cd /var/lib/openhab/jsondb/ || exit 1
-sudo wget -i /path/to/json.txt
-sudo chown orangepi:orangepi /var/lib/openhab/jsondb/*.json
+download_and_chown json.txt /var/lib/openhab/jsondb "*.json"
 
-# persistence > /etc/openhab
-cd /etc/openhab/persistence/ || exit 1
-sudo wget -i /path/to/persist.txt
-sudo chown orangepi:orangepi /etc/openhab/persistence/*.persist
+# persistence > /etc/openhab/persistence
+download_and_chown persist.txt /etc/openhab/persistence "*.persist"
 
-# rules > /etc/openhab
-cd /etc/openhab/rules/ || exit 1
-sudo wget -i /path/to/rules.txt
-sudo chown orangepi:orangepi /etc/openhab/rules/*.rules
+# rules > /etc/openhab/rules
+download_and_chown rules.txt /etc/openhab/rules "*.rules"
 
-# things > /etc/openhab
-cd /etc/openhab/things/ || exit 1
-sudo wget -i /path/to/things.txt
-sudo chown orangepi:orangepi /etc/openhab/things/*.things
+# things > /etc/openhab/things
+download_and_chown things.txt /etc/openhab/things "*.things"
+
+# Cleanup
+rm -rf "$TXT_DIR"
+
+echo "All files downloaded and ownership set correctly."
 
 sudo systemctl restart openhab.service
 
