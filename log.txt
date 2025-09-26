@@ -39,4 +39,4 @@
 - grafana install testing              
 - system-metrics.service testing       > ok
 
-- download grafana metrixs json ?
+- download grafana metrixs json ? need to be created

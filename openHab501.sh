@@ -364,26 +364,26 @@ datasources:
 EOL
 
 # create dashboard provisioning file
-sudo tee $GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml > /dev/null <<EOL
-apiVersion: 1
-providers:
-  - name: 'System Metrics'
-    folder: ''
-    type: file
-    disableDeletion: false
-    updateIntervalSeconds: 10
-    options:
-      path: /var/lib/grafana/dashboards
-EOL
+# sudo tee $GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml > /dev/null <<EOL
+# apiVersion: 1
+# providers:
+#   - name: 'System Metrics'
+#     folder: ''
+#     type: file
+#     disableDeletion: false
+#     updateIntervalSeconds: 10
+#     options:
+#       path: /var/lib/grafana/dashboards
+# EOL
 
-# download system metrics dashboard JSON
-sudo wget -O /var/lib/grafana/dashboards/system_metrics.json \
-  https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
+# # download system metrics dashboard JSON
+# sudo wget -O /var/lib/grafana/dashboards/system_metrics.json \
+#   https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
 
-sudo chown -R grafana:grafana /var/lib/grafana/dashboards
-sudo systemctl restart grafana-server.service
+# sudo chown -R grafana:grafana /var/lib/grafana/dashboards
+# sudo systemctl restart grafana-server.service
 
-echo "Grafana is fully configured with InfluxDB data source and system metrics dashboard."
+# echo "Grafana is fully configured with InfluxDB data source and system metrics dashboard."
 #--------------------------------------------------------------------------------------------------
 # copy backup data from reposity to openhab                                                       |
 #--------------------------------------------------------------------------------------------------
