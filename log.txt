@@ -30,3 +30,13 @@
  OrangePi
   - sudo shutdown -r now  > restart
   - sudo poweroff         > pwer off
+
+
+
+26.09.2025 -----------------------------------------------------------------------
+
+- restore script testing               > ok 
+- grafana install testing              
+- system-metrics.service testing       > ok
+
+- download grafana metrixs json ?

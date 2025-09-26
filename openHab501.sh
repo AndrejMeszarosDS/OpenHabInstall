@@ -179,27 +179,52 @@ EOL
 
 echo "OpenHAB is now configured with InfluxDB token."
 
+
 #--------------------------------------------------------------------------------------------------
 # install python dependencies for system metrics                                                  |
 #--------------------------------------------------------------------------------------------------
-sudo apt-get install -y python3 python3-pip python3-psutil
-pip3 install --user influxdb-client
+HOME_DIR=/home/orangepi
+VENV_DIR="$HOME_DIR/venv"
+SYSTEM_METRICS_SCRIPT="$HOME_DIR/system_metrics.py"
+INFLUX_TOKEN="YOUR_INFLUXDB_TOKEN"  # Replace with your InfluxDB token
+INFLUX_ORG="openhab"
+INFLUX_BUCKET="openhab"
+INFLUX_URL="http://localhost:8086"
+
+#-----------------------------------------------
+# Install Python, venv, pip, and dependencies
+#-----------------------------------------------
+sudo apt-get update
+sudo apt-get install -y python3 python3-venv python3-pip
+
+#-----------------------------------------------
+# Create virtual environment if it doesn't exist
+#-----------------------------------------------
+if [ ! -d "$VENV_DIR" ]; then
+    python3 -m venv "$VENV_DIR"
+fi
+
+#-----------------------------------------------
+# Activate venv and install required Python packages
+#-----------------------------------------------
+. "$VENV_DIR/bin/activate"
+pip install --upgrade pip
+pip install influxdb-client psutil
+deactivate
 
 #--------------------------------------------------------------------------------------------------
 # create system metrics script                                                                    |
 #--------------------------------------------------------------------------------------------------
-HOME_DIR=$(eval echo ~orangepi)
-
-cat << EOF > $HOME_DIR/system_metrics.py
+cat << EOF > "$SYSTEM_METRICS_SCRIPT"
 #!/usr/bin/env python3
 import psutil, time
 from influxdb_client import InfluxDBClient, Point, WriteOptions
 
 # InfluxDB 2.x connection details
-url = "http://localhost:8086"
+url = "$INFLUX_URL"
 token = "$INFLUX_TOKEN"
-org = "$INFLUXDB_ORG"
-bucket = "$INFLUXDB_BUCKET"
+org = "$INFLUX_ORG"
+bucket = "$INFLUX_BUCKET"
 
 client = InfluxDBClient(url=url, token=token, org=org)
 write_api = client.write_api(write_options=WriteOptions(batch_size=1))
@@ -227,41 +252,33 @@ def collect_metrics():
 
 if __name__ == "__main__":
     while True:
-        metrics = collect_metrics()
-        print(metrics)
-        p = Point("system_metrics")
-        for k,v in metrics.items():
-            if v is not None:
-                p = p.field(k, v)
-        write_api.write(bucket=bucket, org=org, record=p)
+        try:
+            metrics = collect_metrics()
+            print(metrics)
+            p = Point("system_metrics")
+            for k,v in metrics.items():
+                if v is not None:
+                    p = p.field(k, v)
+            write_api.write(bucket=bucket, org=org, record=p)
+        except Exception as e:
+            print("Error:", e)
         time.sleep(10)
 EOF
 
-chmod +x $HOME_DIR/system_metrics.py
+chmod +x "$SYSTEM_METRICS_SCRIPT"
 
-#--------------------------------------------------------------------------------------------------
-# set default persistence service                                                                 |
-#--------------------------------------------------------------------------------------------------
-sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
-if grep -q "org.openhab.persistence:default=" /etc/openhab/services/runtime.cfg; then
-    sudo sed -i 's|org.openhab.persistence:default=.*|org.openhab.persistence:default=influxdb|' /etc/openhab/services/runtime.cfg
-else
-    printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/services/runtime.cfg
-fi
+#-----------------------------------------------
+# Create systemd service
+#-----------------------------------------------
+SERVICE_FILE="/etc/systemd/system/system-metrics.service"
 
-# restart openhab service
-# sudo systemctl restart openhab.service
-
-#--------------------------------------------------------------------------------------------------
-# create systemd service for system metrics                                                       |
-#--------------------------------------------------------------------------------------------------
-sudo tee /etc/systemd/system/system-metrics.service > /dev/null <<EOL
+sudo tee "$SERVICE_FILE" > /dev/null <<EOL
 [Unit]
 Description=OrangePi System Metrics Collector
 After=network.target influxdb.service
 
 [Service]
-ExecStart=/usr/bin/python3 $HOME_DIR/system_metrics.py
+ExecStart=$VENV_DIR/bin/python $SYSTEM_METRICS_SCRIPT
 WorkingDirectory=$HOME_DIR
 Restart=always
 RestartSec=10
@@ -272,10 +289,15 @@ Environment="PYTHONUNBUFFERED=1"
 WantedBy=multi-user.target
 EOL
 
-# Reload systemd, enable and start service
+#-----------------------------------------------
+# Enable and start systemd service
+#-----------------------------------------------
 sudo systemctl daemon-reload
 sudo systemctl enable system-metrics.service
-sudo systemctl start system-metrics.service
+sudo systemctl restart system-metrics.service
+sudo systemctl status system-metrics.service
+
+echo "System metrics service installed and running."
 
 #--------------------------------------------------------------------------------------------------
 # install Grafana + configure InfluxDB data source + import system metrics dashboard
@@ -373,23 +395,30 @@ mkdir -p "$TXT_DIR"
 BASE_URL="https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data"
 
 # List of txt files
-TXT_FILES=(icons.txt items.txt json.txt persist.txt rules.txt things.txt)
+TXT_FILES="icons.txt items.txt json.txt persist.txt rules.txt things.txt"
 
 # Download all txt files
-for file in "${TXT_FILES[@]}"; do
+for file in $TXT_FILES; do
     wget -O "$TXT_DIR/$file" "$BASE_URL/$file"
 done
 
 # Helper function to download files and set ownership
 download_and_chown() {
-    local txt_file="$1"
-    local target_dir="$2"
-    local pattern="$3"  # e.g., *.png, *.items
+    txt_file="$1"
+    target_dir="$2"
+    pattern="$3"
 
+    sudo mkdir -p "$target_dir"
     cd "$target_dir" || { echo "Directory $target_dir not found"; return; }
 
-    sudo wget -i "$TXT_DIR/$txt_file"
-    sudo chown orangepi:orangepi "$target_dir/$pattern"
+    # Download each URL from txt file using sudo
+    while IFS= read -r url; do
+        [ -z "$url" ] && continue
+        sudo wget "$url"
+    done < "$TXT_DIR/$txt_file"
+
+    # Change ownership of downloaded files
+    sudo chown orangepi:orangepi $pattern
 }
 
 # icons > /etc/openhab/icons/classic
@@ -414,6 +443,19 @@ download_and_chown things.txt /etc/openhab/things "*.things"
 rm -rf "$TXT_DIR"
 
 echo "All files downloaded and ownership set correctly."
+
+#--------------------------------------------------------------------------------------------------
+# set default persistence service                                                                 |
+#--------------------------------------------------------------------------------------------------
+sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
+if grep -q "org.openhab.persistence:default=" /etc/openhab/services/runtime.cfg; then
+    sudo sed -i 's|org.openhab.persistence:default=.*|org.openhab.persistence:default=influxdb|' /etc/openhab/services/runtime.cfg
+else
+    printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/services/runtime.cfg
+fi
+
+# restart openhab service
+# sudo systemctl restart openhab.service
 
 sudo systemctl restart openhab.service
 
