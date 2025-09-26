@@ -1,0 +1,6 @@
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/heating.things
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/ipcamera.things
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.things
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/opener.things
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/pool_filtration.things
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/pool_temperature.things

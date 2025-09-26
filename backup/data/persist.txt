@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/influxdb.persist
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/mapdb.persist

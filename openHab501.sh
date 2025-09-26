@@ -75,7 +75,7 @@ sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main
 (echo "$samba_share_password"; echo "$samba_share_password") | smbpasswd -s -a "$SUDO_USER"
 sudo usermod -a -G openhab orangepi
 sudo chmod -R g+w /etc/openhab
-sudo chmod -R g+w /var/lib/openhab
+sudo chmod -R g+w /var/lib/openhab/jsondb
 sudo systemctl restart smbd.service
 
 #--------------------------------------------------------------------------------------------------
@@ -130,46 +130,44 @@ echo "Setting up InfluxDB admin user..."
 # OpenHAB Configuration File Path
 OPENHAB_INFLUX_CFG="/etc/openhab/services/influxdb.cfg"
 
-check_influx_cli() {
-    if ! sudo /root/influx version; then
-        echo "Influx CLI is not installed, not executable, or not in the correct directory."
-        echo "Please verify that you have the correct InfluxDB CLI binary."
-        exit 1
-    fi
-}
+#--------------------------------------------------------------------------------------------------
+# check influx CLI                                                                                |
+#--------------------------------------------------------------------------------------------------
+if ! sudo /root/influx version; then
+    echo "Influx CLI is not installed, not executable, or not in the correct directory."
+    echo "Please verify that you have the correct InfluxDB CLI binary."
+    exit 1
+fi
 
-create_influx_token() {
-    echo "Creating an authentication token for InfluxDB..."
-    # Run the command with sudo and capture the token
-    INFLUX_TOKEN=$(sudo /root/influx auth create \
-        --org "$INFLUXDB_ORG" \
-        --description "OpenHAB Token" \
-        --all-access \
-        --hide-headers | awk 'NR==1 {print $4}')
+#--------------------------------------------------------------------------------------------------
+# create influx token                                                                             |
+#--------------------------------------------------------------------------------------------------
+echo "Creating an authentication token for InfluxDB..."
+INFLUX_TOKEN=$(sudo /root/influx auth create \
+    --org "$INFLUXDB_ORG" \
+    --description "OpenHAB Token" \
+    --all-access \
+    --hide-headers | awk 'NR==1 {print $4}')
 
-    # Check if the token was successfully created
-    if [ -z "$INFLUX_TOKEN" || "$INFLUX_TOKEN" == "Error" ]; then
-        echo "Failed to create InfluxDB token. Verify your InfluxDB setup and credentials."
-        exit 1
-    fi
+if [ -z "$INFLUX_TOKEN" ] || [ "$INFLUX_TOKEN" == "Error" ]; then
+    echo "Failed to create InfluxDB token. Verify your InfluxDB setup and credentials."
+    exit 1
+fi
+echo "Token successfully created: $INFLUX_TOKEN"
 
-    echo "Token successfully created: $INFLUX_TOKEN"
-}
+#--------------------------------------------------------------------------------------------------
+# configure openhab to use influx                                                                 |
+#--------------------------------------------------------------------------------------------------
+if [ ! -f "$OPENHAB_INFLUX_CFG" ]; then
+    echo "InfluxDB configuration file not found, creating one..."
+    sudo touch "$OPENHAB_INFLUX_CFG"
+fi
 
-# Function to configure OpenHAB with the InfluxDB token
-configure_openhab() {
-    echo "Configuring OpenHAB to use InfluxDB token..."
+# Backup old config
+sudo cp "$OPENHAB_INFLUX_CFG" "$OPENHAB_INFLUX_CFG.bak"
 
-    if [ ! -f "$OPENHAB_INFLUX_CFG" ]; then
-        echo "InfluxDB configuration file not found, creating one..."
-        sudo touch "$OPENHAB_INFLUX_CFG"
-    fi
-
-    # Backup old config
-    sudo cp "$OPENHAB_INFLUX_CFG" "$OPENHAB_INFLUX_CFG.bak"
-
-    # Write new config
-    sudo tee "$OPENHAB_INFLUX_CFG" > /dev/null <<EOL
+# Write new config
+sudo tee "$OPENHAB_INFLUX_CFG" > /dev/null <<EOL
 # OpenHAB InfluxDB Configuration
 version=V2
 url=http://localhost:8086
@@ -179,44 +177,222 @@ bucket=$INFLUXDB_BUCKET
 retentionPolicy=$INFLUXDB_BUCKET
 EOL
 
-    echo "OpenHAB is now configured with InfluxDB token."
-}
+echo "OpenHAB is now configured with InfluxDB token."
 
+#--------------------------------------------------------------------------------------------------
+# install python dependencies for system metrics                                                  |
+#--------------------------------------------------------------------------------------------------
+sudo apt-get install -y python3 python3-pip python3-psutil
+pip3 install --user influxdb-client
 
-check_influx_cli
-create_influx_token
-configure_openhab
+#--------------------------------------------------------------------------------------------------
+# create system metrics script                                                                    |
+#--------------------------------------------------------------------------------------------------
+HOME_DIR=$(eval echo ~orangepi)
 
+cat << EOF > $HOME_DIR/system_metrics.py
+#!/usr/bin/env python3
+import psutil, time
+from influxdb_client import InfluxDBClient, Point, WriteOptions
 
-# set default persis service
+# InfluxDB 2.x connection details
+url = "http://localhost:8086"
+token = "$INFLUX_TOKEN"
+org = "$INFLUXDB_ORG"
+bucket = "$INFLUXDB_BUCKET"
+
+client = InfluxDBClient(url=url, token=token, org=org)
+write_api = client.write_api(write_options=WriteOptions(batch_size=1))
+
+def read_temp(path):
+    try:
+        with open(path, "r") as f:
+            return int(f.read().strip()) / 1000.0
+    except FileNotFoundError:
+        return None
+
+def collect_metrics():
+    record = {}
+    record["cpu_percent"] = psutil.cpu_percent(interval=1)
+    mem = psutil.virtual_memory()
+    record["mem_total_mb"] = mem.total / 1024 / 1024
+    record["mem_used_mb"] = mem.used / 1024 / 1024
+    record["mem_percent"] = mem.percent
+    record["load1"], record["load5"], record["load15"] = psutil.getloadavg()
+    record["cpu_temp"] = read_temp("/sys/class/thermal/thermal_zone0/temp")
+    record["ddr_temp"] = read_temp("/sys/class/thermal/thermal_zone1/temp")
+    record["gpu_temp"] = read_temp("/sys/class/thermal/thermal_zone2/temp")
+    record["ve_temp"]  = read_temp("/sys/class/thermal/thermal_zone3/temp")
+    return record
+
+if __name__ == "__main__":
+    while True:
+        metrics = collect_metrics()
+        print(metrics)
+        p = Point("system_metrics")
+        for k,v in metrics.items():
+            if v is not None:
+                p = p.field(k, v)
+        write_api.write(bucket=bucket, org=org, record=p)
+        time.sleep(10)
+EOF
+
+chmod +x $HOME_DIR/system_metrics.py
+
+#--------------------------------------------------------------------------------------------------
+# set default persistence service                                                                 |
+#--------------------------------------------------------------------------------------------------
 sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
-printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/services/runtime.cfg
+if grep -q "org.openhab.persistence:default=" /etc/openhab/services/runtime.cfg; then
+    sudo sed -i 's|org.openhab.persistence:default=.*|org.openhab.persistence:default=influxdb|' /etc/openhab/services/runtime.cfg
+else
+    printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/services/runtime.cfg
+fi
 
 # restart openhab service
 sudo systemctl restart openhab.service
 
+#--------------------------------------------------------------------------------------------------
+# create systemd service for system metrics                                                       |
+#--------------------------------------------------------------------------------------------------
+sudo tee /etc/systemd/system/system-metrics.service > /dev/null <<EOL
+[Unit]
+Description=OrangePi System Metrics Collector
+After=network.target influxdb.service
+
+[Service]
+ExecStart=/usr/bin/python3 $HOME_DIR/system_metrics.py
+WorkingDirectory=$HOME_DIR
+Restart=always
+RestartSec=10
+User=orangepi
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+# Reload systemd, enable and start service
+sudo systemctl daemon-reload
+sudo systemctl enable system-metrics.service
+sudo systemctl start system-metrics.service
+
+#--------------------------------------------------------------------------------------------------
+# install Grafana + configure InfluxDB data source + import system metrics dashboard               |
+#--------------------------------------------------------------------------------------------------
+GRAFANA_VERSION="9.6.2"
+GRAFANA_USER="grafana"
+GRAFANA_PASSWORD="grafana_password"   # Change to a secure password
+GRAFANA_DEB="grafana_${GRAFANA_VERSION}_arm64.deb"
+
+cd ~
+wget https://dl.grafana.com/oss/release/$GRAFANA_DEB
+sudo dpkg -i $GRAFANA_DEB
+
+# start and enable Grafana service
+sudo systemctl daemon-reload
+sudo systemctl enable grafana-server.service
+sudo systemctl start grafana-server.service
+
+# set default admin user
+sudo grafana-cli admin reset-admin-password $GRAFANA_PASSWORD
+echo "Grafana installed and running at http://<orangepi-ip>:3000"
+
+# configure InfluxDB data source for Grafana
+GRAFANA_PROVISIONING_DIR="/etc/grafana/provisioning"
+INFLUXDB_TOKEN="$INFLUX_TOKEN"  # From your previous install steps
+INFLUXDB_ORG="openhab"
+INFLUXDB_BUCKET="openhab"
+INFLUXDB_URL="http://localhost:8086"
+
+# create directories for provisioning
+sudo mkdir -p $GRAFANA_PROVISIONING_DIR/datasources
+sudo mkdir -p $GRAFANA_PROVISIONING_DIR/dashboards
+sudo mkdir -p /var/lib/grafana/dashboards
+
+# create InfluxDB datasource provisioning file
+sudo tee $GRAFANA_PROVISIONING_DIR/datasources/influxdb.yaml > /dev/null <<EOL
+apiVersion: 1
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    url: $INFLUXDB_URL
+    database: $INFLUXDB_BUCKET
+    user: $INFLUXDB_USER
+    jsonData:
+      version: Flux
+      organization: $INFLUXDB_ORG
+      defaultBucket: $INFLUXDB_BUCKET
+    secureJsonData:
+      token: $INFLUXDB_TOKEN
+    isDefault: true
+EOL
+
+# create dashboard provisioning file
+sudo tee $GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml > /dev/null <<EOL
+apiVersion: 1
+providers:
+  - name: 'System Metrics'
+    folder: ''
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    options:
+      path: /var/lib/grafana/dashboards
+EOL
+
+# download system metrics dashboard JSON
+sudo wget -O /var/lib/grafana/dashboards/system_metrics.json \
+  https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
+
+sudo chown -R grafana:grafana /var/lib/grafana/dashboards
+sudo systemctl restart grafana-server.service
+
+echo "Grafana is fully configured with InfluxDB data source and system metrics dashboard."
+
+#--------------------------------------------------------------------------------------------------
+# copy backup data from reposity to openhab                                                       |
+#--------------------------------------------------------------------------------------------------
+
+# icons > /etc/openhab
+cd /etc/openhab/icons/classic/ || exit 1
+sudo wget -i /path/to/icons.txt
+sudo chown orangepi:orangepi /etc/openhab/icons/classic/*.png
+
+# items > /etc/openhab
+cd /etc/openhab/items/ || exit 1
+sudo wget -i /path/to/items.txt
+sudo chown orangepi:orangepi /etc/openhab/items/*.items
+
+# ui > /var/lib/openhab/jsondb
+cd /var/lib/openhab/jsondb/ || exit 1
+sudo wget -i /path/to/json.txt
+sudo chown orangepi:orangepi /var/lib/openhab/jsondb/*.json
+
+# persistence > /etc/openhab
+cd /etc/openhab/persistence/ || exit 1
+sudo wget -i /path/to/persist.txt
+sudo chown orangepi:orangepi /etc/openhab/persistence/*.persist
+
+# rules > /etc/openhab
+cd /etc/openhab/rules/ || exit 1
+sudo wget -i /path/to/rules.txt
+sudo chown orangepi:orangepi /etc/openhab/rules/*.rules
+
+# things > /etc/openhab
+cd /etc/openhab/things/ || exit 1
+sudo wget -i /path/to/things.txt
+sudo chown orangepi:orangepi /etc/openhab/things/*.things
+
+sudo systemctl restart openhab.service
 
 
 
-
-
-
-
-
-
-
-# #--------------------------------------------------------------------------------------------------
-# # copy backup data from reposity to openhab                                                       |
-# #--------------------------------------------------------------------------------------------------
-
-# # icons > /etc/openhab
-# cd ~/../../etc/openhab/icons/classic/
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/*.png
-# sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
-
-
-
-
+# icons > /etc/openhab
+#cd ~/../../etc/openhab/icons/classic/
+#sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/*.png
+#sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
 # # items > /etc/openhab
 # cd ~/../../etc/openhab/items/
 # sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.items
