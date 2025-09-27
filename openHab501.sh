@@ -178,43 +178,30 @@ retentionPolicy=$INFLUXDB_BUCKET
 EOL
 
 echo "OpenHAB is now configured with InfluxDB token."
-
-
 #--------------------------------------------------------------------------------------------------
-# install python dependencies for system metrics                                                  |
+# install python dependencies for system metrics
 #--------------------------------------------------------------------------------------------------
 HOME_DIR=/home/orangepi
 VENV_DIR="$HOME_DIR/venv"
 SYSTEM_METRICS_SCRIPT="$HOME_DIR/system_metrics.py"
-INFLUX_TOKEN="YOUR_INFLUXDB_TOKEN"  # Replace with your InfluxDB token
-INFLUX_ORG="openhab"
-INFLUX_BUCKET="openhab"
 INFLUX_URL="http://localhost:8086"
 
-#-----------------------------------------------
 # Install Python, venv, pip, and dependencies
-#-----------------------------------------------
 sudo apt-get update
 sudo apt-get install -y python3 python3-venv python3-pip
 
-#-----------------------------------------------
 # Create virtual environment if it doesn't exist
-#-----------------------------------------------
 if [ ! -d "$VENV_DIR" ]; then
     python3 -m venv "$VENV_DIR"
 fi
 
-#-----------------------------------------------
 # Activate venv and install required Python packages
-#-----------------------------------------------
 . "$VENV_DIR/bin/activate"
 pip install --upgrade pip
 pip install influxdb-client psutil
 deactivate
 
-#--------------------------------------------------------------------------------------------------
-# create system metrics script                                                                    |
-#--------------------------------------------------------------------------------------------------
+# create system metrics script
 cat << EOF > "$SYSTEM_METRICS_SCRIPT"
 #!/usr/bin/env python3
 import psutil, time
@@ -223,8 +210,8 @@ from influxdb_client import InfluxDBClient, Point, WriteOptions
 # InfluxDB 2.x connection details
 url = "$INFLUX_URL"
 token = "$INFLUX_TOKEN"
-org = "$INFLUX_ORG"
-bucket = "$INFLUX_BUCKET"
+org = "$INFLUXDB_ORG"
+bucket = "$INFLUXDB_BUCKET"
 
 client = InfluxDBClient(url=url, token=token, org=org)
 write_api = client.write_api(write_options=WriteOptions(batch_size=1))
@@ -238,16 +225,29 @@ def read_temp(path):
 
 def collect_metrics():
     record = {}
+    # overall CPU usage
     record["cpu_percent"] = psutil.cpu_percent(interval=1)
+
+    # per-core CPU usage (list of percentages)
+    per_core = psutil.cpu_percent(interval=None, percpu=True)
+    for i, usage in enumerate(per_core):
+        record[f"cpu_core{i}_percent"] = usage
+
+    # memory
     mem = psutil.virtual_memory()
     record["mem_total_mb"] = mem.total / 1024 / 1024
     record["mem_used_mb"] = mem.used / 1024 / 1024
     record["mem_percent"] = mem.percent
+
+    # load averages
     record["load1"], record["load5"], record["load15"] = psutil.getloadavg()
+
+    # temperatures
     record["cpu_temp"] = read_temp("/sys/class/thermal/thermal_zone0/temp")
     record["ddr_temp"] = read_temp("/sys/class/thermal/thermal_zone1/temp")
     record["gpu_temp"] = read_temp("/sys/class/thermal/thermal_zone2/temp")
     record["ve_temp"]  = read_temp("/sys/class/thermal/thermal_zone3/temp")
+
     return record
 
 if __name__ == "__main__":
@@ -267,9 +267,7 @@ EOF
 
 chmod +x "$SYSTEM_METRICS_SCRIPT"
 
-#-----------------------------------------------
 # Create systemd service
-#-----------------------------------------------
 SERVICE_FILE="/etc/systemd/system/system-metrics.service"
 
 sudo tee "$SERVICE_FILE" > /dev/null <<EOL
@@ -289,9 +287,7 @@ Environment="PYTHONUNBUFFERED=1"
 WantedBy=multi-user.target
 EOL
 
-#-----------------------------------------------
 # Enable and start systemd service
-#-----------------------------------------------
 sudo systemctl daemon-reload
 sudo systemctl enable system-metrics.service
 sudo systemctl restart system-metrics.service
@@ -303,31 +299,39 @@ echo "System metrics service installed and running."
 # install Grafana + configure InfluxDB data source + import system metrics dashboard
 #--------------------------------------------------------------------------------------------------
 
-GRAFANA_USER="grafana"
 GRAFANA_PASSWORD="grafana_password"   # Change to a secure password
 
 # Install dependencies
 sudo apt-get update
-sudo apt-get install -y software-properties-common wget apt-transport-https
+sudo apt-get install -y software-properties-common wget apt-transport-https gnupg2
 
-# Add Grafana official APT repository
-sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main" -y
-
-# Add Grafana GPG key
-wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+# Add Grafana GPG key and repository
+sudo mkdir -p /etc/apt/keyrings
+wget -q -O- https://packages.grafana.com/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/grafana.gpg
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" | \
+  sudo tee /etc/apt/sources.list.d/grafana.list
 
 # Update package lists and install Grafana
 sudo apt-get update
 sudo apt-get install -y grafana
 
-# Start and enable Grafana service
-sudo systemctl daemon-reload
-sudo systemctl enable grafana-server.service
-sudo systemctl start grafana-server.service
+# Stop Grafana before resetting admin password
+sudo systemctl stop grafana-server
 
-# Set default admin password
+# Reset admin password directly in DB
 sudo grafana-cli admin reset-admin-password $GRAFANA_PASSWORD
+
+# Enable and start Grafana service
+sudo systemctl daemon-reload
+sudo systemctl enable grafana-server
+sudo systemctl start grafana-server
+
+# Show status
+sudo systemctl status grafana-server --no-pager -l
+
 echo "Grafana installed and running at http://<orangepi-ip>:3000"
+echo "Login with admin / $GRAFANA_PASSWORD"
+
 
 #--------------------------------------------------------------------------------------------------
 # configure InfluxDB data source
@@ -384,6 +388,9 @@ EOL
 # sudo systemctl restart grafana-server.service
 
 # echo "Grafana is fully configured with InfluxDB data source and system metrics dashboard."
+
+
+
 #--------------------------------------------------------------------------------------------------
 # copy backup data from reposity to openhab                                                       |
 #--------------------------------------------------------------------------------------------------
@@ -445,7 +452,7 @@ rm -rf "$TXT_DIR"
 echo "All files downloaded and ownership set correctly."
 
 #--------------------------------------------------------------------------------------------------
-# set default persistence service                                                                 |
+# set openhab default persistence service                                                         |
 #--------------------------------------------------------------------------------------------------
 sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
 if grep -q "org.openhab.persistence:default=" /etc/openhab/services/runtime.cfg; then
@@ -454,56 +461,7 @@ else
     printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/services/runtime.cfg
 fi
 
-# restart openhab service
-# sudo systemctl restart openhab.service
-
 sudo systemctl restart openhab.service
-
-
-
-# icons > /etc/openhab
-#cd ~/../../etc/openhab/icons/classic/
-#sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/*.png
-#sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
-# # items > /etc/openhab
-# cd ~/../../etc/openhab/items/
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.items
-# sudo chown orangepi:orangepi /etc/openhab/items/irrigation.items
-# # things > /etc/openhab
-# cd ~/../../etc/openhab/things/
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.things
-# sudo chown orangepi:orangepi /etc/openhab/things/irrigation.things
-# # rules > /etc/openhab
-# cd ~/../../etc/openhab/rules/
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/irrigation.rules
-# sudo chown orangepi:orangepi /etc/openhab/rules/irrigation.rules
-# # persistence > /etc/openhab
-# cd ~/../../etc/openhab/persistence/
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/influxdb.persist
-# sudo chown orangepi:orangepi /etc/openhab/persistence/influxdb.persist
-# # pagers & widgets > /etc/openhab
-# cd /var/lib/openhab/jsondb/
-# sudo rm uicomponents_ui_page.json
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_page.json
-# sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_page.json
-# sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data/uicomponents_ui_widget.json
-# sudo chown openhab /var/lib/openhab/jsondb/uicomponents_ui_widget.json
-# #sudo systemctl restart openhab.service
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

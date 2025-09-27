@@ -37,6 +37,49 @@
 
 - restore script testing               > ok 
 - grafana install testing              
-- system-metrics.service testing       > ok
+  - try other script from web
+- system-metrics.service testing       > 
+  - edited, need to be tested
+
 
 - download grafana metrixs json ? need to be created
+
+- 
+sudo systemctl status system-metrics
+
+
+
+27.09.2025 -----------------------------------------------------------------------
+
+installscript parts:
+  - update & upgrade
+  - nstall Mosquitto Broker
+  - install java 21
+  - install openHAB 5.0.0.1
+  - install frontail and dependecies and make to work
+  - samba share
+  - create openhab admin user
+  - copy addons config file
+  - install influx
+  - install influx CLI
+  - create influx admin user and database 
+  - check influx CLI
+  - create influx token
+  - configure openhab to use influx
+  
+  - install python dependencies for system metrics
+    - extended for 4 core >  test
+  
+  - install Grafana + configure InfluxDB data source + import system metrics dashboard
+    - corrected > test
+
+  - configure InfluxDB data source
+
+  - copy backup data from reposity to openhab
+
+  - set openhab default persistence service
+
+
+
+
+
