@@ -317,6 +317,8 @@ sudo apt-get install -y grafana
 # Stop Grafana before resetting admin password
 sudo systemctl stop grafana-server
 
+sudo chown -R grafana:grafana /var/lib/grafana /var/log/grafana /etc/grafana
+
 sleep 10
 
 # Reset admin password directly in DB
