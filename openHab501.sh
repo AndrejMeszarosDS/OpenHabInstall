@@ -303,13 +303,12 @@ GRAFANA_PASSWORD="grafana_password"   # Change to a secure password
 
 # Install dependencies
 sudo apt-get update
-sudo apt-get install -y software-properties-common wget apt-transport-https gnupg2
+sudo apt-get install -y apt-transport-https software-properties-common wget
 
 # Add Grafana GPG key and repository
-sudo mkdir -p /etc/apt/keyrings
-wget -q -O- https://packages.grafana.com/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/grafana.gpg
-echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" | \
-  sudo tee /etc/apt/sources.list.d/grafana.list
+sudo mkdir -p /etc/apt/keyrings/
+wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
 
 # Update package lists and install Grafana
 sudo apt-get update
@@ -317,6 +316,8 @@ sudo apt-get install -y grafana
 
 # Stop Grafana before resetting admin password
 sudo systemctl stop grafana-server
+
+sleep 10
 
 # Reset admin password directly in DB
 sudo grafana-cli admin reset-admin-password $GRAFANA_PASSWORD

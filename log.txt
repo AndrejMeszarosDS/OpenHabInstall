@@ -48,7 +48,7 @@
 sudo systemctl status system-metrics
 
 
-
+sudo systemctl status grafana-server
 27.09.2025 -----------------------------------------------------------------------
 
 installscript parts:
@@ -68,14 +68,15 @@ installscript parts:
   - configure openhab to use influx
   
   - install python dependencies for system metrics
-    - extended for 4 core >  test
+    - extended for 4 core >  test > ok
+    - system metric are in influx 
   
   - install Grafana + configure InfluxDB data source + import system metrics dashboard
     - corrected > test
 
   - configure InfluxDB data source
 
-  - copy backup data from reposity to openhab
+  - copy backup data from reposity to openhab > ok 
 
   - set openhab default persistence service
 
