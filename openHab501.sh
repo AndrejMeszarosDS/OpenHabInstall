@@ -41,26 +41,19 @@ sudo apt install --yes --force-yes openjdk-21-jre-headless
 #--------------------------------------------------------------------------------------------------
 # install openHAB 5.0.0.1                                                          |
 #--------------------------------------------------------------------------------------------------
-OPENHAB_KEYRING="/usr/share/keyrings/openhab.gpg"
-OPENHAB_LIST_FILE="/etc/apt/sources.list.d/openhab.list"
-
-sudo install -d -m 0755 /usr/share/keyrings
-curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor | sudo tee "$OPENHAB_KEYRING" > /dev/null
-sudo chmod 0644 "$OPENHAB_KEYRING"
-echo "deb [signed-by=$OPENHAB_KEYRING] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main" | sudo tee "$OPENHAB_LIST_FILE" > /dev/null
+curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor > openhab.gpg
+sudo mkdir /usr/share/keyrings
+sudo mv openhab.gpg /usr/share/keyrings
+sudo chmod u=rw,g=r,o=r /usr/share/keyrings/openhab.gpg
+echo 'deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main' | sudo tee /etc/apt/sources.list.d/openhab.list
 sudo apt-get update
 sudo apt install --yes --force-yes openhab=5.0.0-1
 sudo apt-mark hold openhab
 sudo apt-mark hold openhab-addons
+sudo systemctl start openhab.service
+sudo systemctl status openhab.service
 sudo systemctl daemon-reload
-sudo systemctl enable --now openhab.service
-
-if ! sudo systemctl list-unit-files | grep -q '^openhab.service'; then
-    echo "openHAB service was not installed correctly."
-    exit 1
-fi
-
-sudo systemctl status openhab.service --no-pager
+sudo systemctl enable openhab.service
 
 #--------------------------------------------------------------------------------------------------
 # install frontail and dependecies and make to work                                               |
@@ -444,61 +437,61 @@ echo "Grafana is fully configured with InfluxDB data source and system metrics d
 # copy backup data from reposity to openhab                                                       |
 #--------------------------------------------------------------------------------------------------
 
-TXT_DIR=/home/orangepi/openhab_txt
-mkdir -p "$TXT_DIR"
+# TXT_DIR=/home/orangepi/openhab_txt
+# mkdir -p "$TXT_DIR"
 
-# Base URL of your txt files
-BASE_URL="https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data"
+# # Base URL of your txt files
+# BASE_URL="https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/backup/data"
 
-# List of txt files
-TXT_FILES="icons.txt items.txt json.txt persist.txt rules.txt things.txt"
+# # List of txt files
+# TXT_FILES="icons.txt items.txt json.txt persist.txt rules.txt things.txt"
 
-# Download all txt files
-for file in $TXT_FILES; do
-    wget -O "$TXT_DIR/$file" "$BASE_URL/$file"
-done
+# # Download all txt files
+# for file in $TXT_FILES; do
+#     wget -O "$TXT_DIR/$file" "$BASE_URL/$file"
+# done
 
-# Helper function to download files and set ownership
-download_and_chown() {
-    txt_file="$1"
-    target_dir="$2"
-    pattern="$3"
+# # Helper function to download files and set ownership
+# download_and_chown() {
+#     txt_file="$1"
+#     target_dir="$2"
+#     pattern="$3"
 
-    sudo mkdir -p "$target_dir"
-    cd "$target_dir" || { echo "Directory $target_dir not found"; return; }
+#     sudo mkdir -p "$target_dir"
+#     cd "$target_dir" || { echo "Directory $target_dir not found"; return; }
 
-    # Download each URL from txt file using sudo
-    while IFS= read -r url; do
-        [ -z "$url" ] && continue
-        sudo wget "$url"
-    done < "$TXT_DIR/$txt_file"
+#     # Download each URL from txt file using sudo
+#     while IFS= read -r url; do
+#         [ -z "$url" ] && continue
+#         sudo wget "$url"
+#     done < "$TXT_DIR/$txt_file"
 
-    # Change ownership of downloaded files
-    sudo chown orangepi:orangepi $pattern
-}
+#     # Change ownership of downloaded files
+#     sudo chown orangepi:orangepi $pattern
+# }
 
-# icons > /etc/openhab/icons/classic
-download_and_chown icons.txt /etc/openhab/icons/classic "*.png"
+# # icons > /etc/openhab/icons/classic
+# download_and_chown icons.txt /etc/openhab/icons/classic "*.png"
 
-# items > /etc/openhab/items
-download_and_chown items.txt /etc/openhab/items "*.items"
+# # items > /etc/openhab/items
+# download_and_chown items.txt /etc/openhab/items "*.items"
 
-# ui > /var/lib/openhab/jsondb
-download_and_chown json.txt /var/lib/openhab/jsondb "*.json"
+# # ui > /var/lib/openhab/jsondb
+# download_and_chown json.txt /var/lib/openhab/jsondb "*.json"
 
-# persistence > /etc/openhab/persistence
-download_and_chown persist.txt /etc/openhab/persistence "*.persist"
+# # persistence > /etc/openhab/persistence
+# download_and_chown persist.txt /etc/openhab/persistence "*.persist"
 
-# rules > /etc/openhab/rules
-download_and_chown rules.txt /etc/openhab/rules "*.rules"
+# # rules > /etc/openhab/rules
+# download_and_chown rules.txt /etc/openhab/rules "*.rules"
 
-# things > /etc/openhab/things
-download_and_chown things.txt /etc/openhab/things "*.things"
+# # things > /etc/openhab/things
+# download_and_chown things.txt /etc/openhab/things "*.things"
 
-# Cleanup
-rm -rf "$TXT_DIR"
+# # Cleanup
+# rm -rf "$TXT_DIR"
 
-echo "All files downloaded and ownership set correctly."
+# echo "All files downloaded and ownership set correctly."
 
 #--------------------------------------------------------------------------------------------------
 # set openhab default persistence service                                                         |
