@@ -1,3 +1,21 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_USER="${SUDO_USER:-orangepi}"
+SCRIPT_HOME="/home/$SCRIPT_USER"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+MOSQUITTO_PASSWORD="mqttpass"
+SAMBA_SHARE_PASSWORD="secret"
+OPENHAB_ADMIN_USER_NAME="admin"
+OPENHAB_ADMIN_USER_PASSWORD="openhab_password"
+INFLUXDB_USER="orangepi"
+INFLUXDB_PASSWORD="orangepi"
+OPENHAB_INFLUX_USER="openhab"
+OPENHAB_INFLUX_PASSWORD="openhab_password"
+GRAFANA_PASSWORD="grafana_password"
+
 #--------------------------------------------------------------------------------------------------
 # update & upgrade                                                                                |
 #--------------------------------------------------------------------------------------------------
@@ -7,12 +25,11 @@ sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 #--------------------------------------------------------------------------------------------------
 # install Mosquitto Broker                                                                        |
 #--------------------------------------------------------------------------------------------------
-mosquitto_password=mqttpass
 sudo apt-get install -y mosquitto mosquitto-clients
 cd ~/../../etc/mosquitto/
 sudo rm mosquitto.conf
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
-sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi $mosquitto_password
+sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi "$MOSQUITTO_PASSWORD"
 sudo systemctl enable mosquitto.service
 sudo systemctl restart mosquitto
 
@@ -67,12 +84,11 @@ sudo systemctl restart frontail.service
 #--------------------------------------------------------------------------------------------------
 # samba share                                                                                     |
 #--------------------------------------------------------------------------------------------------
-samba_share_password=secret
 sudo apt-get install --yes --force-yes samba samba-common-bin
 cd ~/../../etc/samba/
 sudo rm smb.conf
 sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
-(echo "$samba_share_password"; echo "$samba_share_password") | smbpasswd -s -a "$SUDO_USER"
+(echo "$SAMBA_SHARE_PASSWORD"; echo "$SAMBA_SHARE_PASSWORD") | smbpasswd -s -a "$SCRIPT_USER"
 sudo usermod -a -G openhab orangepi
 sudo chmod -R g+w /etc/openhab
 sudo chmod -R g+w /var/lib/openhab/jsondb
@@ -81,9 +97,23 @@ sudo systemctl restart smbd.service
 #--------------------------------------------------------------------------------------------------
 # create openhab admin user                                                                       |
 #--------------------------------------------------------------------------------------------------
-opanhab_admin_user_name="admin"
-opanhab_admin_user_password="openhab_password"
-openhab-cli console -p habopen users add $opanhab_admin_user_name $opanhab_admin_user_password administrator
+echo "Waiting for openHAB console to become ready..."
+OPENHAB_CLI_READY=0
+for attempt in $(seq 1 30); do
+    if sudo systemctl is-active --quiet openhab.service && timeout 1 bash -c '</dev/tcp/127.0.0.1/8101' >/dev/null 2>&1; then
+        OPENHAB_CLI_READY=1
+        break
+    fi
+    echo "openHAB not ready yet, retrying in 10 seconds... ($attempt/30)"
+    sleep 10
+done
+
+if [ "$OPENHAB_CLI_READY" -ne 1 ]; then
+    echo "openHAB console did not become ready in time."
+    exit 1
+fi
+
+openhab-cli console -p habopen users add "$OPENHAB_ADMIN_USER_NAME" "$OPENHAB_ADMIN_USER_PASSWORD" administrator
 
 #--------------------------------------------------------------------------------------------------
 # copy addons config file                                                                         |
@@ -111,10 +141,6 @@ tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 #--------------------------------------------------------------------------------------------------
 # create influx admin user and database                                                           |
 #--------------------------------------------------------------------------------------------------
-INFLUXDB_USER="orangepi"
-INFLUXDB_PASSWORD="orangepi"
-OPENHAB_USER="openhab"
-OPENHAB_PASSWORD="openhab_password"
 INFLUXDB_BUCKET="openhab"
 INFLUXDB_ORG="openhab"
 INFLUXDB_RETENTION="0"
@@ -181,7 +207,7 @@ echo "OpenHAB is now configured with InfluxDB token."
 #--------------------------------------------------------------------------------------------------
 # install python dependencies for system metrics
 #--------------------------------------------------------------------------------------------------
-HOME_DIR=/home/orangepi
+HOME_DIR="$SCRIPT_HOME"
 VENV_DIR="$HOME_DIR/venv"
 SYSTEM_METRICS_SCRIPT="$HOME_DIR/system_metrics.py"
 INFLUX_URL="http://localhost:8086"
@@ -280,7 +306,7 @@ ExecStart=$VENV_DIR/bin/python $SYSTEM_METRICS_SCRIPT
 WorkingDirectory=$HOME_DIR
 Restart=always
 RestartSec=10
-User=orangepi
+User=$SCRIPT_USER
 Environment="PYTHONUNBUFFERED=1"
 
 [Install]
@@ -299,7 +325,10 @@ echo "System metrics service installed and running."
 # install Grafana + configure InfluxDB data source + import system metrics dashboard
 #--------------------------------------------------------------------------------------------------
 
-GRAFANA_PASSWORD="grafana_password"   # Change to a secure password
+GRAFANA_PROVISIONING_DIR="/etc/grafana/provisioning"
+GRAFANA_DASHBOARD_DIR="/var/lib/grafana/dashboards"
+LOCAL_GRAFANA_DASHBOARD="$SCRIPT_DIR/grafana/system_metrics_dashboard.json"
+GRAFANA_DASHBOARD_URL="https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json"
 
 # Install dependencies
 sudo apt-get update
@@ -307,90 +336,77 @@ sudo apt-get install -y apt-transport-https software-properties-common wget
 
 # Add Grafana GPG key and repository
 sudo mkdir -p /etc/apt/keyrings/
-wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
-echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+wget -q -O - https://apt.grafana.com/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/grafana.gpg
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list > /dev/null
 
 # Update package lists and install Grafana
 sudo apt-get update
 sudo apt-get install -y grafana
 
-# Stop Grafana before resetting admin password
-sudo systemctl stop grafana-server
-
-sudo chown -R grafana:grafana /var/lib/grafana /var/log/grafana /etc/grafana
-
-sleep 10
-
-# Reset admin password directly in DB
-sudo grafana-cli admin reset-admin-password $GRAFANA_PASSWORD
+# Reset admin password using the packaged home path
+sudo grafana-cli --homepath /usr/share/grafana admin reset-admin-password "$GRAFANA_PASSWORD"
 
 # Enable and start Grafana service
 sudo systemctl daemon-reload
-sudo systemctl enable grafana-server
-sudo systemctl start grafana-server
+sudo systemctl enable --now grafana-server
 
-# Show status
-sudo systemctl status grafana-server --no-pager -l
-
-echo "Grafana installed and running at http://<orangepi-ip>:3000"
-echo "Login with admin / $GRAFANA_PASSWORD"
-
-
-#--------------------------------------------------------------------------------------------------
 # configure InfluxDB data source
-#--------------------------------------------------------------------------------------------------
-GRAFANA_PROVISIONING_DIR="/etc/grafana/provisioning"
-INFLUXDB_TOKEN="$INFLUX_TOKEN"  # From your previous install steps
-INFLUXDB_ORG="openhab"
-INFLUXDB_BUCKET="openhab"
+INFLUXDB_TOKEN="$INFLUX_TOKEN"
 INFLUXDB_URL="http://localhost:8086"
-INFLUXDB_USER="openhab"  # replace if different
 
 # create directories for provisioning
-sudo mkdir -p $GRAFANA_PROVISIONING_DIR/datasources
-sudo mkdir -p $GRAFANA_PROVISIONING_DIR/dashboards
-sudo mkdir -p /var/lib/grafana/dashboards
+sudo mkdir -p "$GRAFANA_PROVISIONING_DIR/datasources"
+sudo mkdir -p "$GRAFANA_PROVISIONING_DIR/dashboards"
+sudo mkdir -p "$GRAFANA_DASHBOARD_DIR"
 
 # create InfluxDB datasource provisioning file
-sudo tee $GRAFANA_PROVISIONING_DIR/datasources/influxdb.yaml > /dev/null <<EOL
+sudo tee "$GRAFANA_PROVISIONING_DIR/datasources/influxdb.yaml" > /dev/null <<EOL
 apiVersion: 1
 datasources:
   - name: InfluxDB
+    uid: openhab-influxdb
     type: influxdb
     access: proxy
     url: $INFLUXDB_URL
-    database: $INFLUXDB_BUCKET
-    user: $INFLUXDB_USER
+    isDefault: true
+    editable: false
     jsonData:
       version: Flux
       organization: $INFLUXDB_ORG
       defaultBucket: $INFLUXDB_BUCKET
+      tlsSkipVerify: true
     secureJsonData:
       token: $INFLUXDB_TOKEN
-    isDefault: true
 EOL
 
 # create dashboard provisioning file
-# sudo tee $GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml > /dev/null <<EOL
-# apiVersion: 1
-# providers:
-#   - name: 'System Metrics'
-#     folder: ''
-#     type: file
-#     disableDeletion: false
-#     updateIntervalSeconds: 10
-#     options:
-#       path: /var/lib/grafana/dashboards
-# EOL
+sudo tee "$GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml" > /dev/null <<EOL
+apiVersion: 1
+providers:
+  - name: System Metrics
+    folder: OpenHAB
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 10
+    options:
+      path: $GRAFANA_DASHBOARD_DIR
+EOL
 
-# # download system metrics dashboard JSON
-# sudo wget -O /var/lib/grafana/dashboards/system_metrics.json \
-#   https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
+# install system metrics dashboard JSON
+if [ -f "$LOCAL_GRAFANA_DASHBOARD" ]; then
+    sudo cp "$LOCAL_GRAFANA_DASHBOARD" "$GRAFANA_DASHBOARD_DIR/system_metrics_dashboard.json"
+else
+    sudo wget -O "$GRAFANA_DASHBOARD_DIR/system_metrics_dashboard.json" "$GRAFANA_DASHBOARD_URL"
+fi
 
-# sudo chown -R grafana:grafana /var/lib/grafana/dashboards
-# sudo systemctl restart grafana-server.service
+sudo chown -R grafana:grafana "$GRAFANA_DASHBOARD_DIR" "$GRAFANA_PROVISIONING_DIR"
+sudo systemctl restart grafana-server.service
+sudo systemctl status grafana-server --no-pager -l
 
-# echo "Grafana is fully configured with InfluxDB data source and system metrics dashboard."
+echo "Grafana installed and running at http://<orangepi-ip>:3000"
+echo "Login with admin / $GRAFANA_PASSWORD"
+echo "Grafana is fully configured with InfluxDB data source and system metrics dashboard."
 
 
 
