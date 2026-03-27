@@ -63,6 +63,19 @@ fi
 sudo systemctl enable --now openhab
 
 #-------------------------------------------------------------------------------------------------- ok
+log "Installing InfluxDB"
+cd ~
+curl -LO https://download.influxdata.com/influxdb/releases/influxdb2_2.7.7-1_arm64.deb
+sudo dpkg -i influxdb2_2.7.7-1_arm64.deb
+sudo service influxdb start
+
+#--------------------------------------------------------------------------------------------------
+log "Installing InfluxDB CLI"
+cd ~
+wget https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz
+tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
+
+#-------------------------------------------------------------------------------------------------- ok
 log "Frontail"
 if ! command -v node >/dev/null; then
     sudo apt-get install -y nodejs npm
@@ -98,22 +111,8 @@ sudo chmod -R g+w /etc/openhab
 sudo chmod -R g+w /var/lib/openhab/jsondb
 sudo systemctl restart smbd.service
 
-#-------------------------------------------------------------------------------------------------- ok
-log "Installing InfluxDB"
-cd ~
-curl -LO https://download.influxdata.com/influxdb/releases/influxdb2_2.7.7-1_arm64.deb
-sudo dpkg -i influxdb2_2.7.7-1_arm64.deb
-sudo service influxdb start
-
-#--------------------------------------------------------------------------------------------------
-log "Installing InfluxDB CLI"
-cd ~
-wget https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz
-tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
-
 #--------------------------------------------------------------------------------------------------
 log "Creating InfluxDB admin user and database"
-
 
 echo "Setting up InfluxDB admin user..."
 ./influx setup --username "$INFLUXDB_USER" \

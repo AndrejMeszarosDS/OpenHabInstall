@@ -114,7 +114,6 @@ tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 #--------------------------------------------------------------------------------------------------
 log "Creating InfluxDB admin user and database"
 
-
 echo "Setting up InfluxDB admin user..."
 ./influx setup --username "$INFLUXDB_USER" \
              --password "$INFLUXDB_PASSWORD" \
