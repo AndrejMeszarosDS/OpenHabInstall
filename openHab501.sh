@@ -23,7 +23,7 @@ install_if_missing() {
 
 #--------------------------------------------------------------------------------------------------
 log "Update system"
-# sudo apt-get update
+sudo apt-get update
 # sudo apt-get -y upgrade
 # ask somwthing 
 
@@ -47,20 +47,23 @@ install_if_missing openjdk-21-jre-headless
 
 #-------------------------------------------------------------------------------------------------- ok
 log "OpenHAB"
-if ! dpkg -s openhab >/dev/null 2>&1; then
-    sudo mkdir -p /usr/share/keyrings
-    curl -fsSL https://openhab.jfrog.io/artifactory/api/gpg/key/public | \
-        gpg --dearmor | sudo tee /usr/share/keyrings/openhab.gpg > /dev/null
+# sudo install -d -m 0755 /usr/share/keyrings
+# curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor | sudo tee "$OPENHAB_KEYRING" > /dev/null
+# sudo chmod 0644 "$OPENHAB_KEYRING"
+# echo "deb [signed-by=$OPENHAB_KEYRING] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main" | sudo tee "$OPENHAB_LIST_FILE" > /dev/null
+# sudo apt-get update
+# sudo apt install --yes --force-yes openhab=5.0.0-1
+# sudo apt-mark hold openhab
+# sudo apt-mark hold openhab-addons
+# sudo systemctl daemon-reload
+# sudo systemctl enable --now openhab.service
 
-    echo 'deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main' | \
-        sudo tee /etc/apt/sources.list.d/openhab.list
+# if ! sudo systemctl list-unit-files | grep -q '^openhab.service'; then
+#     echo "openHAB service was not installed correctly."
+#     exit 1
+# fi
 
-    sudo apt-get update
-    sudo apt-get install -y openhab=5.0.0-1
-    sudo apt-mark hold openhab openhab-addons
-fi
-
-sudo systemctl enable --now openhab
+# sudo systemctl status openhab.service --no-pager
 
 #-------------------------------------------------------------------------------------------------- ok
 log "Installing InfluxDB"
