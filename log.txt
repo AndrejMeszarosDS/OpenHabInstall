@@ -81,6 +81,21 @@ installscript parts:
   - set openhab default persistence service
 
 
+27.03.2026 -----------------------------------------------------------------------
 
+connect to orangepi on mac :
+  - terminal : ssh orangepi@192.168.0.145 orangepi
+  - os version installed : Welcome to Orange Pi 1.0.4 Jammy with Linux 6.1.31-sun50iw9
+    - Orangepizero3_1.0.4_ubuntu_jammy_server_linux6.1.31.img
+  - balenaEtcher
+    - write img to sd created
+  - try to connect ...
+    - need to clear last connection
+      - ssh-keygen -R 192.168.0.145
+      - after this 
+        - ssh orangepi@192.168.0.145 orangepi 
+          - is working
+  - try to start updated install
+    - sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openHab501.sh && sudo chmod 755 openHab501.sh && sudo ./openHab501.sh 
 
 

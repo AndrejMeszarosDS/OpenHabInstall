@@ -350,6 +350,13 @@ echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stab
 sudo apt-get update
 sudo apt-get install -y grafana
 
+# Ensure Grafana can write its SQLite DB and logs
+sudo install -d -m 0755 -o grafana -g grafana /var/lib/grafana
+sudo install -d -m 0755 -o grafana -g grafana /var/log/grafana
+sudo install -d -m 0755 -o root -g grafana /etc/grafana/provisioning
+sudo find /etc/grafana/provisioning -type d -exec chmod 0755 {} \;
+sudo find /etc/grafana/provisioning -type f -exec chmod 0644 {} \;
+
 # Reset admin password using the packaged home path
 sudo grafana-cli --homepath /usr/share/grafana admin reset-admin-password "$GRAFANA_PASSWORD"
 
@@ -360,6 +367,12 @@ sudo systemctl enable --now grafana-server
 # configure InfluxDB data source
 INFLUXDB_TOKEN="$INFLUX_TOKEN"
 INFLUXDB_URL="http://localhost:8086"
+
+if [ -z "${INFLUXDB_ORG:-}" ] || [ -z "${INFLUXDB_BUCKET:-}" ] || [ -z "${INFLUXDB_TOKEN:-}" ]; then
+    echo "Grafana provisioning skipped because InfluxDB values are empty."
+    echo "INFLUXDB_ORG='${INFLUXDB_ORG:-}' INFLUXDB_BUCKET='${INFLUXDB_BUCKET:-}' token_present=$([ -n "${INFLUXDB_TOKEN:-}" ] && echo yes || echo no)"
+    exit 1
+fi
 
 # create directories for provisioning
 sudo mkdir -p "$GRAFANA_PROVISIONING_DIR/datasources"
@@ -374,16 +387,16 @@ datasources:
     uid: openhab-influxdb
     type: influxdb
     access: proxy
-    url: $INFLUXDB_URL
+    url: "$INFLUXDB_URL"
     isDefault: true
     editable: false
     jsonData:
-      version: Flux
-      organization: $INFLUXDB_ORG
-      defaultBucket: $INFLUXDB_BUCKET
+      version: "Flux"
+      organization: "$INFLUXDB_ORG"
+      defaultBucket: "$INFLUXDB_BUCKET"
       tlsSkipVerify: true
     secureJsonData:
-      token: $INFLUXDB_TOKEN
+      token: "$INFLUXDB_TOKEN"
 EOL
 
 # create dashboard provisioning file
@@ -391,13 +404,13 @@ sudo tee "$GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml" > /dev/null 
 apiVersion: 1
 providers:
   - name: System Metrics
-    folder: OpenHAB
+    folder: "OpenHAB"
     type: file
     disableDeletion: false
     allowUiUpdates: true
     updateIntervalSeconds: 10
     options:
-      path: $GRAFANA_DASHBOARD_DIR
+      path: "$GRAFANA_DASHBOARD_DIR"
 EOL
 
 # install system metrics dashboard JSON
@@ -408,7 +421,17 @@ else
 fi
 
 sudo chown -R grafana:grafana "$GRAFANA_DASHBOARD_DIR" "$GRAFANA_PROVISIONING_DIR"
+sudo chmod 0755 "$GRAFANA_DASHBOARD_DIR"
+sudo find "$GRAFANA_DASHBOARD_DIR" -type f -exec chmod 0644 {} \;
 sudo systemctl restart grafana-server.service
+sleep 5
+
+if ! sudo systemctl is-active --quiet grafana-server.service; then
+    echo "Grafana failed to stay running after provisioning."
+    sudo journalctl -u grafana-server.service -n 50 --no-pager
+    exit 1
+fi
+
 sudo systemctl status grafana-server --no-pager -l
 
 echo "Grafana installed and running at http://<orangepi-ip>:3000"
