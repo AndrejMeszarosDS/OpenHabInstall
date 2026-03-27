@@ -14,6 +14,7 @@ INFLUXDB_USER="orangepi"
 INFLUXDB_PASSWORD="orangepi"
 INFLUXDB_ORG="openhab"
 INFLUXDB_BUCKET="openhab"
+INFLUXDB_RETENTION="0"
 GRAFANA_PASSWORD="GrafanaPass_2026!"
 
 install_if_missing() {
@@ -22,7 +23,7 @@ install_if_missing() {
 
 #--------------------------------------------------------------------------------------------------
 log "Update system"
-sudo apt-get update
+# sudo apt-get update
 # sudo apt-get -y upgrade
 # ask somwthing 
 
@@ -62,36 +63,6 @@ fi
 sudo systemctl enable --now openhab
 
 #-------------------------------------------------------------------------------------------------- ok
-log "Waiting for OpenHAB to fully start..."
-
-for i in {1..60}; do
-    if sudo systemctl is-active --quiet openhab && \
-       sudo -u openhab timeout 2 bash -c '</dev/tcp/127.0.0.1/8101' 2>/dev/null; then
-        
-        # check if console responds
-        if echo "bundle:list" | sudo -u openhab nc localhost 8101 >/dev/null 2>&1; then
-            echo "OpenHAB is ready"
-            break
-        fi
-    fi
-
-    echo "Still starting... ($i)"
-    sleep 5
-done
-
-if ! sudo -u openhab openhab-cli console -p habopen "user:list" | grep -q "$OPENHAB_ADMIN_USER_NAME"; then
-    echo "Creating OpenHAB admin user..."
-
-    sudo -u openhab openhab-cli console -p habopen <<EOF
-user:add $OPENHAB_ADMIN_USER_NAME $OPENHAB_ADMIN_USER_PASSWORD
-user:roles:add $OPENHAB_ADMIN_USER_NAME administrator
-logout
-EOF
-else
-    echo "User already exists"
-fi
-
-#-------------------------------------------------------------------------------------------------- ok
 log "Frontail"
 if ! command -v node >/dev/null; then
     sudo apt-get install -y nodejs npm
@@ -117,48 +88,32 @@ sudo systemctl enable --now frontail
 
 #-------------------------------------------------------------------------------------------------- ok
 log "Samba"
-install_if_missing samba
-
-sudo wget -q -O /etc/samba/smb.conf \
-https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
-
-(echo "$SAMBA_SHARE_PASSWORD"; echo "$SAMBA_SHARE_PASSWORD") | sudo smbpasswd -s -a "$SCRIPT_USER" || true
-
-sudo usermod -a -G openhab "$SCRIPT_USER" || true
-sudo chmod -R g+w /etc/openhab /var/lib/openhab/jsondb || true
-
-sudo systemctl restart smbd
+sudo apt-get install --yes --force-yes samba samba-common-bin
+cd ~/../../etc/samba/
+sudo rm smb.conf
+sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
+(echo "$SAMBA_SHARE_PASSWORD"; echo "$SAMBA_SHARE_PASSWORD") | smbpasswd -s -a "$SCRIPT_USER"
+sudo usermod -a -G openhab orangepi
+sudo chmod -R g+w /etc/openhab
+sudo chmod -R g+w /var/lib/openhab/jsondb
+sudo systemctl restart smbd.service
 
 #-------------------------------------------------------------------------------------------------- ok
-
-
-
-
-
-
-
-
-#--------------------------------------------------------------------------------------------------
-# install influx                                                                                  |
-#--------------------------------------------------------------------------------------------------
+log "Installing InfluxDB"
 cd ~
 curl -LO https://download.influxdata.com/influxdb/releases/influxdb2_2.7.7-1_arm64.deb
 sudo dpkg -i influxdb2_2.7.7-1_arm64.deb
 sudo service influxdb start
 
 #--------------------------------------------------------------------------------------------------
-# install influx CLI                                                                              |
-#--------------------------------------------------------------------------------------------------
+log "Installing InfluxDB CLI"
 cd ~
 wget https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz
 tar xvzf ./influxdb2-client-2.7.5-linux-arm64.tar.gz
 
 #--------------------------------------------------------------------------------------------------
-# create influx admin user and database                                                           |
-#--------------------------------------------------------------------------------------------------
-INFLUXDB_BUCKET="openhab"
-INFLUXDB_ORG="openhab"
-INFLUXDB_RETENTION="0"
+log "Creating InfluxDB admin user and database"
+
 
 echo "Setting up InfluxDB admin user..."
 ./influx setup --username "$INFLUXDB_USER" \
@@ -172,8 +127,7 @@ echo "Setting up InfluxDB admin user..."
 OPENHAB_INFLUX_CFG="/etc/openhab/services/influxdb.cfg"
 
 #--------------------------------------------------------------------------------------------------
-# check influx CLI                                                                                |
-#--------------------------------------------------------------------------------------------------
+log "Checking InfluxDB CLI"
 if ! sudo /root/influx version; then
     echo "Influx CLI is not installed, not executable, or not in the correct directory."
     echo "Please verify that you have the correct InfluxDB CLI binary."
@@ -181,10 +135,9 @@ if ! sudo /root/influx version; then
 fi
 
 #--------------------------------------------------------------------------------------------------
-# create influx token                                                                             |
-#--------------------------------------------------------------------------------------------------
+log "Creating InfluxDB token"
 echo "Creating an authentication token for InfluxDB..."
-INFLUX_TOKEN=$(sudo /root/influx auth create \
+INFLUX_TOKEN=$(sudo ./influx auth create \
     --org "$INFLUXDB_ORG" \
     --description "OpenHAB Token" \
     --all-access \
@@ -197,8 +150,7 @@ fi
 echo "Token successfully created: $INFLUX_TOKEN"
 
 #--------------------------------------------------------------------------------------------------
-# configure openhab to use influx                                                                 |
-#--------------------------------------------------------------------------------------------------
+log "Configuring OpenHAB to use InfluxDB"
 if [ ! -f "$OPENHAB_INFLUX_CFG" ]; then
     echo "InfluxDB configuration file not found, creating one..."
     sudo touch "$OPENHAB_INFLUX_CFG"
@@ -220,10 +172,8 @@ EOL
 
 echo "OpenHAB is now configured with InfluxDB token."
 
-#-------------------------------------------------------------------------------------------------- ok
 #--------------------------------------------------------------------------------------------------
-# install python dependencies for system metrics
-#--------------------------------------------------------------------------------------------------
+log "Installing python dependencies for system metrics"
 HOME_DIR="$SCRIPT_HOME"
 VENV_DIR="$HOME_DIR/venv"
 SYSTEM_METRICS_SCRIPT="$HOME_DIR/system_metrics.py"
