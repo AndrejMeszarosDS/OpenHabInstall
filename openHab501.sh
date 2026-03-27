@@ -14,7 +14,7 @@ INFLUXDB_USER="orangepi"
 INFLUXDB_PASSWORD="orangepi"
 OPENHAB_INFLUX_USER="openhab"
 OPENHAB_INFLUX_PASSWORD="openhab_password"
-GRAFANA_PASSWORD="grafana_password"
+GRAFANA_PASSWORD="GrafanaPass_2026!"
 
 #--------------------------------------------------------------------------------------------------
 # update & upgrade                                                                                |
@@ -41,19 +41,26 @@ sudo apt install --yes --force-yes openjdk-21-jre-headless
 #--------------------------------------------------------------------------------------------------
 # install openHAB 5.0.0.1                                                          |
 #--------------------------------------------------------------------------------------------------
-curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor > openhab.gpg
-sudo mkdir /usr/share/keyrings
-sudo mv openhab.gpg /usr/share/keyrings
-sudo chmod u=rw,g=r,o=r /usr/share/keyrings/openhab.gpg
-echo 'deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main' | sudo tee /etc/apt/sources.list.d/openhab.list
+OPENHAB_KEYRING="/usr/share/keyrings/openhab.gpg"
+OPENHAB_LIST_FILE="/etc/apt/sources.list.d/openhab.list"
+
+sudo install -d -m 0755 /usr/share/keyrings
+curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor | sudo tee "$OPENHAB_KEYRING" > /dev/null
+sudo chmod 0644 "$OPENHAB_KEYRING"
+echo "deb [signed-by=$OPENHAB_KEYRING] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main" | sudo tee "$OPENHAB_LIST_FILE" > /dev/null
 sudo apt-get update
 sudo apt install --yes --force-yes openhab=5.0.0-1
 sudo apt-mark hold openhab
 sudo apt-mark hold openhab-addons
-sudo systemctl start openhab.service
-sudo systemctl status openhab.service
 sudo systemctl daemon-reload
-sudo systemctl enable openhab.service
+sudo systemctl enable --now openhab.service
+
+if ! sudo systemctl list-unit-files | grep -q '^openhab.service'; then
+    echo "openHAB service was not installed correctly."
+    exit 1
+fi
+
+sudo systemctl status openhab.service --no-pager
 
 #--------------------------------------------------------------------------------------------------
 # install frontail and dependecies and make to work                                               |
@@ -473,11 +480,15 @@ echo "All files downloaded and ownership set correctly."
 #--------------------------------------------------------------------------------------------------
 # set openhab default persistence service                                                         |
 #--------------------------------------------------------------------------------------------------
-sudo chown orangepi:orangepi /etc/openhab/services/runtime.cfg
-if grep -q "org.openhab.persistence:default=" /etc/openhab/services/runtime.cfg; then
-    sudo sed -i 's|org.openhab.persistence:default=.*|org.openhab.persistence:default=influxdb|' /etc/openhab/services/runtime.cfg
+RUNTIME_CFG="/etc/openhab/services/runtime.cfg"
+sudo mkdir -p /etc/openhab/services
+sudo touch "$RUNTIME_CFG"
+sudo chown "$SCRIPT_USER:$SCRIPT_USER" "$RUNTIME_CFG"
+
+if grep -q "org.openhab.persistence:default=" "$RUNTIME_CFG"; then
+    sudo sed -i 's|org.openhab.persistence:default=.*|org.openhab.persistence:default=influxdb|' "$RUNTIME_CFG"
 else
-    printf "\norg.openhab.persistence:default=influxdb" | sudo tee -a /etc/openhab/services/runtime.cfg
+    printf "\norg.openhab.persistence:default=influxdb\n" | sudo tee -a "$RUNTIME_CFG" > /dev/null
 fi
 
 sudo systemctl restart openhab.service
