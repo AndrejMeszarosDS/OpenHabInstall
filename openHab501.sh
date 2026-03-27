@@ -25,21 +25,20 @@ install_if_missing() {
 log "Update system"
 sudo apt-get update
 # sudo apt-get -y upgrade
-# ask somwthing 
 
 #-------------------------------------------------------------------------------------------------- X
 log "Mosquitto"
-# install_if_missing mosquitto
-# install_if_missing mosquitto-clients
+install_if_missing mosquitto
+install_if_missing mosquitto-clients
 
-# sudo wget -q -O /etc/mosquitto/mosquitto.conf \
-# https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
+sudo wget -q -O /etc/mosquitto/mosquitto.conf \
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
 
-# if [ ! -f /etc/mosquitto/passwd ]; then
-#     sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi "$MOSQUITTO_PASSWORD"
-# fi
+if [ ! -f /etc/mosquitto/passwd ]; then
+    sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi "$MOSQUITTO_PASSWORD"
+fi
 
-# sudo systemctl enable --now mosquitto
+sudo systemctl enable --now mosquitto
 
 #-------------------------------------------------------------------------------------------------- ok
 log "Java"
@@ -47,23 +46,23 @@ install_if_missing openjdk-21-jre-headless
 
 #-------------------------------------------------------------------------------------------------- ok
 log "OpenHAB"
-# sudo install -d -m 0755 /usr/share/keyrings
-# curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor | sudo tee "$OPENHAB_KEYRING" > /dev/null
-# sudo chmod 0644 "$OPENHAB_KEYRING"
-# echo "deb [signed-by=$OPENHAB_KEYRING] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main" | sudo tee "$OPENHAB_LIST_FILE" > /dev/null
-# sudo apt-get update
-# sudo apt install --yes --force-yes openhab=5.0.0-1
-# sudo apt-mark hold openhab
-# sudo apt-mark hold openhab-addons
-# sudo systemctl daemon-reload
-# sudo systemctl enable --now openhab.service
+sudo install -d -m 0755 /usr/share/keyrings
+curl -fsSL "https://openhab.jfrog.io/artifactory/api/gpg/key/public" | gpg --dearmor | sudo tee "$OPENHAB_KEYRING" > /dev/null
+sudo chmod 0644 "$OPENHAB_KEYRING"
+echo "deb [signed-by=$OPENHAB_KEYRING] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main" | sudo tee "$OPENHAB_LIST_FILE" > /dev/null
+sudo apt-get update
+sudo apt install --yes --force-yes openhab=5.0.0-1
+sudo apt-mark hold openhab
+sudo apt-mark hold openhab-addons
+sudo systemctl daemon-reload
+sudo systemctl enable --now openhab.service
 
-# if ! sudo systemctl list-unit-files | grep -q '^openhab.service'; then
-#     echo "openHAB service was not installed correctly."
-#     exit 1
-# fi
+if ! sudo systemctl list-unit-files | grep -q '^openhab.service'; then
+    echo "openHAB service was not installed correctly."
+    exit 1
+fi
 
-# sudo systemctl status openhab.service --no-pager
+sudo systemctl status openhab.service --no-pager
 
 #-------------------------------------------------------------------------------------------------- ok
 log "Installing InfluxDB"
