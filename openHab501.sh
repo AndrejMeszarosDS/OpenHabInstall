@@ -116,14 +116,14 @@ fi
 #--------------------------------------------------------------------------------------------------
 log "InfluxDB setup"
 
-# run setup only if not initialized
-if ! influx ping >/dev/null 2>&1; then
-  echo "InfluxDB not reachable"
-  exit 1
-fi
+# Ensure InfluxDB is reachable
+until curl -s http://localhost:8086/health | grep -q '"status":"pass"'; do
+  sleep 3
+done
 
-if ! influx bucket list >/dev/null 2>&1; then
-  echo "Running initial InfluxDB setup..."
+# If not initialized, run setup
+if ! influx org list >/dev/null 2>&1; then
+  echo "Running initial setup..."
 
   influx setup \
     --username "$INFLUXDB_USER" \
@@ -135,14 +135,23 @@ if ! influx bucket list >/dev/null 2>&1; then
 fi
 
 #--------------------------------------------------------------------------------------------------
-log "Create InfluxDB token (always)"
+log "Login to InfluxDB (CLI)"
+
+# force login using username/password
+influx config create \
+  --config-name temp \
+  --host-url http://localhost:8086 \
+  --org "$INFLUXDB_ORG" \
+  --username-password "$INFLUXDB_USER:$INFLUXDB_PASSWORD" \
+  --active 2>/dev/null || true
+
+#--------------------------------------------------------------------------------------------------
+log "Create InfluxDB token"
 
 INFLUX_TOKEN=$(influx auth create \
   --org "$INFLUXDB_ORG" \
-  --username "$INFLUXDB_USER" \
-  --password "$INFLUXDB_PASSWORD" \
   --all-access \
-  --json | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+  --json 2>/dev/null | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
 
 if [ -z "$INFLUX_TOKEN" ]; then
   echo "❌ ERROR: Failed to create token"
@@ -152,7 +161,7 @@ fi
 echo "✅ Token created"
 
 #--------------------------------------------------------------------------------------------------
-log "Configure Influx CLI"
+log "Configure Influx CLI (token)"
 
 influx config create \
   --config-name default \
