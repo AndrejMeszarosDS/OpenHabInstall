@@ -53,6 +53,28 @@ sudo apt-get install -y openjdk-21-jre-headless
 fi
 
 #--------------------------------------------------------------------------------------------------
+log "Samba"
+if ! dpkg -s samba &>/dev/null; then
+sudo apt-get install -y samba samba-common-bin
+fi
+
+if [ ! -f /etc/samba/smb.conf ]; then
+sudo wget -q -O /etc/samba/smb.conf 
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
+fi
+
+if ! sudo pdbedit -L | grep -q "^$SCRIPT_USER:"; then
+(echo "$SAMBA_PASSWORD"; echo "$SAMBA_PASSWORD") | sudo smbpasswd -s -a "$SCRIPT_USER"
+fi
+
+sudo usermod -a -G openhab "$SCRIPT_USER"
+sudo chmod -R g+w /etc/openhab || true
+sudo chmod -R g+w /var/lib/openhab/jsondb || true
+
+sudo systemctl enable smbd
+sudo systemctl restart smbd
+
+#--------------------------------------------------------------------------------------------------
 log "openHAB install"
 if ! dpkg -s openhab &>/dev/null; then
 curl -fsSL https://openhab.jfrog.io/artifactory/api/gpg/key/public | gpg --dearmor > openhab.gpg
@@ -74,26 +96,13 @@ sudo systemctl start openhab
 until curl -s http://localhost:8080 > /dev/null; do sleep 5; done
 
 #--------------------------------------------------------------------------------------------------
-log "Samba"
-if ! dpkg -s samba &>/dev/null; then
-sudo apt-get install -y samba samba-common-bin
+log "openHAB user"
+if ! sudo openhab-cli console -p habopen "users list" | grep -q "$OPENHAB_ADMIN_USER_NAME"; then
+sudo openhab-cli console -p habopen users add 
+"$OPENHAB_ADMIN_USER_NAME" 
+"$OPENHAB_ADMIN_USER_PASSWORD" 
+administrator
 fi
-
-if [ ! -f /etc/samba/smb.conf ]; then
-sudo wget -q -O /etc/samba/smb.conf 
-https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
-fi
-
-if ! sudo pdbedit -L | grep -q "^$SCRIPT_USER:"; then
-(echo "$SAMBA_PASSWORD"; echo "$SAMBA_PASSWORD") | sudo smbpasswd -s -a "$SCRIPT_USER"
-fi
-
-sudo usermod -a -G openhab "$SCRIPT_USER"
-sudo chmod -R g+w /etc/openhab || true
-sudo chmod -R g+w /var/lib/openhab/jsondb || true
-
-sudo systemctl enable smbd
-sudo systemctl restart smbd
 
 #--------------------------------------------------------------------------------------------------
 log "InfluxDB"
@@ -121,21 +130,13 @@ fi
 #--------------------------------------------------------------------------------------------------
 log "InfluxDB setup"
 if ! influx bucket list --org "$INFLUXDB_ORG" >/dev/null 2>&1; then
-influx setup 
---username "$INFLUXDB_USER" 
---password "$INFLUXDB_PASSWORD" 
---org "$INFLUXDB_ORG" 
---bucket "$INFLUXDB_BUCKET" 
---retention "$INFLUXDB_RETENTION" 
---force
+influx setup --username "$INFLUXDB_USER" \
+             --password "$INFLUXDB_PASSWORD" \
+             --org "$INFLUXDB_ORG" \
+             --bucket "$INFLUXDB_BUCKET" \
+             --retention "$INFLUXDB_RETENTION" \
+             --force
 fi
-
-influx config create 
---config-name temp 
---host-url http://localhost:8086 
---org "$INFLUXDB_ORG" 
---username-password "$INFLUXDB_USER:$INFLUXDB_PASSWORD" 
---active 2>/dev/null || true
 
 #--------------------------------------------------------------------------------------------------
 log "Create InfluxDB token"
@@ -151,6 +152,8 @@ echo "❌ Failed to create InfluxDB token"
 exit 1
 fi
 
+echo "✅ Token created"
+
 #--------------------------------------------------------------------------------------------------
 log "Configure openHAB Influx"
 
@@ -165,27 +168,10 @@ EOL
 sudo systemctl restart openhab
 
 #--------------------------------------------------------------------------------------------------
-log "openHAB user"
-if ! sudo openhab-cli console -p habopen "users list" | grep -q "$OPENHAB_ADMIN_USER_NAME"; then
-sudo openhab-cli console -p habopen users add 
-"$OPENHAB_ADMIN_USER_NAME" 
-"$OPENHAB_ADMIN_USER_PASSWORD" 
-administrator
-fi
-
-
-#--------------------------------------------------------------------------------------------------
-log "addons config file"
-cd ~/../../etc/openhab/services
-sudo rm addons.cfg
-sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
-sudo chown orangepi:orangepi ~/../../etc/openhab/services/addons.cfg
-
-#--------------------------------------------------------------------------------------------------
-log "System metrics (FULL)"
+log "System metrics"
 
 VENV_DIR="$HOME_DIR/venv"
-SYSTEM_METRICS_SCRIPT="$HOME_DIR/system_metrics.py"
+SCRIPT="$HOME_DIR/system_metrics.py"
 
 sudo apt-get install -y python3 python3-venv python3-pip
 
@@ -195,83 +181,28 @@ fi
 
 sudo -u "$SCRIPT_USER" "$VENV_DIR/bin/pip" install influxdb-client psutil
 
-cat <<EOF > "$SYSTEM_METRICS_SCRIPT"
-#!/usr/bin/env python3
+cat <<EOF > "$SCRIPT"
+from influxdb_client import InfluxDBClient, Point
 import psutil, time
-from influxdb_client import InfluxDBClient, Point, WriteOptions
 
-url = "http://localhost:8086"
-token = "$INFLUX_TOKEN"
-org = "$INFLUXDB_ORG"
-bucket = "$INFLUXDB_BUCKET"
-
-client = InfluxDBClient(url=url, token=token, org=org)
-write_api = client.write_api(write_options=WriteOptions(batch_size=1))
-
-def read_temp(path):
-try:
-with open(path, "r") as f:
-return int(f.read().strip()) / 1000.0
-except:
-return None
-
-def collect_metrics():
-record = {}
-record["cpu_percent"] = psutil.cpu_percent(interval=1)
-
-```
-per_core = psutil.cpu_percent(interval=None, percpu=True)
-for i, usage in enumerate(per_core):
-    record[f"cpu_core{i}_percent"] = usage
-
-mem = psutil.virtual_memory()
-record["mem_total_mb"] = mem.total / 1024 / 1024
-record["mem_used_mb"] = mem.used / 1024 / 1024
-record["mem_percent"] = mem.percent
-
-record["load1"], record["load5"], record["load15"] = psutil.getloadavg()
-
-record["cpu_temp"] = read_temp("/sys/class/thermal/thermal_zone0/temp")
-record["ddr_temp"] = read_temp("/sys/class/thermal/thermal_zone1/temp")
-record["gpu_temp"] = read_temp("/sys/class/thermal/thermal_zone2/temp")
-record["ve_temp"]  = read_temp("/sys/class/thermal/thermal_zone3/temp")
-
-return record
-```
+client = InfluxDBClient(url="http://localhost:8086", token="$INFLUX_TOKEN", org="$INFLUXDB_ORG")
+write = client.write_api()
 
 while True:
-try:
-metrics = collect_metrics()
-print(metrics)
 p = Point("system_metrics")
-for k,v in metrics.items():
-if v is not None:
-p = p.field(k, v)
-write_api.write(bucket=bucket, org=org, record=p)
-except Exception as e:
-print("Error:", e)
+.field("cpu_percent", psutil.cpu_percent())
+.field("mem_percent", psutil.virtual_memory().percent)
+write.write(bucket="$INFLUXDB_BUCKET", record=p)
 time.sleep(10)
 EOF
 
-sudo chown "$SCRIPT_USER:$SCRIPT_USER" "$SYSTEM_METRICS_SCRIPT"
-chmod +x "$SYSTEM_METRICS_SCRIPT"
+chmod +x "$SCRIPT"
 
 sudo tee /etc/systemd/system/system-metrics.service > /dev/null <<EOL
-[Unit]
-Description=OrangePi System Metrics Collector
-After=network-online.target influxdb.service
-Wants=network-online.target
-
 [Service]
-ExecStart=$VENV_DIR/bin/python $SYSTEM_METRICS_SCRIPT
-WorkingDirectory=$HOME_DIR
+ExecStart=$VENV_DIR/bin/python $SCRIPT
 Restart=always
-RestartSec=10
 User=$SCRIPT_USER
-Environment="PYTHONUNBUFFERED=1"
-
-[Install]
-WantedBy=multi-user.target
 EOL
 
 sudo systemctl daemon-reload
