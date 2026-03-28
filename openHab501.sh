@@ -105,15 +105,6 @@ until curl -s http://localhost:8086/health | grep -q '"status":"pass"'; do sleep
 log "Influx CLI"
 
 if ! command -v influx &>/dev/null; then
-  wget -q https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz
-  tar -xzf influxdb2-client-2.7.5-linux-arm64.tar.gz
-  sudo cp influxdb2-client-2.7.5-linux-arm64/influx /usr/local/bin/
-fi
-
-#--------------------------------------------------------------------------------------------------
-log "Influx CLI"
-
-if ! command -v influx &>/dev/null; then
   cd /tmp
 
   FILE="influxdb2-client.tar.gz"
@@ -125,20 +116,25 @@ if ! command -v influx &>/dev/null; then
   echo "Extracting..."
   tar -xzf "$FILE"
 
-  echo "Locating binary..."
+  echo "Searching for influx binary..."
   BIN=$(find . -type f -name influx | head -n1)
 
   if [ -z "$BIN" ]; then
-    echo "❌ Influx binary not found"
+    echo "❌ ERROR: influx binary not found after extraction"
     exit 1
   fi
 
-  echo "Installing..."
+  echo "Installing influx CLI..."
   sudo cp "$BIN" /usr/local/bin/influx
   sudo chmod +x /usr/local/bin/influx
 
   echo "✅ Influx CLI installed"
 fi
+
+
+
+
+
 
 #--------------------------------------------------------------------------------------------------
 log "Configure openHAB influx"
