@@ -116,42 +116,37 @@ fi
 #--------------------------------------------------------------------------------------------------
 log "InfluxDB setup"
 
+INFLUX_TOKEN=""
+
 # run setup only if not initialized
 if ! influx org list >/dev/null 2>&1; then
   echo "Running initial InfluxDB setup..."
 
-  influx setup \
+  SETUP_OUTPUT=$(influx setup \
     --username "$INFLUXDB_USER" \
     --password "$INFLUXDB_PASSWORD" \
     --org "$INFLUXDB_ORG" \
     --bucket "$INFLUXDB_BUCKET" \
     --retention "$INFLUXDB_RETENTION" \
-    --force
+    --force \
+    --json)
+
+  # extract token directly from setup
+  INFLUX_TOKEN=$(echo "$SETUP_OUTPUT" | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
 fi
 
 #--------------------------------------------------------------------------------------------------
-log "Get or create InfluxDB token"
+log "Ensure InfluxDB token"
 
-INFLUX_TOKEN=""
-
-# try to get token safely
-if influx auth list >/dev/null 2>&1; then
-  INFLUX_TOKEN=$(influx auth list --json | grep -o '"token":"[^"]*"' | head -n1 | cut -d':' -f2 | tr -d '"')
+# if token not obtained from setup → try to get existing
+if [ -z "${INFLUX_TOKEN:-}" ]; then
+  INFLUX_TOKEN=$(influx auth list --json 2>/dev/null | grep -o '"token":"[^"]*"' | head -n1 | cut -d':' -f2 | tr -d '"')
 fi
 
-# if no token → create one
-if [ -z "$INFLUX_TOKEN" ]; then
-  echo "Creating token..."
-
-  INFLUX_TOKEN=$(influx auth create \
-    --org "$INFLUXDB_ORG" \
-    --all-access \
-    --json | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
-fi
-
-# final safety check
+# if still empty → FAIL clearly
 if [ -z "$INFLUX_TOKEN" ]; then
   echo "❌ ERROR: Could not obtain InfluxDB token"
+  echo "Try running manually: influx setup"
   exit 1
 fi
 
