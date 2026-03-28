@@ -53,6 +53,27 @@ sudo apt-get install -y openjdk-21-jre-headless
 fi
 
 #--------------------------------------------------------------------------------------------------
+log "openHAB install"
+if ! dpkg -s openhab &>/dev/null; then
+curl -fsSL https://openhab.jfrog.io/artifactory/api/gpg/key/public | gpg --dearmor > openhab.gpg
+sudo mkdir -p /usr/share/keyrings
+sudo mv openhab.gpg /usr/share/keyrings/openhab.gpg
+sudo chmod 644 /usr/share/keyrings/openhab.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main" | 
+sudo tee /etc/apt/sources.list.d/openhab.list
+
+sudo apt-get update
+sudo apt-get install -y openhab
+sudo apt-mark hold openhab openhab-addons
+fi
+
+sudo systemctl enable openhab
+sudo systemctl start openhab
+
+until curl -s http://localhost:8080 > /dev/null; do sleep 5; done
+
+#--------------------------------------------------------------------------------------------------
 log "Samba"
 if ! dpkg -s samba &>/dev/null; then
 sudo apt-get install -y samba samba-common-bin
@@ -73,27 +94,6 @@ sudo chmod -R g+w /var/lib/openhab/jsondb || true
 
 sudo systemctl enable smbd
 sudo systemctl restart smbd
-
-#--------------------------------------------------------------------------------------------------
-log "openHAB install"
-if ! dpkg -s openhab &>/dev/null; then
-curl -fsSL https://openhab.jfrog.io/artifactory/api/gpg/key/public | gpg --dearmor > openhab.gpg
-sudo mkdir -p /usr/share/keyrings
-sudo mv openhab.gpg /usr/share/keyrings/openhab.gpg
-sudo chmod 644 /usr/share/keyrings/openhab.gpg
-
-echo "deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main" | 
-sudo tee /etc/apt/sources.list.d/openhab.list
-
-sudo apt-get update
-sudo apt-get install -y openhab
-sudo apt-mark hold openhab openhab-addons
-fi
-
-sudo systemctl enable openhab
-sudo systemctl start openhab
-
-until curl -s http://localhost:8080 > /dev/null; do sleep 5; done
 
 #--------------------------------------------------------------------------------------------------
 log "openHAB user"
