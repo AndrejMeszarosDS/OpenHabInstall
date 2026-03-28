@@ -148,13 +148,28 @@ influx config create \
 #--------------------------------------------------------------------------------------------------
 log "Create InfluxDB token"
 
-INFLUX_TOKEN=$(influx auth create \
+set +e  # temporarily disable exit-on-error
+
+TOKEN_OUTPUT=$(influx auth create \
   --org "$INFLUXDB_ORG" \
   --all-access \
-  --json 2>/dev/null | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+  --json 2>&1)
+
+EXIT_CODE=$?
+
+set -e  # re-enable safety
+
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "❌ Token creation failed"
+  echo "$TOKEN_OUTPUT"
+  exit 1
+fi
+
+INFLUX_TOKEN=$(echo "$TOKEN_OUTPUT" | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
 
 if [ -z "$INFLUX_TOKEN" ]; then
-  echo "❌ ERROR: Failed to create token"
+  echo "❌ Could not extract token"
+  echo "$TOKEN_OUTPUT"
   exit 1
 fi
 
