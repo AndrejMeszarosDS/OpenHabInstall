@@ -111,26 +111,34 @@ if ! command -v influx &>/dev/null; then
 fi
 
 #--------------------------------------------------------------------------------------------------
-log "Influx setup"
+log "Influx CLI"
 
-if ! influx org list | grep -q "$INFLUXDB_ORG"; then
-  influx setup \
-    --username "$INFLUXDB_USER" \
-    --password "$INFLUXDB_PASSWORD" \
-    --org "$INFLUXDB_ORG" \
-    --bucket "$INFLUXDB_BUCKET" \
-    --force
+if ! command -v influx &>/dev/null; then
+  cd /tmp
+
+  FILE="influxdb2-client.tar.gz"
+  URL="https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz"
+
+  echo "Downloading Influx CLI..."
+  wget -O "$FILE" "$URL"
+
+  echo "Extracting..."
+  tar -xzf "$FILE"
+
+  echo "Locating binary..."
+  BIN=$(find . -type f -name influx | head -n1)
+
+  if [ -z "$BIN" ]; then
+    echo "❌ Influx binary not found"
+    exit 1
+  fi
+
+  echo "Installing..."
+  sudo cp "$BIN" /usr/local/bin/influx
+  sudo chmod +x /usr/local/bin/influx
+
+  echo "✅ Influx CLI installed"
 fi
-
-influx config create \
-  --config-name default \
-  --host-url http://localhost:8086 \
-  --org "$INFLUXDB_ORG" \
-  --username "$INFLUXDB_USER" \
-  --password "$INFLUXDB_PASSWORD" \
-  --active 2>/dev/null || true
-
-INFLUX_TOKEN=$(influx auth list --json | grep -o '"token":"[^"]*"' | head -n1 | cut -d':' -f2 | tr -d '"')
 
 #--------------------------------------------------------------------------------------------------
 log "Configure openHAB influx"
