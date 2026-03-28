@@ -107,11 +107,16 @@ when script is ok, need to test :
 
 
   - openhab 
-    - addons 
-      - mapdb
-      - influx
-      - mqtt 
-      - jstransvalami
+    - addons : services/addons.cfg 
+      - influxdb persistence
+        - persistence = mapdb, influxdb
+      - mapdb persistence
+      - 
+      - mqtt bindinf
+        - binding = mqtt
+      - jsonpath transformation
+        - 
+      - openhab cloud
   - influx
     - login
     - db 

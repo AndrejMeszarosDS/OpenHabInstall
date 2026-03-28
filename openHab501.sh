@@ -26,6 +26,8 @@ INFLUXDB_RETENTION="0"
 
 GRAFANA_PASSWORD="grafana_password"
 
+SAMBA_PASSWORD="secret"
+
 #--------------------------------------------------------------------------------------------------
 log "Update system"
 sudo apt-get update
@@ -50,6 +52,38 @@ log "Java"
 if ! dpkg -s openjdk-21-jre-headless &>/dev/null; then
   sudo apt-get install -y openjdk-21-jre-headless
 fi
+
+#--------------------------------------------------------------------------------------------------
+log "Samba"
+
+# Install samba
+if ! dpkg -s samba &>/dev/null; then
+  sudo apt-get install -y samba samba-common-bin
+fi
+
+# Download config only if missing
+if [ ! -f /etc/samba/smb.conf ]; then
+  sudo wget -q -O /etc/samba/smb.conf \
+  https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
+fi
+
+# Create samba user (only if not exists)
+if ! sudo pdbedit -L | grep -q "^$SCRIPT_USER:"; then
+  (echo "$SAMBA_PASSWORD"; echo "$SAMBA_PASSWORD") | sudo smbpasswd -s -a "$SCRIPT_USER"
+fi
+
+# Add user to openhab group (safe)
+sudo usermod -a -G openhab "$SCRIPT_USER"
+
+# Fix permissions for openHAB folders
+sudo chmod -R g+w /etc/openhab || true
+sudo chmod -R g+w /var/lib/openhab/jsondb || true
+
+# Restart samba
+sudo systemctl enable smbd
+sudo systemctl restart smbd
+
+echo "✅ Samba ready"
 
 #--------------------------------------------------------------------------------------------------
 log "openHAB install"
@@ -304,6 +338,87 @@ sudo systemctl start grafana-server
 sleep 5
 
 sudo grafana-cli admin reset-admin-password "$GRAFANA_PASSWORD"
+
+#--------------------------------------------------------------------------------------------------
+log "Grafana provisioning"
+
+GRAFANA_PROVISIONING_DIR="/etc/grafana/provisioning"
+DASHBOARD_DIR="/var/lib/grafana/dashboards"
+
+INFLUXDB_URL="http://localhost:8086"
+INFLUXDB_ORG="openhab"
+INFLUXDB_BUCKET="openhab"
+
+#--------------------------------------------------------------------------------------------------
+# Create directories (safe)
+sudo mkdir -p "$GRAFANA_PROVISIONING_DIR/datasources"
+sudo mkdir -p "$GRAFANA_PROVISIONING_DIR/dashboards"
+sudo mkdir -p "$DASHBOARD_DIR"
+
+#--------------------------------------------------------------------------------------------------
+# Datasource (only create if not exists)
+if [ ! -f "$GRAFANA_PROVISIONING_DIR/datasources/influxdb.yaml" ]; then
+sudo tee "$GRAFANA_PROVISIONING_DIR/datasources/influxdb.yaml" > /dev/null <<EOL
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    url: $INFLUXDB_URL
+    isDefault: true
+    jsonData:
+      version: Flux
+      organization: $INFLUXDB_ORG
+      defaultBucket: $INFLUXDB_BUCKET
+    secureJsonData:
+      token: $INFLUX_TOKEN
+EOL
+fi
+
+#--------------------------------------------------------------------------------------------------
+# Dashboard provisioning (only create if not exists)
+if [ ! -f "$GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml" ]; then
+sudo tee "$GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml" > /dev/null <<EOL
+apiVersion: 1
+
+providers:
+  - name: 'System Metrics'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    options:
+      path: $DASHBOARD_DIR
+EOL
+fi
+
+#--------------------------------------------------------------------------------------------------
+# Download dashboard (overwrite safe)
+sudo wget -q -O "$DASHBOARD_DIR/system_metrics.json" \
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
+
+#--------------------------------------------------------------------------------------------------
+# Fix permissions (CRITICAL)
+sudo chown -R grafana:grafana "$DASHBOARD_DIR"
+sudo chmod -R 755 "$DASHBOARD_DIR"
+
+#--------------------------------------------------------------------------------------------------
+# Restart Grafana cleanly
+sudo systemctl restart grafana-server
+
+# wait for Grafana
+echo "Waiting for Grafana..."
+for i in {1..20}; do
+  if curl -s http://localhost:3000 > /dev/null; then
+    echo "✅ Grafana ready"
+    break
+  fi
+  sleep 2
+done
+
+echo "✅ Grafana fully configured with datasource + dashboard"
 
 #--------------------------------------------------------------------------------------------------
 log "Waiting for Grafana"
