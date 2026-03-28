@@ -315,7 +315,7 @@ log "Grafana"
 # Install dependencies (safe)
 sudo apt-get install -y apt-transport-https software-properties-common wget
 
-# Add repo only once
+# Add Grafana repo ONLY once
 if [ ! -f /etc/apt/sources.list.d/grafana.list ]; then
   sudo mkdir -p /etc/apt/keyrings
   wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
@@ -329,17 +329,33 @@ if ! dpkg -s grafana &>/dev/null; then
   sudo apt-get install -y grafana
 fi
 
+# Fix ONLY required permissions (safe)
+sudo chown -R grafana:grafana /var/lib/grafana
+sudo chown -R grafana:grafana /var/log/grafana
+
 # Reset admin password
 sudo grafana-cli admin reset-admin-password "$GRAFANA_PASSWORD"
 
-# Enable + start
+# Enable + start service
+sudo systemctl daemon-reload
 sudo systemctl enable grafana-server
-sudo systemctl start grafana-server
+sudo systemctl restart grafana-server
 
-# Wait until ready
-until curl -s http://localhost:3000 > /dev/null; do sleep 3; done
+#--------------------------------------------------------------------------------------------------
+log "Waiting for Grafana"
 
-echo "Grafana running at http://<ip>:3000 (admin / $GRAFANA_PASSWORD)"
+for i in {1..40}; do
+  if curl -s http://localhost:3000 > /dev/null; then
+    echo "✅ Grafana is up"
+    break
+  fi
+  sleep 3
+done
+
+if ! curl -s http://localhost:3000 > /dev/null; then
+  echo "⚠️ Grafana failed to start"
+  systemctl status grafana-server --no-pager
+fi
 
 #--------------------------------------------------------------------------------------------------
 log "Grafana provisioning"
@@ -352,7 +368,8 @@ sudo mkdir -p "$GRAFANA_PROVISIONING_DIR/datasources"
 sudo mkdir -p "$GRAFANA_PROVISIONING_DIR/dashboards"
 sudo mkdir -p /var/lib/grafana/dashboards
 
-# Datasource (only if missing)
+#--------------------------------------------------------------------------------------------------
+# InfluxDB datasource (only once)
 if [ ! -f "$GRAFANA_PROVISIONING_DIR/datasources/influxdb.yaml" ]; then
 sudo tee "$GRAFANA_PROVISIONING_DIR/datasources/influxdb.yaml" > /dev/null <<EOL
 apiVersion: 1
@@ -371,7 +388,8 @@ datasources:
 EOL
 fi
 
-# Dashboard provider (only if missing)
+#--------------------------------------------------------------------------------------------------
+# Dashboard provider (only once)
 if [ ! -f "$GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml" ]; then
 sudo tee "$GRAFANA_PROVISIONING_DIR/dashboards/system_metrics.yaml" > /dev/null <<EOL
 apiVersion: 1
@@ -386,16 +404,18 @@ providers:
 EOL
 fi
 
-# Dashboard JSON (only if missing)
+#--------------------------------------------------------------------------------------------------
+# Dashboard JSON (only once)
 if [ ! -f /var/lib/grafana/dashboards/system_metrics.json ]; then
   sudo wget -q -O /var/lib/grafana/dashboards/system_metrics.json \
   https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
 fi
 
-# Fix ownership (only dashboards folder)
+# Fix ownership
 sudo chown -R grafana:grafana /var/lib/grafana/dashboards
 
 # Restart Grafana to load provisioning
 sudo systemctl restart grafana-server
 
-echo "✅ Grafana fully configured with InfluxDB and dashboard"
+echo "✅ Grafana fully configured"
+echo "👉 http://<your-ip>:3000  (admin / $GRAFANA_PASSWORD)"
