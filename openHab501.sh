@@ -116,7 +116,7 @@ fi
 #--------------------------------------------------------------------------------------------------
 log "InfluxDB setup"
 
-if ! influx org list 2>/dev/null | grep -q "$INFLUXDB_ORG"; then
+if ! influx org list >/dev/null 2>&1; then
   influx setup \
     --username "$INFLUXDB_USER" \
     --password "$INFLUXDB_PASSWORD" \
@@ -129,22 +129,30 @@ fi
 #--------------------------------------------------------------------------------------------------
 log "Get or create InfluxDB token"
 
-INFLUX_TOKEN=$(influx auth list --json 2>/dev/null | grep -o '"token":"[^"]*"' | head -n1 | cut -d':' -f2 | tr -d '"')
+INFLUX_TOKEN=""
 
-if [ -z "${INFLUX_TOKEN:-}" ]; then
+if influx auth list >/dev/null 2>&1; then
+  INFLUX_TOKEN=$(influx auth list --json | grep -o '"token":"[^"]*"' | head -n1 | cut -d':' -f2 | tr -d '"')
+fi
+
+if [ -z "$INFLUX_TOKEN" ]; then
+  echo "Creating token..."
+
   INFLUX_TOKEN=$(influx auth create \
     --org "$INFLUXDB_ORG" \
     --all-access \
     --json | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
-
-  if [ -z "$INFLUX_TOKEN" ]; then
-    echo "❌ Failed to create InfluxDB token"
-    exit 1
-  fi
 fi
 
+if [ -z "$INFLUX_TOKEN" ]; then
+  echo "❌ Failed to obtain InfluxDB token"
+  exit 1
+fi
+
+echo "✅ Token ready"
+
 #--------------------------------------------------------------------------------------------------
-log "Configure Influx CLI (token-based)"
+log "Configure Influx CLI"
 
 influx config create \
   --config-name default \
@@ -152,117 +160,3 @@ influx config create \
   --org "$INFLUXDB_ORG" \
   --token "$INFLUX_TOKEN" \
   --active 2>/dev/null || true
-
-#--------------------------------------------------------------------------------------------------
-log "Configure openHAB influx"
-
-sudo tee /etc/openhab/services/influxdb.cfg > /dev/null <<EOL
-version=V2
-url=http://localhost:8086
-token=$INFLUX_TOKEN
-org=$INFLUXDB_ORG
-bucket=$INFLUXDB_BUCKET
-EOL
-
-sudo systemctl restart openhab
-
-#--------------------------------------------------------------------------------------------------
-log "System metrics"
-
-sudo apt-get install -y python3 python3-venv python3-pip
-
-VENV_DIR="$HOME_DIR/venv"
-SCRIPT_PATH="$HOME_DIR/system_metrics.py"
-
-if [ ! -d "$VENV_DIR" ]; then
-  sudo -u $SCRIPT_USER python3 -m venv "$VENV_DIR"
-  sudo -u $SCRIPT_USER "$VENV_DIR/bin/pip" install influxdb-client psutil
-fi
-
-cat <<EOF > "$SCRIPT_PATH"
-import psutil,time
-from influxdb_client import InfluxDBClient,Point
-c=InfluxDBClient(url="http://localhost:8086",token="$INFLUX_TOKEN",org="$INFLUXDB_ORG")
-w=c.write_api()
-while True:
- p=Point("system").field("cpu",psutil.cpu_percent()).field("mem",psutil.virtual_memory().percent)
- w.write(bucket="$INFLUXDB_BUCKET",record=p)
- time.sleep(10)
-EOF
-
-chmod +x "$SCRIPT_PATH"
-
-if [ ! -f /etc/systemd/system/system-metrics.service ]; then
-sudo tee /etc/systemd/system/system-metrics.service > /dev/null <<EOL
-[Unit]
-After=network-online.target influxdb.service
-Wants=network-online.target
-[Service]
-ExecStart=$VENV_DIR/bin/python $SCRIPT_PATH
-Restart=always
-User=$SCRIPT_USER
-[Install]
-WantedBy=multi-user.target
-EOL
-fi
-
-sudo systemctl daemon-reload
-sudo systemctl enable system-metrics
-sudo systemctl restart system-metrics
-
-#--------------------------------------------------------------------------------------------------
-log "Grafana"
-
-if ! dpkg -s grafana &>/dev/null; then
-  sudo mkdir -p /etc/apt/keyrings
-  wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
-  echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | \
-  sudo tee /etc/apt/sources.list.d/grafana.list
-  sudo apt-get update
-  sudo apt-get install -y grafana
-fi
-
-sudo grafana-cli admin reset-admin-password "$GRAFANA_PASSWORD"
-
-sudo systemctl enable grafana-server
-sudo systemctl start grafana-server
-
-until curl -s http://localhost:3000 > /dev/null; do sleep 3; done
-
-#--------------------------------------------------------------------------------------------------
-log "Grafana provisioning"
-
-sudo mkdir -p /etc/grafana/provisioning/datasources
-sudo mkdir -p /etc/grafana/provisioning/dashboards
-sudo mkdir -p /var/lib/grafana/dashboards
-
-if [ ! -f /etc/grafana/provisioning/datasources/influxdb.yaml ]; then
-sudo tee /etc/grafana/provisioning/datasources/influxdb.yaml > /dev/null <<EOL
-apiVersion: 1
-datasources:
-- name: InfluxDB
-  type: influxdb
-  url: http://localhost:8086
-  jsonData:
-    version: Flux
-    organization: $INFLUXDB_ORG
-    defaultBucket: $INFLUXDB_BUCKET
-  secureJsonData:
-    token: $INFLUX_TOKEN
-  isDefault: true
-EOL
-fi
-
-if [ ! -f /var/lib/grafana/dashboards/system.json ]; then
-  sudo wget -q -O /var/lib/grafana/dashboards/system.json \
-  https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
-fi
-
-sudo chown -R grafana:grafana /var/lib/grafana
-sudo systemctl restart grafana-server
-
-#--------------------------------------------------------------------------------------------------
-log "DONE"
-
-echo "openHAB: http://<ip>:8080"
-echo "Grafana: http://<ip>:3000"
