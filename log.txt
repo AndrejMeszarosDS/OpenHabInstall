@@ -101,3 +101,20 @@ connect to orangepi on mac :
 
 28.03.2026 -----------------------------------------------------------------------
 
+when script is ok, need to test :
+  - openhab 
+    - addons 
+      - mapdb
+      - influx
+      - mqtt 
+      - jstransvalami
+  - influx
+    - login
+    - db 
+    - metrix 
+  - grafana 
+    - login
+    - db 
+    - influx connection
+    - dashboard
+    

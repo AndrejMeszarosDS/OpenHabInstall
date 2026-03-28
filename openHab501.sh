@@ -151,15 +151,6 @@ INFLUX_TOKEN=$(influx auth create \
   --all-access \
   --hide-headers | awk 'NR==1 {print $4}')
 
-log "Configure Influx CLI"
-
-influx config create \
-  --config-name default \
-  --host-url http://localhost:8086 \
-  --org "$INFLUXDB_ORG" \
-  --token "$INFLUX_TOKEN" \
-  --active 2>/dev/null || true
-
 #--------------------------------------------------------------------------------------------------
 log "Configure openHAB Influx"
 
@@ -204,7 +195,7 @@ sudo chown "$SCRIPT_USER":"$SCRIPT_USER" "$SCRIPT_PATH"
 chmod +x "$SCRIPT_PATH"
 
 #--------------------------------------------------------------------------------------------------
-# FIX /tmp AGAIN (important before Grafana)
+# FIX /tmp AGAIN BEFORE GRAFANA
 sudo chown root:root /tmp
 sudo chmod 1777 /tmp
 
@@ -225,24 +216,31 @@ if ! dpkg -s grafana &>/dev/null; then
   sudo apt-get install -y grafana
 fi
 
+# 🔥 CRITICAL FIX FOR DB
+sudo systemctl stop grafana-server || true
 sudo chown -R grafana:grafana /var/lib/grafana
 sudo chown -R grafana:grafana /var/log/grafana
+sudo chmod -R 755 /var/lib/grafana
+sudo chmod -R 755 /var/log/grafana
+sudo rm -f /var/lib/grafana/grafana.db
 
 sudo grafana-cli admin reset-admin-password "$GRAFANA_PASSWORD"
 
 sudo systemctl enable grafana-server
-sudo systemctl restart grafana-server
+sudo systemctl start grafana-server
 
 log "Waiting for Grafana"
 
 for i in {1..40}; do
   if curl -s http://localhost:3000 > /dev/null; then
-    echo "Grafana is up"
+    echo "✅ Grafana is up"
     break
   fi
   sleep 3
 done
 
-echo "✅ DONE"
+echo "--------------------------------------------------"
+echo "✅ INSTALLATION COMPLETE"
 echo "openHAB: http://<ip>:8080"
 echo "Grafana: http://<ip>:3000"
+echo "--------------------------------------------------"
