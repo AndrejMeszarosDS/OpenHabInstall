@@ -148,32 +148,18 @@ influx config create \
 #--------------------------------------------------------------------------------------------------
 log "Create InfluxDB token"
 
-set +e  # temporarily disable exit-on-error
+INFLUX_TOKEN=$(sudo /root/influx auth create \
+    --org "$INFLUXDB_ORG" \
+    --description "OpenHAB Token" \
+    --all-access \
+    --hide-headers | awk 'NR==1 {print $4}')
 
-TOKEN_OUTPUT=$(influx auth create \
-  --org "$INFLUXDB_ORG" \
-  --all-access \
-  --json 2>&1)
-
-EXIT_CODE=$?
-
-set -e  # re-enable safety
-
-if [ $EXIT_CODE -ne 0 ]; then
-  echo "❌ Token creation failed"
-  echo "$TOKEN_OUTPUT"
-  exit 1
+if [ -z "$INFLUX_TOKEN" ] || [ "$INFLUX_TOKEN" == "Error" ]; then
+    echo "Failed to create InfluxDB token. Verify your InfluxDB setup and credentials."
+    exit 1
 fi
 
-INFLUX_TOKEN=$(echo "$TOKEN_OUTPUT" | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
-
-if [ -z "$INFLUX_TOKEN" ]; then
-  echo "❌ Could not extract token"
-  echo "$TOKEN_OUTPUT"
-  exit 1
-fi
-
-echo "✅ Token created"
+echo "✅ Token created: $INFLUX_TOKEN"
 
 #--------------------------------------------------------------------------------------------------
 log "Configure Influx CLI (token)"
