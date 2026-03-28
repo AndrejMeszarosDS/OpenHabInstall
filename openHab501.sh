@@ -96,15 +96,6 @@ sudo systemctl enable smbd
 sudo systemctl restart smbd
 
 #--------------------------------------------------------------------------------------------------
-log "openHAB user"
-if ! sudo openhab-cli console -p habopen "users list" | grep -q "$OPENHAB_ADMIN_USER_NAME"; then
-sudo openhab-cli console -p habopen users add 
-"$OPENHAB_ADMIN_USER_NAME" 
-"$OPENHAB_ADMIN_USER_PASSWORD" 
-administrator
-fi
-
-#--------------------------------------------------------------------------------------------------
 log "InfluxDB"
 if ! dpkg -s influxdb2 &>/dev/null; then
 curl -LO https://download.influxdata.com/influxdb/releases/influxdb2_2.7.7-1_arm64.deb
@@ -240,37 +231,48 @@ sudo mkdir -p /etc/grafana/provisioning/datasources
 sudo mkdir -p /etc/grafana/provisioning/dashboards
 sudo mkdir -p /var/lib/grafana/dashboards
 
+#--------------------------------------------------------------------------------------------------
+# Datasource
 sudo tee /etc/grafana/provisioning/datasources/influxdb.yaml > /dev/null <<EOL
 apiVersion: 1
 datasources:
+  - name: InfluxDB
+    type: influxdb
+    url: http://localhost:8086
+    isDefault: true
+    jsonData:
+      version: Flux
+      organization: $INFLUXDB_ORG
+      defaultBucket: $INFLUXDB_BUCKET
+    secureJsonData:
+      token: $INFLUX_TOKEN
+EOL
 
-* name: InfluxDB
-  type: influxdb
-  url: http://localhost:8086
-  isDefault: true
-  jsonData:
-  version: Flux
-  organization: $INFLUXDB_ORG
-  defaultBucket: $INFLUXDB_BUCKET
-  secureJsonData:
-  token: $INFLUX_TOKEN
-  EOL
-
+#--------------------------------------------------------------------------------------------------
+# Dashboard provider
 sudo tee /etc/grafana/provisioning/dashboards/system_metrics.yaml > /dev/null <<EOL
 apiVersion: 1
 providers:
+  - name: 'System Metrics'
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards
+EOL
 
-* name: 'System Metrics'
-  type: file
-  options:
-  path: /var/lib/grafana/dashboards
-  EOL
-
-sudo wget -q -O /var/lib/grafana/dashboards/system_metrics.json 
+#--------------------------------------------------------------------------------------------------
+# Download dashboard
+sudo wget -q -O /var/lib/grafana/dashboards/system_metrics.json \
 https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
 
 sudo chown -R grafana:grafana /var/lib/grafana
 sudo systemctl restart grafana-server
+
+#--------------------------------------------------------------------------------------------------
+log "openHAB user"
+
+if ! sudo openhab-cli console -p habopen "user list" 2>/dev/null | grep -q "$OPENHAB_ADMIN_USER_NAME"; then
+  sudo openhab-cli console -p habopen "user add $OPENHAB_ADMIN_USER_NAME $OPENHAB_ADMIN_USER_PASSWORD administrator"
+fi
 
 #--------------------------------------------------------------------------------------------------
 log "DONE"
