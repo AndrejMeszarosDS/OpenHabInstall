@@ -106,20 +106,9 @@ log "Influx CLI"
 
 if ! command -v influx &>/dev/null; then
   cd /tmp
-
-  FILE="influxdb2-client.tar.gz"
-  URL="https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz"
-
-  wget -O "$FILE" "$URL"
-  tar -xzf "$FILE"
-
+  wget -O influx.tar.gz https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz
+  tar -xzf influx.tar.gz
   BIN=$(find . -type f -name influx | head -n1)
-
-  if [ -z "$BIN" ]; then
-    echo "❌ ERROR: influx binary not found"
-    exit 1
-  fi
-
   sudo cp "$BIN" /usr/local/bin/influx
   sudo chmod +x /usr/local/bin/influx
 fi
@@ -137,14 +126,6 @@ if ! influx org list 2>/dev/null | grep -q "$INFLUXDB_ORG"; then
     --force
 fi
 
-influx config create \
-  --config-name default \
-  --host-url http://localhost:8086 \
-  --org "$INFLUXDB_ORG" \
-  --username "$INFLUXDB_USER" \
-  --password "$INFLUXDB_PASSWORD" \
-  --active 2>/dev/null || true
-
 #--------------------------------------------------------------------------------------------------
 log "Get or create InfluxDB token"
 
@@ -161,6 +142,16 @@ if [ -z "${INFLUX_TOKEN:-}" ]; then
     exit 1
   fi
 fi
+
+#--------------------------------------------------------------------------------------------------
+log "Configure Influx CLI (token-based)"
+
+influx config create \
+  --config-name default \
+  --host-url http://localhost:8086 \
+  --org "$INFLUXDB_ORG" \
+  --token "$INFLUX_TOKEN" \
+  --active 2>/dev/null || true
 
 #--------------------------------------------------------------------------------------------------
 log "Configure openHAB influx"
