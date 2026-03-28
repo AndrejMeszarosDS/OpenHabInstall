@@ -14,6 +14,7 @@ INFLUXDB_USER="orangepi"
 INFLUXDB_PASSWORD="orangepi"
 INFLUXDB_ORG="openhab"
 INFLUXDB_BUCKET="openhab"
+INFLUXDB_RETENTION="0"
 
 GRAFANA_PASSWORD="grafana_password"
 
@@ -62,7 +63,6 @@ fi
 sudo systemctl enable openhab
 sudo systemctl start openhab
 
-# wait
 until curl -s http://localhost:8080 > /dev/null; do sleep 5; done
 
 #--------------------------------------------------------------------------------------------------
@@ -110,31 +110,57 @@ if ! command -v influx &>/dev/null; then
   FILE="influxdb2-client.tar.gz"
   URL="https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-arm64.tar.gz"
 
-  echo "Downloading Influx CLI..."
   wget -O "$FILE" "$URL"
-
-  echo "Extracting..."
   tar -xzf "$FILE"
 
-  echo "Searching for influx binary..."
   BIN=$(find . -type f -name influx | head -n1)
 
   if [ -z "$BIN" ]; then
-    echo "❌ ERROR: influx binary not found after extraction"
+    echo "❌ ERROR: influx binary not found"
     exit 1
   fi
 
-  echo "Installing influx CLI..."
   sudo cp "$BIN" /usr/local/bin/influx
   sudo chmod +x /usr/local/bin/influx
-
-  echo "✅ Influx CLI installed"
 fi
 
+#--------------------------------------------------------------------------------------------------
+log "InfluxDB setup"
 
+if ! influx org list 2>/dev/null | grep -q "$INFLUXDB_ORG"; then
+  influx setup \
+    --username "$INFLUXDB_USER" \
+    --password "$INFLUXDB_PASSWORD" \
+    --org "$INFLUXDB_ORG" \
+    --bucket "$INFLUXDB_BUCKET" \
+    --retention "$INFLUXDB_RETENTION" \
+    --force
+fi
 
+influx config create \
+  --config-name default \
+  --host-url http://localhost:8086 \
+  --org "$INFLUXDB_ORG" \
+  --username "$INFLUXDB_USER" \
+  --password "$INFLUXDB_PASSWORD" \
+  --active 2>/dev/null || true
 
+#--------------------------------------------------------------------------------------------------
+log "Get or create InfluxDB token"
 
+INFLUX_TOKEN=$(influx auth list --json 2>/dev/null | grep -o '"token":"[^"]*"' | head -n1 | cut -d':' -f2 | tr -d '"')
+
+if [ -z "${INFLUX_TOKEN:-}" ]; then
+  INFLUX_TOKEN=$(influx auth create \
+    --org "$INFLUXDB_ORG" \
+    --all-access \
+    --json | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+
+  if [ -z "$INFLUX_TOKEN" ]; then
+    echo "❌ Failed to create InfluxDB token"
+    exit 1
+  fi
+fi
 
 #--------------------------------------------------------------------------------------------------
 log "Configure openHAB influx"
