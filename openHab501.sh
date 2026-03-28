@@ -170,32 +170,109 @@ sudo systemctl restart openhab
 #--------------------------------------------------------------------------------------------------
 log "System metrics"
 
+HOME_DIR="/home/orangepi"
+VENV_DIR="$HOME_DIR/venv"
+SYSTEM_METRICS_SCRIPT="$HOME_DIR/system_metrics.py"
+INFLUX_URL="http://localhost:8086"
+
+# Install Python
 sudo apt-get install -y python3 python3-venv python3-pip
 
-VENV_DIR="$HOME_DIR/venv"
-SCRIPT_PATH="$HOME_DIR/system_metrics.py"
-
+# Create venv (as orangepi!)
 if [ ! -d "$VENV_DIR" ]; then
-  sudo -u "$SCRIPT_USER" python3 -m venv "$VENV_DIR"
-  sudo -u "$SCRIPT_USER" "$VENV_DIR/bin/pip" install influxdb-client psutil
+    sudo -u orangepi python3 -m venv "$VENV_DIR"
 fi
 
-cat <<EOF > "$SCRIPT_PATH"
-import psutil,time
-from influxdb_client import InfluxDBClient,Point
-c=InfluxDBClient(url="http://localhost:8086",token="$INFLUX_TOKEN",org="$INFLUXDB_ORG")
-w=c.write_api()
+# Install dependencies (as orangepi!)
+sudo -u orangepi "$VENV_DIR/bin/pip" install --upgrade pip
+sudo -u orangepi "$VENV_DIR/bin/pip" install influxdb-client psutil
+
+# Create script
+cat << EOF > "$SYSTEM_METRICS_SCRIPT"
+#!/usr/bin/env python3
+import psutil, time
+from influxdb_client import InfluxDBClient, Point, WriteOptions
+
+url = "$INFLUX_URL"
+token = "$INFLUX_TOKEN"
+org = "$INFLUXDB_ORG"
+bucket = "$INFLUXDB_BUCKET"
+
+client = InfluxDBClient(url=url, token=token, org=org)
+write_api = client.write_api(write_options=WriteOptions(batch_size=1))
+
+def read_temp(path):
+    try:
+        with open(path, "r") as f:
+            return int(f.read().strip()) / 1000.0
+    except:
+        return None
+
+def collect_metrics():
+    record = {}
+    record["cpu_percent"] = psutil.cpu_percent(interval=1)
+
+    per_core = psutil.cpu_percent(interval=None, percpu=True)
+    for i, usage in enumerate(per_core):
+        record[f"cpu_core{i}_percent"] = usage
+
+    mem = psutil.virtual_memory()
+    record["mem_total_mb"] = mem.total / 1024 / 1024
+    record["mem_used_mb"] = mem.used / 1024 / 1024
+    record["mem_percent"] = mem.percent
+
+    record["load1"], record["load5"], record["load15"] = psutil.getloadavg()
+
+    record["cpu_temp"] = read_temp("/sys/class/thermal/thermal_zone0/temp")
+    record["ddr_temp"] = read_temp("/sys/class/thermal/thermal_zone1/temp")
+    record["gpu_temp"] = read_temp("/sys/class/thermal/thermal_zone2/temp")
+    record["ve_temp"]  = read_temp("/sys/class/thermal/thermal_zone3/temp")
+
+    return record
+
 while True:
- p=Point("system").field("cpu",psutil.cpu_percent()).field("mem",psutil.virtual_memory().percent)
- w.write(bucket="$INFLUXDB_BUCKET",record=p)
- time.sleep(10)
+    try:
+        metrics = collect_metrics()
+        print(metrics)
+        p = Point("system_metrics")
+        for k,v in metrics.items():
+            if v is not None:
+                p = p.field(k, v)
+        write_api.write(bucket=bucket, org=org, record=p)
+    except Exception as e:
+        print("Error:", e)
+    time.sleep(10)
 EOF
 
-sudo chown "$SCRIPT_USER":"$SCRIPT_USER" "$SCRIPT_PATH"
-chmod +x "$SCRIPT_PATH"
+sudo chown orangepi:orangepi "$SYSTEM_METRICS_SCRIPT"
+chmod +x "$SYSTEM_METRICS_SCRIPT"
+
+# Create service
+sudo tee /etc/systemd/system/system-metrics.service > /dev/null <<EOL
+[Unit]
+Description=OrangePi System Metrics Collector
+After=network-online.target influxdb.service
+Wants=network-online.target
+
+[Service]
+ExecStart=$VENV_DIR/bin/python $SYSTEM_METRICS_SCRIPT
+WorkingDirectory=$HOME_DIR
+Restart=always
+RestartSec=10
+User=orangepi
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+# Enable + start
+sudo systemctl daemon-reload
+sudo systemctl enable system-metrics
+sudo systemctl restart system-metrics
 
 #--------------------------------------------------------------------------------------------------
-# FIX /tmp AGAIN BEFORE GRAFANA
+# FIX /tmp AGAIN
 sudo chown root:root /tmp
 sudo chmod 1777 /tmp
 
@@ -216,19 +293,19 @@ if ! dpkg -s grafana &>/dev/null; then
   sudo apt-get install -y grafana
 fi
 
-# 🔥 CRITICAL FIX FOR DB
+# 🔥 CORRECT ORDER (CRITICAL)
 sudo systemctl stop grafana-server || true
-sudo chown -R grafana:grafana /var/lib/grafana
-sudo chown -R grafana:grafana /var/log/grafana
-sudo chmod -R 755 /var/lib/grafana
-sudo chmod -R 755 /var/log/grafana
-sudo rm -f /var/lib/grafana/grafana.db
+sudo rm -rf /var/lib/grafana
+sudo mkdir -p /var/lib/grafana /var/log/grafana
+sudo chown -R grafana:grafana /var/lib/grafana /var/log/grafana
+sudo chmod 755 /var/lib/grafana /var/log/grafana
+
+sudo systemctl start grafana-server
+sleep 5
 
 sudo grafana-cli admin reset-admin-password "$GRAFANA_PASSWORD"
 
-sudo systemctl enable grafana-server
-sudo systemctl start grafana-server
-
+#--------------------------------------------------------------------------------------------------
 log "Waiting for Grafana"
 
 for i in {1..40}; do
@@ -240,7 +317,7 @@ for i in {1..40}; do
 done
 
 echo "--------------------------------------------------"
-echo "✅ INSTALLATION COMPLETE"
+echo "✅ INSTALL COMPLETE"
 echo "openHAB: http://<ip>:8080"
 echo "Grafana: http://<ip>:3000"
 echo "--------------------------------------------------"

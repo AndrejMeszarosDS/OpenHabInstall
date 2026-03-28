@@ -102,6 +102,10 @@ connect to orangepi on mac :
 28.03.2026 -----------------------------------------------------------------------
 
 when script is ok, need to test :
+  - system metrics 
+    - not working
+
+
   - openhab 
     - addons 
       - mapdb
@@ -117,4 +121,4 @@ when script is ok, need to test :
     - db 
     - influx connection
     - dashboard
-    
+
