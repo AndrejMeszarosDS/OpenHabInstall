@@ -132,18 +132,17 @@ fi
 #--------------------------------------------------------------------------------------------------
 log "Create InfluxDB token"
 
-INFLUX_TOKEN=$(influx auth create 
---org "$INFLUXDB_ORG" 
---description "OpenHAB Token" 
---all-access 
---json | grep -o '"token":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+INFLUX_TOKEN=$(sudo ./influx auth create \
+    --org "$INFLUXDB_ORG" \
+    --description "OpenHAB Token" \
+    --all-access \
+    --hide-headers | awk 'NR==1 {print $4}')
 
-if [ -z "$INFLUX_TOKEN" ]; then
-echo "❌ Failed to create InfluxDB token"
-exit 1
+if [ -z "$INFLUX_TOKEN" ] || [ "$INFLUX_TOKEN" == "Error" ]; then
+    echo "Failed to create InfluxDB token. Verify your InfluxDB setup and credentials."
+    exit 1
 fi
-
-echo "✅ Token created"
+echo "Token successfully created: $INFLUX_TOKEN"
 
 #--------------------------------------------------------------------------------------------------
 log "Configure openHAB Influx"
