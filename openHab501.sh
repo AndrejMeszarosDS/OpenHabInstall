@@ -200,6 +200,12 @@ sudo systemctl enable system-metrics
 sudo systemctl restart system-metrics
 
 #--------------------------------------------------------------------------------------------------
+log "Fix /tmp (before Grafana)"
+
+sudo chmod 1777 /tmp
+sudo chown root:root /tmp
+
+#--------------------------------------------------------------------------------------------------
 log "Grafana"
 
 sudo apt-get install -y apt-transport-https software-properties-common wget
