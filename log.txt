@@ -99,3 +99,5 @@ connect to orangepi on mac :
     - sudo wget https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openHab501.sh && sudo chmod 755 openHab501.sh && sudo ./openHab501.sh 
 
 
+28.03.2026 -----------------------------------------------------------------------
+
