@@ -100,6 +100,33 @@ connect to orangepi on mac :
 
 
 28.03.2026 -----------------------------------------------------------------------
+29.03.2026 -----------------------------------------------------------------------
+
+i continue fixing the script with vsc codex.
+started installing script with log file. After finishing or stopping we analyse the logfile.
+
+steps, which looks to work :
+  - Fix /tmp
+  - Update system
+  - Mosquitto
+  - Java
+  - openHAB install
+  - Samba
+  - InfluxDB
+  - Influx CLI
+  - InfluxDB setup
+  - Create InfluxDB token
+  - Configure openHAB Influx
+  - System metrics
+  - Fix /tmp (before Grafana)
+  - Grafana     : stopped
+analyse with AI : 
+ 
+
+
+
+
+
 
 when script is ok, need to test :
   - system metrics 

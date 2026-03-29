@@ -28,8 +28,10 @@ INFLUXDB_RETENTION="0"
 
 GRAFANA_PASSWORD="grafana_password"
 SAMBA_PASSWORD="secret"
+GRAFANA_ONLY_TEST="${GRAFANA_ONLY_TEST:-0}"
 
 #--------------------------------------------------------------------------------------------------
+if [ "$GRAFANA_ONLY_TEST" != "1" ]; then
 log "Update system"
 sudo apt-get update
 
@@ -60,7 +62,7 @@ sudo mkdir -p /usr/share/keyrings
 sudo mv openhab.gpg /usr/share/keyrings/openhab.gpg
 sudo chmod 644 /usr/share/keyrings/openhab.gpg
 
-echo "deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main" | 
+echo "deb [signed-by=/usr/share/keyrings/openhab.gpg] https://openhab.jfrog.io/artifactory/openhab-linuxpkg stable main" |
 sudo tee /etc/apt/sources.list.d/openhab.list
 
 sudo apt-get update
@@ -80,7 +82,7 @@ sudo apt-get install -y samba samba-common-bin
 fi
 
 if [ ! -f /etc/samba/smb.conf ]; then
-sudo wget -q -O /etc/samba/smb.conf 
+sudo wget -q -O /etc/samba/smb.conf \
 https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
 fi
 
@@ -198,6 +200,7 @@ EOL
 sudo systemctl daemon-reload
 sudo systemctl enable system-metrics
 sudo systemctl restart system-metrics
+fi
 
 #--------------------------------------------------------------------------------------------------
 log "Fix /tmp (before Grafana)"
@@ -207,6 +210,14 @@ sudo chown root:root /tmp
 
 #--------------------------------------------------------------------------------------------------
 log "Grafana"
+
+if [ "$GRAFANA_ONLY_TEST" = "1" ]; then
+INFLUX_TOKEN="${INFLUX_TOKEN:-$(sudo awk -F= '/^token=/{print $2}' /etc/openhab/services/influxdb.cfg 2>/dev/null || true)}"
+if [ -z "${INFLUX_TOKEN:-}" ]; then
+echo "Grafana-only test requires an existing InfluxDB token in /etc/openhab/services/influxdb.cfg"
+exit 1
+fi
+fi
 
 sudo apt-get install -y apt-transport-https software-properties-common wget
 
@@ -220,14 +231,13 @@ sudo apt-get update
 sudo apt-get install -y grafana
 
 sudo systemctl stop grafana-server || true
-sudo rm -rf /var/lib/grafana
+sudo systemctl daemon-reload
+sudo systemctl enable grafana-server
 sudo mkdir -p /var/lib/grafana
 sudo chown -R grafana:grafana /var/lib/grafana
 
 sudo systemctl start grafana-server
-sleep 5
-
-sudo grafana-cli admin reset-admin-password "$GRAFANA_PASSWORD"
+until curl -fsS http://localhost:3000/api/health > /dev/null; do sleep 3; done
 
 #--------------------------------------------------------------------------------------------------
 log "Grafana provisioning"
@@ -270,13 +280,24 @@ sudo wget -q -O /var/lib/grafana/dashboards/system_metrics.json \
 https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
 
 sudo chown -R grafana:grafana /var/lib/grafana
+
+if ! curl -fsS "http://admin:$GRAFANA_PASSWORD@localhost:3000/api/user" > /dev/null; then
+sudo curl -fsS -X PUT \
+    -H "Content-Type: application/json" \
+    -d "{\"oldPassword\":\"admin\",\"newPassword\":\"$GRAFANA_PASSWORD\",\"confirmNew\":\"$GRAFANA_PASSWORD\"}" \
+    http://admin:admin@localhost:3000/api/user/password > /dev/null
+fi
+
 sudo systemctl restart grafana-server
+until curl -fsS http://localhost:3000/api/health > /dev/null; do sleep 3; done
 
 #--------------------------------------------------------------------------------------------------
+if [ "$GRAFANA_ONLY_TEST" != "1" ]; then
 log "openHAB user"
 
 if ! sudo openhab-cli console -p habopen "user list" 2>/dev/null | grep -q "$OPENHAB_ADMIN_USER_NAME"; then
   sudo openhab-cli console -p habopen "user add $OPENHAB_ADMIN_USER_NAME $OPENHAB_ADMIN_USER_PASSWORD administrator"
+fi
 fi
 
 #--------------------------------------------------------------------------------------------------
