@@ -163,43 +163,103 @@ sudo systemctl restart openhab
 log "System metrics"
 
 VENV_DIR="$HOME_DIR/venv"
-SCRIPT="$HOME_DIR/system_metrics.py"
+SYSTEM_METRICS_SCRIPT="$HOME_DIR/system_metrics.py"
+INFLUX_URL="http://localhost:8086"
 
+sudo apt-get update
 sudo apt-get install -y python3 python3-venv python3-pip
 
 if [ ! -d "$VENV_DIR" ]; then
 sudo -u "$SCRIPT_USER" python3 -m venv "$VENV_DIR"
 fi
 
+sudo -u "$SCRIPT_USER" "$VENV_DIR/bin/pip" install --upgrade pip
 sudo -u "$SCRIPT_USER" "$VENV_DIR/bin/pip" install influxdb-client psutil
 
-cat <<EOF > "$SCRIPT"
-from influxdb_client import InfluxDBClient, Point
-import psutil, time
+cat <<EOF > "$SYSTEM_METRICS_SCRIPT"
+#!/usr/bin/env python3
+import psutil
+import time
+from influxdb_client import InfluxDBClient, Point, WriteOptions
 
-client = InfluxDBClient(url="http://localhost:8086", token="$INFLUX_TOKEN", org="$INFLUXDB_ORG")
-write = client.write_api()
+url = "$INFLUX_URL"
+token = "$INFLUX_TOKEN"
+org = "$INFLUXDB_ORG"
+bucket = "$INFLUXDB_BUCKET"
 
-while True:
-p = Point("system_metrics")
-.field("cpu_percent", psutil.cpu_percent())
-.field("mem_percent", psutil.virtual_memory().percent)
-write.write(bucket="$INFLUXDB_BUCKET", record=p)
-time.sleep(10)
+client = InfluxDBClient(url=url, token=token, org=org)
+write_api = client.write_api(write_options=WriteOptions(batch_size=1))
+
+
+def read_temp(path):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return int(f.read().strip()) / 1000.0
+    except FileNotFoundError:
+        return None
+
+
+def collect_metrics():
+    record = {}
+    record["cpu_percent"] = psutil.cpu_percent(interval=1)
+
+    per_core = psutil.cpu_percent(interval=None, percpu=True)
+    for i, usage in enumerate(per_core):
+        record[f"cpu_core{i}_percent"] = usage
+
+    mem = psutil.virtual_memory()
+    record["mem_total_mb"] = mem.total / 1024 / 1024
+    record["mem_used_mb"] = mem.used / 1024 / 1024
+    record["mem_percent"] = mem.percent
+
+    record["load1"], record["load5"], record["load15"] = psutil.getloadavg()
+
+    record["cpu_temp"] = read_temp("/sys/class/thermal/thermal_zone0/temp")
+    record["ddr_temp"] = read_temp("/sys/class/thermal/thermal_zone1/temp")
+    record["gpu_temp"] = read_temp("/sys/class/thermal/thermal_zone2/temp")
+    record["ve_temp"] = read_temp("/sys/class/thermal/thermal_zone3/temp")
+
+    return record
+
+
+if __name__ == "__main__":
+    while True:
+        try:
+            metrics = collect_metrics()
+            print(metrics)
+            p = Point("system_metrics")
+            for k, v in metrics.items():
+                if v is not None:
+                    p = p.field(k, v)
+            write_api.write(bucket=bucket, org=org, record=p)
+        except Exception as e:
+            print("Error:", e)
+        time.sleep(10)
 EOF
 
-chmod +x "$SCRIPT"
+chmod +x "$SYSTEM_METRICS_SCRIPT"
 
 sudo tee /etc/systemd/system/system-metrics.service > /dev/null <<EOL
+[Unit]
+Description=OrangePi System Metrics Collector
+After=network.target influxdb.service
+
 [Service]
-ExecStart=$VENV_DIR/bin/python $SCRIPT
+ExecStart=$VENV_DIR/bin/python $SYSTEM_METRICS_SCRIPT
+WorkingDirectory=$HOME_DIR
 Restart=always
+RestartSec=10
 User=$SCRIPT_USER
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target
 EOL
 
 sudo systemctl daemon-reload
-sudo systemctl enable system-metrics
-sudo systemctl restart system-metrics
+sudo systemctl enable system-metrics.service
+sudo systemctl restart system-metrics.service
+sudo systemctl status system-metrics.service || true
 fi
 
 #--------------------------------------------------------------------------------------------------
