@@ -121,7 +121,19 @@ steps, which looks to work :
   - Fix /tmp (before Grafana)
   - Grafana     : stopped
 analyse with AI : 
- 
+
+
+
+
+- what doesnt work :
+  - openhab addons missing
+  - samba share wrong config
+  - missing system metrix in influx
+  - grafana 
+    - dashboard exists but no data
+    - is it connected to influx ?
+    - is it connected to openhab ?
+    
 
 
 

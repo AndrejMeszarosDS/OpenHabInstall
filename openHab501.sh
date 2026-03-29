@@ -81,10 +81,12 @@ if ! dpkg -s samba &>/dev/null; then
 sudo apt-get install -y samba samba-common-bin
 fi
 
-if [ ! -f /etc/samba/smb.conf ]; then
+if [ -f /etc/samba/smb.conf ] && [ ! -f /etc/samba/smb.conf.bak ]; then
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+fi
+
 sudo wget -q -O /etc/samba/smb.conf \
 https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/samba/smb.conf
-fi
 
 if ! sudo pdbedit -L | grep -q "^$SCRIPT_USER:"; then
 (echo "$SAMBA_PASSWORD"; echo "$SAMBA_PASSWORD") | sudo smbpasswd -s -a "$SCRIPT_USER"
@@ -134,7 +136,7 @@ fi
 #--------------------------------------------------------------------------------------------------
 log "Create InfluxDB token"
 
-INFLUX_TOKEN=$(sudo ./influx auth create \
+INFLUX_TOKEN=$(sudo influx auth create \
     --org "$INFLUXDB_ORG" \
     --description "OpenHAB Token" \
     --all-access \
@@ -144,7 +146,7 @@ if [ -z "$INFLUX_TOKEN" ] || [ "$INFLUX_TOKEN" == "Error" ]; then
     echo "Failed to create InfluxDB token. Verify your InfluxDB setup and credentials."
     exit 1
 fi
-echo "Token successfully created: $INFLUX_TOKEN"
+echo "Token successfully created."
 
 #--------------------------------------------------------------------------------------------------
 log "Configure openHAB Influx"
@@ -157,6 +159,26 @@ org=$INFLUXDB_ORG
 bucket=$INFLUXDB_BUCKET
 EOL
 
+#--------------------------------------------------------------------------------------------------
+log "Configure openHAB addons"
+
+if [ -f /etc/openhab/services/addons.cfg ] && [ ! -f /etc/openhab/services/addons.cfg.bak ]; then
+sudo cp /etc/openhab/services/addons.cfg /etc/openhab/services/addons.cfg.bak
+fi
+
+sudo wget -q -O /etc/openhab/services/addons.cfg \
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
+sudo chown "$SCRIPT_USER":"$SCRIPT_USER" /etc/openhab/services/addons.cfg
+
+#--------------------------------------------------------------------------------------------------
+log "Set default persistence"
+
+if grep -q "org.openhab.persistence:default=" /etc/openhab/services/runtime.cfg; then
+sudo sed -i 's|org.openhab.persistence:default=.*|org.openhab.persistence:default=influxdb|' /etc/openhab/services/runtime.cfg
+else
+printf "\norg.openhab.persistence:default=influxdb\n" | sudo tee -a /etc/openhab/services/runtime.cfg > /dev/null
+fi
+
 sudo systemctl restart openhab
 
 #--------------------------------------------------------------------------------------------------
@@ -166,7 +188,6 @@ VENV_DIR="$HOME_DIR/venv"
 SYSTEM_METRICS_SCRIPT="$HOME_DIR/system_metrics.py"
 INFLUX_URL="http://localhost:8086"
 
-sudo apt-get update
 sudo apt-get install -y python3 python3-venv python3-pip
 
 if [ ! -d "$VENV_DIR" ]; then
@@ -312,6 +333,7 @@ sudo tee /etc/grafana/provisioning/datasources/influxdb.yaml > /dev/null <<EOL
 apiVersion: 1
 datasources:
   - name: InfluxDB
+    uid: openhab-influxdb
     type: influxdb
     url: http://localhost:8086
     isDefault: true
@@ -355,8 +377,8 @@ until curl -fsS http://localhost:3000/api/health > /dev/null; do sleep 3; done
 if [ "$GRAFANA_ONLY_TEST" != "1" ]; then
 log "openHAB user"
 
-if ! sudo openhab-cli console -p habopen "user list" 2>/dev/null | grep -q "$OPENHAB_ADMIN_USER_NAME"; then
-  sudo openhab-cli console -p habopen "user add $OPENHAB_ADMIN_USER_NAME $OPENHAB_ADMIN_USER_PASSWORD administrator"
+if ! sudo openhab-cli console -p habopen "users list" 2>/dev/null | grep -q "$OPENHAB_ADMIN_USER_NAME"; then
+  sudo openhab-cli console -p habopen "users add $OPENHAB_ADMIN_USER_NAME $OPENHAB_ADMIN_USER_PASSWORD administrator"
 fi
 fi
 
