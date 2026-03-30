@@ -147,4 +147,19 @@ testing openhab persistence
   - in openhab settings persistence still show me no persistence instlled, but addons show it installed
   - restarting openhab service
   - testing
-  - 
+  - persistence services not starting, checked with ai in Karaf console.
+  - order changed in instalation script
+  - makking new freash clean install
+  - testing :
+    - openhab persistence in 
+      - addons 
+      - persistence
+
+
+
+
+
+opeanahb addons can be before samba ...
+
+ok, need to add retention > ok
+still miss persist files  > 

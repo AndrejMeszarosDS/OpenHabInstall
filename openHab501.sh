@@ -123,6 +123,21 @@ https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/a
 sudo chown "$SCRIPT_USER":"$SCRIPT_USER" /etc/openhab/services/addons.cfg
 
 #--------------------------------------------------------------------------------------------------
+log "Install persistence configs"
+
+sudo mkdir -p /etc/openhab/persistence
+
+for persist_file in influxdb.persist mapdb.persist; do
+if [ -f "/etc/openhab/persistence/$persist_file" ] && [ ! -f "/etc/openhab/persistence/$persist_file.bak" ]; then
+sudo cp "/etc/openhab/persistence/$persist_file" "/etc/openhab/persistence/$persist_file.bak"
+fi
+
+sudo wget -q -O "/etc/openhab/persistence/$persist_file" \
+"https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/persistence/$persist_file"
+sudo chown "$SCRIPT_USER":"$SCRIPT_USER" "/etc/openhab/persistence/$persist_file"
+done
+
+#--------------------------------------------------------------------------------------------------
 log "Set default persistence"
 
 if grep -q "org.openhab.persistence:default=" /etc/openhab/services/runtime.cfg; then
@@ -177,6 +192,7 @@ url=http://localhost:8086
 token=$INFLUX_TOKEN
 org=$INFLUXDB_ORG
 bucket=$INFLUXDB_BUCKET
+retentionPolicy=$INFLUXDB_BUCKET
 EOL
 
 sudo systemctl restart openhab
@@ -328,7 +344,7 @@ sudo mkdir -p /etc/grafana/provisioning/dashboards
 sudo mkdir -p /var/lib/grafana/dashboards
 
 #--------------------------------------------------------------------------------------------------
-# Datasource
+log "Configure Grafana Datasource"
 sudo tee /etc/grafana/provisioning/datasources/influxdb.yaml > /dev/null <<EOL
 apiVersion: 1
 datasources:
@@ -346,7 +362,7 @@ datasources:
 EOL
 
 #--------------------------------------------------------------------------------------------------
-# Dashboard provider
+log "Dashboard provider"
 sudo tee /etc/grafana/provisioning/dashboards/system_metrics.yaml > /dev/null <<EOL
 apiVersion: 1
 providers:
@@ -357,7 +373,7 @@ providers:
 EOL
 
 #--------------------------------------------------------------------------------------------------
-# Download dashboard
+log "Download dashboard"
 sudo wget -q -O /var/lib/grafana/dashboards/system_metrics.json \
 https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/grafana/system_metrics_dashboard.json
 
@@ -374,12 +390,9 @@ sudo systemctl restart grafana-server
 until curl -fsS http://localhost:3000/api/health > /dev/null; do sleep 3; done
 
 #--------------------------------------------------------------------------------------------------
-if [ "$GRAFANA_ONLY_TEST" != "1" ]; then
-log "openHAB user"
-
+log "Openhab admin user"
 if ! sudo openhab-cli console -p habopen "users list" 2>/dev/null | grep -q "$OPENHAB_ADMIN_USER_NAME"; then
   sudo openhab-cli console -p habopen "users add $OPENHAB_ADMIN_USER_NAME $OPENHAB_ADMIN_USER_PASSWORD administrator"
-fi
 fi
 
 #--------------------------------------------------------------------------------------------------

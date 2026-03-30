@@ -1,0 +1,6 @@
+Strategies {
+}
+
+Items {
+    gMapDB*   : strategy = everyChange, restoreOnStartup
+}
