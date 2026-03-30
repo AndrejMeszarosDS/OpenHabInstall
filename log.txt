@@ -125,44 +125,26 @@ analyse with AI :
 
 
 
-- what doesnt work :
-  - openhab addons missing
-  - samba share wrong config
-  - missing system metrix in influx
+- what doesnt work : begin to work
+  - openhab addons missing.   > addons are in openhab
+  - samba share wrong config. > now it is ok
+  - missing system metrix in influx > there are
   - grafana 
     - dashboard exists but no data
-    - is it connected to influx ?
-    - is it connected to openhab ?
-    
+    - is it connected to influx ? > ok
+    - is it connected to openhab ? > ok 
 
 
+- what doesnt work : 
+  - openhab default persistence not setted !!!!!!!!!!!!!!
 
 
+30.03.2026 -----------------------------------------------------------------------
 
-
-when script is ok, need to test :
-  - system metrics 
-    - not working
-
-
-  - openhab 
-    - addons : services/addons.cfg 
-      - influxdb persistence
-        - persistence = mapdb, influxdb
-      - mapdb persistence
-      - 
-      - mqtt bindinf
-        - binding = mqtt
-      - jsonpath transformation
-        - 
-      - openhab cloud
-  - influx
-    - login
-    - db 
-    - metrix 
-  - grafana 
-    - login
-    - db 
-    - influx connection
-    - dashboard
-
+testing openhab persistence
+  - added tst items
+  - added page to change test items values
+  - in openhab settings persistence still show me no persistence instlled, but addons show it installed
+  - restarting openhab service
+  - testing
+  - 

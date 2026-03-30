@@ -112,6 +112,26 @@ sudo systemctl start influxdb
 until curl -s http://localhost:8086/health | grep -q '"status":"pass"'; do sleep 3; done
 
 #--------------------------------------------------------------------------------------------------
+log "Configure openHAB addons"
+
+if [ -f /etc/openhab/services/addons.cfg ] && [ ! -f /etc/openhab/services/addons.cfg.bak ]; then
+sudo cp /etc/openhab/services/addons.cfg /etc/openhab/services/addons.cfg.bak
+fi
+
+sudo wget -q -O /etc/openhab/services/addons.cfg \
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
+sudo chown "$SCRIPT_USER":"$SCRIPT_USER" /etc/openhab/services/addons.cfg
+
+#--------------------------------------------------------------------------------------------------
+log "Set default persistence"
+
+if grep -q "org.openhab.persistence:default=" /etc/openhab/services/runtime.cfg; then
+sudo sed -i 's|org.openhab.persistence:default=.*|org.openhab.persistence:default=influxdb|' /etc/openhab/services/runtime.cfg
+else
+printf "\norg.openhab.persistence:default=influxdb\n" | sudo tee -a /etc/openhab/services/runtime.cfg > /dev/null
+fi
+
+#--------------------------------------------------------------------------------------------------
 log "Influx CLI"
 if ! command -v influx &>/dev/null; then
 cd /tmp
@@ -158,26 +178,6 @@ token=$INFLUX_TOKEN
 org=$INFLUXDB_ORG
 bucket=$INFLUXDB_BUCKET
 EOL
-
-#--------------------------------------------------------------------------------------------------
-log "Configure openHAB addons"
-
-if [ -f /etc/openhab/services/addons.cfg ] && [ ! -f /etc/openhab/services/addons.cfg.bak ]; then
-sudo cp /etc/openhab/services/addons.cfg /etc/openhab/services/addons.cfg.bak
-fi
-
-sudo wget -q -O /etc/openhab/services/addons.cfg \
-https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/openhab/addons.cfg
-sudo chown "$SCRIPT_USER":"$SCRIPT_USER" /etc/openhab/services/addons.cfg
-
-#--------------------------------------------------------------------------------------------------
-log "Set default persistence"
-
-if grep -q "org.openhab.persistence:default=" /etc/openhab/services/runtime.cfg; then
-sudo sed -i 's|org.openhab.persistence:default=.*|org.openhab.persistence:default=influxdb|' /etc/openhab/services/runtime.cfg
-else
-printf "\norg.openhab.persistence:default=influxdb\n" | sudo tee -a /etc/openhab/services/runtime.cfg > /dev/null
-fi
 
 sudo systemctl restart openhab
 
