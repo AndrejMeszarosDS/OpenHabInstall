@@ -17,8 +17,8 @@ SCRIPT_USER="${SUDO_USER:-orangepi}"
 HOME_DIR="/home/$SCRIPT_USER"
 
 MOSQUITTO_PASSWORD="mqttpass"
-OPENHAB_ADMIN_USER_NAME="admin"
-OPENHAB_ADMIN_USER_PASSWORD="openhab_password"
+OPENHAB_ADMIN_USER_NAME="orangepi"
+OPENHAB_ADMIN_USER_PASSWORD="orangepi"
 
 INFLUXDB_USER="orangepi"
 INFLUXDB_PASSWORD="orangepi"
@@ -37,15 +37,13 @@ sudo apt-get update
 
 #--------------------------------------------------------------------------------------------------
 log "Mosquitto"
-if ! dpkg -s mosquitto &>/dev/null; then
 sudo apt-get install -y mosquitto mosquitto-clients
-fi
-
-if [ ! -f /etc/mosquitto/passwd ]; then
-sudo mosquitto_passwd -b -c /etc/mosquitto/passwd "$SCRIPT_USER" "$MOSQUITTO_PASSWORD"
-fi
-
-sudo systemctl enable mosquitto
+cd /etc/mosquitto
+sudo rm -f mosquitto.conf
+sudo wget -q -O /etc/mosquitto/mosquitto.conf \
+https://raw.githubusercontent.com/AndrejMeszarosDS/OpenHabInstall/main/mosquitto/mosquitto.conf
+sudo mosquitto_passwd -b -c /etc/mosquitto/passwd orangepi "$MOSQUITTO_PASSWORD"
+sudo systemctl enable mosquitto.service
 sudo systemctl restart mosquitto
 
 #--------------------------------------------------------------------------------------------------

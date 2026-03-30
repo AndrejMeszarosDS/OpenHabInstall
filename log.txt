@@ -155,11 +155,29 @@ testing openhab persistence
       - addons 
       - persistence
 
-
-
-
-
 opeanahb addons can be before samba ...
 
 ok, need to add retention > ok
-still miss persist files  > 
+still miss persist files  > added
+
+- makking new freash clean install
+  - test is ok
+    - persistence works
+    - data are in influx
+    - restore at startup works
+
+- creating modules in prod orangepi
+  - create global items     > 
+  - heating
+    - icons                 > ok
+    - items                 > ok
+      - persistence         > 
+    - things                > ok
+    - rules                 > ok
+    - widget                > ok
+    - adding to overview    > ok
+    - create test page      > 
+
+
+fuck, mosquitto conf not added !!!!!!!!
+
