@@ -181,3 +181,6 @@ still miss persist files  > added
 
 fuck, mosquitto conf not added !!!!!!!!
 
+i added it
+
+- makking new freash clean install

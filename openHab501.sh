@@ -31,6 +31,11 @@ SAMBA_PASSWORD="secret"
 GRAFANA_ONLY_TEST="${GRAFANA_ONLY_TEST:-0}"
 
 #--------------------------------------------------------------------------------------------------
+# set timezone
+log "Set timezone"
+sudo timedatectl set-timezone Europe/Prague
+
+#--------------------------------------------------------------------------------------------------
 if [ "$GRAFANA_ONLY_TEST" != "1" ]; then
 log "Update system"
 sudo apt-get update
